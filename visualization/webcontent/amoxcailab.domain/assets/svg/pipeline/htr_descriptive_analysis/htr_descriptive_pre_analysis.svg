@@ -1,0 +1,216 @@
+<svg width="2160" height="3840" viewBox="0 0 2160 3840" version="1.1" xmlns="http://www.w3.org/2000/svg">
+  <rect x="0" y="0" width="2160" height="3840" rx="30" fill="#282828" stroke="#665c54" stroke-width="6"/>
+
+  <defs>
+    <marker id="arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L8,3 z" fill="#ebdbb2"/>
+    </marker>
+    <marker id="arrow-gold" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L8,3 z" fill="#fabd2f"/>
+    </marker>
+    <marker id="arrow-red" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L8,3 z" fill="#fb4934"/>
+    </marker>
+  </defs>
+
+  <text x="1080" y="100" font-family="'Fira Mono Nerd Font', 'ShureTechMono Nerd Font', monospace" font-size="56" fill="#ebdbb2" font-weight="bold" text-anchor="middle">ARQUITECTURA DEL PIPELINE: ANÁLISIS DE ERRORES HTR</text>
+
+  <g transform="translate(150, 200)">
+    <rect width="950" height="450" fill="#3c3836" stroke="#fabd2f" stroke-width="6" rx="16"/>
+    <text x="475" y="70" font-family="'Fira Mono Nerd Font', 'ShureTechMono Nerd Font', monospace" font-size="44" fill="#fabd2f" font-weight="bold" text-anchor="middle">📥 ENTRADAS EXTERNAS</text>
+    <g font-family="'Fira Mono Nerd Font', 'ShureTechMono Nerd Font', monospace" font-size="34" fill="#ebdbb2">
+      <text x="50" y="160">📁 data/raw/&lt;style&gt;/*_HTR.txt</text>
+      <text x="50" y="230">📁 data/raw/ground_truths/*_GT.txt</text>
+      <text x="50" y="300">📄 zip_manifest.json</text>
+      <text x="50" y="370">📄 tag_schema.json</text>
+      <text x="50" y="440">📄 stopwords.json</text>
+    </g>
+  </g>
+
+  <g transform="translate(150, 750)">
+    <rect width="950" height="250" fill="#3c3836" stroke="#458588" stroke-width="6" rx="16"/>
+    <text x="475" y="75" font-family="'Fira Mono Nerd Font', 'ShureTechMono Nerd Font', monospace" font-size="40" fill="#458588" font-weight="bold" text-anchor="middle">ETAPA 0: EMPAREJAMIENTO</text>
+    <text x="475" y="160" font-family="'Fira Mono Nerd Font', 'ShureTechMono Nerd Font', monospace" font-size="40" fill="#ebdbb2" font-weight="bold" text-anchor="middle">run_split.py</text>
+  </g>
+
+  <g transform="translate(150, 1150)">
+    <rect width="950" height="680" fill="#3c3836" stroke="#fb4934" stroke-width="6" rx="16"/>
+    <text x="475" y="70" font-family="'Fira Mono Nerd Font', 'ShureTechMono Nerd Font', monospace" font-size="44" fill="#fb4934" font-weight="bold" text-anchor="middle">ETAPAS 1-2-3: ETIQUETADO PROGRESIVO</text>
+
+    <g transform="translate(50, 110)">
+      <rect width="850" height="150" fill="#282828" stroke="#665c54" stroke-width="4" rx="12"/>
+      <text x="425" y="60" font-family="'Fira Mono Nerd Font', 'ShureTechMono Nerd Font', monospace" font-size="36" fill="#ebdbb2" font-weight="bold" text-anchor="middle">run_step1.py</text>
+      <text x="425" y="115" font-family="'Fira Mono Nerd Font', 'ShureTechMono Nerd Font', monospace" font-size="32" fill="#a89984" text-anchor="middle">S1: Normalización de texto y espacios</text>
+    </g>
+    <g transform="translate(50, 290)">
+      <rect width="850" height="180" fill="#282828" stroke="#665c54" stroke-width="4" rx="12"/>
+      <text x="425" y="60" font-family="'Fira Mono Nerd Font', 'ShureTechMono Nerd Font', monospace" font-size="36" fill="#ebdbb2" font-weight="bold" text-anchor="middle">run_step2.py</text>
+      <text x="425" y="115" font-family="'Fira Mono Nerd Font', 'ShureTechMono Nerd Font', monospace" font-size="32" fill="#a89984" text-anchor="middle">S2: Alineación Character-Level</text>
+      <text x="425" y="160" font-family="'Fira Mono Nerd Font', 'ShureTechMono Nerd Font', monospace" font-size="32" fill="#8ec07c" text-anchor="middle">Clasificación: S2X / S2I / S2D</text>
+    </g>
+    <g transform="translate(50, 500)">
+      <rect width="850" height="150" fill="#282828" stroke="#665c54" stroke-width="4" rx="12"/>
+      <text x="425" y="60" font-family="'Fira Mono Nerd Font', 'ShureTechMono Nerd Font', monospace" font-size="36" fill="#ebdbb2" font-weight="bold" text-anchor="middle">run_step3.py</text>
+      <text x="425" y="115" font-family="'Fira Mono Nerd Font', 'ShureTechMono Nerd Font', monospace" font-size="32" fill="#a89984" text-anchor="middle">S3: Heurísticas Paleográficas</text>
+      <text x="425" y="160" font-family="'Fira Mono Nerd Font', 'ShureTechMono Nerd Font', monospace" font-size="28" fill="#fabd2f" text-anchor="middle">Detección de abreviaturas/grafías complejas</text>
+    </g>
+  </g>
+
+  <g transform="translate(150, 1950)">
+    <rect width="950" height="300" fill="#3c3836" stroke="#b16286" stroke-width="6" rx="16"/>
+    <text x="475" y="70" font-family="'Fira Mono Nerd Font', 'ShureTechMono Nerd Font', monospace" font-size="44" fill="#b16286" font-weight="bold" text-anchor="middle">DIAGNÓSTICO DE CORPUS</text>
+    
+    <g transform="translate(50, 110)">
+      <rect width="850" height="70" fill="#282828" stroke="#665c54" stroke-width="4" rx="8"/>
+      <text x="425" y="48" font-family="'Fira Mono Nerd Font', 'ShureTechMono Nerd Font', monospace" font-size="32" fill="#ebdbb2" text-anchor="middle">build_issue_index.py → conteos S1/S2/S3</text>
+    </g>
+    <g transform="translate(50, 200)">
+      <rect width="850" height="70" fill="#282828" stroke="#665c54" stroke-width="4" rx="8"/>
+      <text x="425" y="48" font-family="'Fira Mono Nerd Font', 'ShureTechMono Nerd Font', monospace" font-size="30" fill="#ebdbb2" text-anchor="middle">build_alignment_diagnostics.py → OK/DRIFT</text>
+    </g>
+  </g>
+
+  <g transform="translate(150, 2350)">
+    <rect width="950" height="350" fill="#3c3836" stroke="#fe8019" stroke-width="6" rx="16"/>
+    <text x="475" y="70" font-family="'Fira Mono Nerd Font', 'ShureTechMono Nerd Font', monospace" font-size="44" fill="#fe8019" font-weight="bold" text-anchor="middle">ANÁLISIS POSTHOC</text>
+    
+    <g transform="translate(50, 110)">
+      <rect width="850" height="60" fill="#282828" stroke="#665c54" stroke-width="4" rx="8"/>
+      <text x="425" y="42" font-family="'Fira Mono Nerd Font', 'ShureTechMono Nerd Font', monospace" font-size="34" fill="#ebdbb2" text-anchor="middle">posthoc_analysis.py</text>
+    </g>
+    <g transform="translate(50, 190)">
+      <rect width="850" height="60" fill="#282828" stroke="#665c54" stroke-width="4" rx="8"/>
+      <text x="425" y="42" font-family="'Fira Mono Nerd Font', 'ShureTechMono Nerd Font', monospace" font-size="34" fill="#ebdbb2" text-anchor="middle">assign_issue_ids.py</text>
+    </g>
+    <g transform="translate(50, 270)">
+      <rect width="850" height="60" fill="#282828" stroke="#665c54" stroke-width="4" rx="8"/>
+      <text x="425" y="42" font-family="'Fira Mono Nerd Font', 'ShureTechMono Nerd Font', monospace" font-size="34" fill="#ebdbb2" text-anchor="middle">build_review_pool.py</text>
+    </g>
+  </g>
+
+  <g transform="translate(150, 2800)">
+    <rect width="950" height="350" fill="#3c3836" stroke="#83a598" stroke-width="6" rx="16"/>
+    <text x="475" y="70" font-family="'Fira Mono Nerd Font', 'ShureTechMono Nerd Font', monospace" font-size="44" fill="#83a598" font-weight="bold" text-anchor="middle">MUESTREO ESTRATIFICADO</text>
+    
+    <g transform="translate(50, 110)">
+      <rect width="850" height="60" fill="#282828" stroke="#665c54" stroke-width="4" rx="8"/>
+      <text x="425" y="42" font-family="'Fira Mono Nerd Font', 'ShureTechMono Nerd Font', monospace" font-size="34" fill="#ebdbb2" text-anchor="middle">rank_and_sample_reviews.py</text>
+    </g>
+    <text x="475" y="230" font-family="'Fira Mono Nerd Font', 'ShureTechMono Nerd Font', monospace" font-size="32" fill="#ebdbb2" text-anchor="middle">S1=30% / S2=40% / S3=30% | balanceo estilo</text>
+    <text x="475" y="280" font-family="'Fira Mono Nerd Font', 'ShureTechMono Nerd Font', monospace" font-size="32" fill="#ebdbb2" text-anchor="middle">S2 prioridad por frecuencia par | seed=42</text>
+    <text x="475" y="330" font-family="'Fira Mono Nerd Font', 'ShureTechMono Nerd Font', monospace" font-size="32" fill="#ebdbb2" text-anchor="middle">Excluye IDs previos (review_tracking.csv)</text>
+  </g>
+
+  <g transform="translate(150, 3250)">
+    <rect width="950" height="250" fill="#3c3836" stroke="#fabd2f" stroke-width="6" rx="16"/>
+    <text x="475" y="70" font-family="'Fira Mono Nerd Font', 'ShureTechMono Nerd Font', monospace" font-size="44" fill="#fabd2f" font-weight="bold" text-anchor="middle">ASIGNACIÓN A REVISORES</text>
+    <text x="475" y="140" font-family="'Fira Mono Nerd Font', 'ShureTechMono Nerd Font', monospace" font-size="38" fill="#ebdbb2" text-anchor="middle">allocate_reviews.py</text>
+    <text x="475" y="210" font-family="'Fira Mono Nerd Font', 'ShureTechMono Nerd Font', monospace" font-size="28" fill="#ebdbb2" text-anchor="middle">balanceo por caligrafía | seed=42 | multi-round safe</text>
+  </g>
+
+  <g transform="translate(150, 3600)">
+    <rect width="950" height="180" fill="#282828" stroke="#fabd2f" stroke-width="6" rx="16" stroke-dasharray="16,10"/>
+    <text x="475" y="70" font-family="'Fira Mono Nerd Font', 'ShureTechMono Nerd Font', monospace" font-size="44" fill="#fabd2f" font-weight="bold" text-anchor="middle">review_tracking.csv</text>
+    <text x="475" y="130" font-family="'Fira Mono Nerd Font', 'ShureTechMono Nerd Font', monospace" font-size="32" fill="#ebdbb2" text-anchor="middle">Histórico IDs revisados (append por ronda)</text>
+  </g>
+
+  <g transform="translate(1250, 750)">
+    <rect width="800" height="300" fill="#3c3836" stroke="#83a598" stroke-width="6" rx="16"/>
+    <text x="400" y="70" font-family="'Fira Mono Nerd Font', 'ShureTechMono Nerd Font', monospace" font-size="44" fill="#83a598" font-weight="bold" text-anchor="middle">📄 meta/</text>
+    <g font-family="'Fira Mono Nerd Font', 'ShureTechMono Nerd Font', monospace" font-size="34" fill="#ebdbb2">
+      <text x="60" y="150">train_pairs.json</text>
+      <text x="60" y="210">test_pairs.json</text>
+      <text x="60" y="270">split_metadata.json | htr_index.csv</text>
+    </g>
+  </g>
+
+  <g transform="translate(1250, 1150)">
+    <rect width="800" height="250" fill="#3c3836" stroke="#8ec07c" stroke-width="6" rx="16"/>
+    <text x="400" y="70" font-family="'Fira Mono Nerd Font', 'ShureTechMono Nerd Font', monospace" font-size="44" fill="#8ec07c" font-weight="bold" text-anchor="middle">📊 step_summaries/</text>
+    <g font-family="'Fira Mono Nerd Font', 'ShureTechMono Nerd Font', monospace" font-size="32" fill="#ebdbb2">
+      <text x="60" y="140">S1: resúmenes PNG + CSV</text>
+      <text x="60" y="190">S2: matrices de confusión PNG + CSV</text>
+      <text x="60" y="240">S3: resúmenes PNG + CSV</text>
+    </g>
+  </g>
+
+  <g transform="translate(1250, 1450)">
+    <rect width="800" height="180" fill="#282828" stroke="#cc241d" stroke-width="6" rx="16" stroke-dasharray="16,10"/>
+    <text x="400" y="70" font-family="'Fira Mono Nerd Font', 'ShureTechMono Nerd Font', monospace" font-size="36" fill="#cc241d" font-weight="bold" text-anchor="middle">logs/&lt;style&gt;/&lt;doc&gt;_issues.json</text>
+    <text x="400" y="130" font-family="'Fira Mono Nerd Font', 'ShureTechMono Nerd Font', monospace" font-size="34" fill="#ebdbb2" text-anchor="middle">Acumula tags S1 → S2 → S3</text>
+  </g>
+
+  <g transform="translate(1250, 1680)">
+    <rect width="800" height="180" fill="#282828" stroke="#fabd2f" stroke-width="6" rx="16"/>
+    <text x="400" y="70" font-family="'Fira Mono Nerd Font', 'ShureTechMono Nerd Font', monospace" font-size="40" fill="#fabd2f" font-weight="bold" text-anchor="middle">posthoc/</text>
+    <text x="400" y="125" font-family="'Fira Mono Nerd Font', 'ShureTechMono Nerd Font', monospace" font-size="30" fill="#ebdbb2" text-anchor="middle">s1_s2_overlap.json</text>
+    <text x="400" y="165" font-family="'Fira Mono Nerd Font', 'ShureTechMono Nerd Font', monospace" font-size="30" fill="#ebdbb2" text-anchor="middle">s1_s3_overlap.json | s2_s3_overlap.json</text>
+  </g>
+
+  <g transform="translate(1250, 1950)">
+    <rect width="800" height="300" fill="#3c3836" stroke="#d3869b" stroke-width="6" rx="16"/>
+    <text x="400" y="70" font-family="'Fira Mono Nerd Font', 'ShureTechMono Nerd Font', monospace" font-size="44" fill="#d3869b" font-weight="bold" text-anchor="middle">📄 meta/ — diagnósticos</text>
+    <g font-family="'Fira Mono Nerd Font', 'ShureTechMono Nerd Font', monospace" font-size="34" fill="#ebdbb2">
+      <text x="60" y="170">issues_index.json</text>
+      <text x="60" y="240">alignment_diagnostics.json</text>
+    </g>
+  </g>
+
+  <g transform="translate(1250, 2350)">
+    <rect width="800" height="350" fill="#3c3836" stroke="#d65d0e" stroke-width="6" rx="16"/>
+    <text x="400" y="70" font-family="'Fira Mono Nerd Font', 'ShureTechMono Nerd Font', monospace" font-size="44" fill="#d65d0e" font-weight="bold" text-anchor="middle">📄 Salidas posthoc/</text>
+    <g font-family="'Fira Mono Nerd Font', 'ShureTechMono Nerd Font', monospace" font-size="32" fill="#ebdbb2">
+      <text x="60" y="150">posthoc_summary.json / .csv / overlap.png</text>
+      <text x="60" y="210">issues_with_ids.json</text>
+      <text x="60" y="270">review_pool.csv | review_master.csv</text>
+      <text x="60" y="330">corpus_report.md</text>
+    </g>
+  </g>
+
+  <g transform="translate(1250, 2800)">
+    <rect width="800" height="350" fill="#3c3836" stroke="#8ec07c" stroke-width="6" rx="16"/>
+    <text x="400" y="70" font-family="'Fira Mono Nerd Font', 'ShureTechMono Nerd Font', monospace" font-size="44" fill="#8ec07c" font-weight="bold" text-anchor="middle">📄 review/ — muestreo</text>
+    <g font-family="'Fira Mono Nerd Font', 'ShureTechMono Nerd Font', monospace" font-size="32" fill="#ebdbb2">
+      <text x="60" y="150">sampling_metadata.json</text>
+      <text x="60" y="210">review_master.csv (muestreado)</text>
+      <text x="60" y="270">diagnostics_full_pool_*</text>
+      <text x="60" y="330">diagnostics_sampled_master_*</text>
+    </g>
+  </g>
+
+  <g transform="translate(1250, 3250)">
+    <rect width="800" height="250" fill="#3c3836" stroke="#d3869b" stroke-width="6" rx="16"/>
+    <text x="400" y="70" font-family="'Fira Mono Nerd Font', 'ShureTechMono Nerd Font', monospace" font-size="44" fill="#d3869b" font-weight="bold" text-anchor="middle">📄 review/ — revisores</text>
+    <g font-family="'Fira Mono Nerd Font', 'ShureTechMono Nerd Font', monospace" font-size="34" fill="#ebdbb2">
+      <text x="60" y="150">review_master_with_allocations.csv</text>
+      <text x="60" y="220">allocations/review_INITIALS.csv</text>
+    </g>
+  </g>
+
+  <path d="M 625 650 L 625 750" stroke="#ebdbb2" stroke-width="6" fill="none" marker-end="url(#arrow)"/>
+  
+  <path d="M 1100 875 L 1250 875" stroke="#ebdbb2" stroke-width="6" fill="none" marker-end="url(#arrow)"/>
+
+  <path d="M 1250 1000 L 1150 1000 L 1150 1100 L 625 1100 L 625 1150" stroke="#ebdbb2" stroke-width="6" fill="none" marker-end="url(#arrow)"/>
+
+  <path d="M 1100 1275 L 1250 1275" stroke="#ebdbb2" stroke-width="6" fill="none" marker-end="url(#arrow)"/> <path d="M 1100 1540 L 1250 1540" stroke="#ebdbb2" stroke-width="6" fill="none" marker-end="url(#arrow)"/> <path d="M 1100 1770 L 1250 1770" stroke="#fb4934" stroke-width="6" fill="none" marker-end="url(#arrow-red)"/> <path d="M 1250 1600 L 1150 1600 L 1150 1900 L 625 1900 L 625 1950" stroke="#ebdbb2" stroke-width="6" fill="none" marker-end="url(#arrow)"/>
+
+  <path d="M 1100 2100 L 1250 2100" stroke="#ebdbb2" stroke-width="6" fill="none" marker-end="url(#arrow)"/>
+  <path d="M 625 2250 L 625 2350" stroke="#ebdbb2" stroke-width="6" fill="none" marker-end="url(#arrow)"/>
+
+  <path d="M 1250 1820 L 1200 1820 L 1200 2300 L 800 2300 L 800 2350" stroke="#fabd2f" stroke-width="6" fill="none" marker-end="url(#arrow-gold)"/>
+
+  <path d="M 1100 2525 L 1250 2525" stroke="#ebdbb2" stroke-width="6" fill="none" marker-end="url(#arrow)"/>
+  <path d="M 625 2700 L 625 2800" stroke="#ebdbb2" stroke-width="6" fill="none" marker-end="url(#arrow)"/>
+
+  <path d="M 1100 2975 L 1250 2975" stroke="#ebdbb2" stroke-width="6" fill="none" marker-end="url(#arrow)"/>
+  <path d="M 625 3150 L 625 3250" stroke="#ebdbb2" stroke-width="6" fill="none" marker-end="url(#arrow)"/>
+
+  <path d="M 1100 3375 L 1250 3375" stroke="#ebdbb2" stroke-width="6" fill="none" marker-end="url(#arrow)"/>
+  <path d="M 625 3500 L 625 3600" stroke="#fabd2f" stroke-width="6" fill="none" marker-end="url(#arrow-gold)"/>
+
+  <path d="M 150 3690 L 70 3690 L 70 2975 L 150 2975" stroke="#fabd2f" stroke-width="6" fill="none" stroke-dasharray="16,10" marker-end="url(#arrow-gold)"/>
+  
+  <text x="80" y="3330" font-family="'Fira Mono Nerd Font', 'ShureTechMono Nerd Font', monospace" font-size="28" fill="#fabd2f" font-weight="bold" transform="rotate(-90 80 3330)">Filtro de exclusión de IDs</text>
+
+</svg>
