@@ -1,0 +1,85 @@
+<svg width="780" height="360" viewBox="0 0 780 360" xmlns="http://www.w3.org/2000/svg">
+  
+  <!-- Background -->
+  <rect x="0" y="0" width="780" height="360" rx="10" fill="#ffffff" stroke="#cccccc" stroke-width="3" />
+  
+  <!-- Header -->
+  <rect x="0" y="0" width="780" height="60" rx="10" fill="#f0f0f0" stroke="#cccccc" stroke-width="2" />
+  <text x="390" y="38" font-family="Courier New, monospace" font-size="22" fill="#b58900" font-weight="bold" text-anchor="middle">
+    DIMENSION 1: IDENTIFICATION METADATA
+  </text>
+
+  <!-- Left column -->
+  <g transform="translate(30, 120)">
+    <text x="0" y="-12" font-family="Arial" font-size="14" fill="#666666" font-weight="bold">
+      RECORD DATA
+    </text>
+    
+    <!-- Document name -->
+    <g>
+      <rect width="350" height="75" rx="5" fill="#f7f7f7" stroke="#268bd2" stroke-width="1.5" />
+      <text x="15" y="25" font-family="Arial" font-size="11" fill="#268bd2" font-weight="bold">
+        DOCUMENT NAME
+      </text>
+      <text x="15" y="55" font-family="Courier New" font-size="16" fill="#000000">
+        AGN_Tierras_v2781_exp11_04...
+      </text>
+      <path d="M310 18 H330 L340 28 V58 H310 Z M330 18 V28 H340"
+            fill="none" stroke="#268bd2" stroke-width="2" />
+    </g>
+    
+    <!-- Reviewer -->
+    <g transform="translate(0, 95)">
+      <rect width="350" height="75" rx="5" fill="#f7f7f7" stroke="#d33682" stroke-width="1.5" />
+      <text x="15" y="25" font-family="Arial" font-size="11" fill="#d33682" font-weight="bold">
+        REVIEWER
+      </text>
+      <text x="15" y="55" font-family="Arial" font-size="16" fill="#000000">
+        Reviewer name
+      </text>
+    </g>
+  </g>
+
+  <!-- Right column -->
+  <g transform="translate(400, 120)">
+    <text x="0" y="-12" font-family="Arial" font-size="14" fill="#666666" font-weight="bold">
+      PALEOGRAPHIC CONTEXT
+    </text>
+    
+    <rect width="350" height="170" rx="5" fill="#f7f7f7" stroke="#b58900" stroke-width="1.5" />
+    <text x="20" y="30" font-family="Arial" font-size="12" fill="#b58900" font-weight="bold">
+      HANDWRITING TYPE (OPTIONS)
+    </text>
+    
+    <g transform="translate(20, 55)">
+      <g>
+        <circle cx="11" cy="9" r="7" fill="none" stroke="#000000" stroke-width="1.5" />
+        <circle cx="11" cy="9" r="5" fill="#859900" />
+        <text x="30" y="13" font-family="Arial" font-size="14" fill="#000000">
+          Processal
+        </text>
+      </g>
+      
+      <g transform="translate(0, 28)">
+        <circle cx="11" cy="9" r="7" fill="none" stroke="#000000" stroke-width="1.5" />
+        <text x="30" y="13" font-family="Arial" font-size="14" fill="#555555">
+          Chained
+        </text>
+      </g>
+      
+      <g transform="translate(0, 56)">
+        <circle cx="11" cy="9" r="7" fill="none" stroke="#000000" stroke-width="1.5" />
+        <text x="30" y="13" font-family="Arial" font-size="14" fill="#555555" font-style="italic">
+          Italic Cursive
+        </text>
+      </g>
+      
+      <g transform="translate(0, 84)">
+        <circle cx="11" cy="9" r="7" fill="none" stroke="#000000" stroke-width="1.5" />
+        <text x="30" y="13" font-family="Arial" font-size="14" fill="#555555">
+          Round
+        </text>
+      </g>
+    </g>
+  </g>
+</svg>

@@ -1,0 +1,57 @@
+<svg width="1200" height="650" viewBox="0 0 1200 650" xmlns="http://www.w3.org/2000/svg">
+  <rect x="0" y="0" width="1200" height="650" rx="15" fill="#282828" stroke="#665c54" stroke-width="3" />
+  
+  <rect x="0" y="0" width="1200" height="80" rx="15" fill="#3c3836" stroke="#665c54" stroke-width="2" />
+  <text x="600" y="48" font-family="Courier New, monospace" font-size="28" fill="#fabd2f" font-weight="bold" text-anchor="middle">ERRORES EN EL PASO 4: DECODIFICACIÓN (CTC)</text>
+
+  <g transform="translate(40, 100)" font-family="Arial" font-size="14" font-weight="bold">
+    <text x="0" y="20" fill="#a89984">CAPTURA:</text>
+    <rect x="90" y="0" width="215" height="30" rx="5" fill="#458588" fill-opacity="0.2" stroke="#458588" stroke-width="1"/>
+    <text x="100" y="20" fill="#83a598">COLAPSO DE CARACTERES</text>
+  </g>
+
+  <g transform="translate(30, 150)">
+    <rect width="1140" height="220" rx="10" fill="#32302f" stroke="#665c54" stroke-width="1.5" />
+    <text x="20" y="30" font-family="Arial" font-size="18" fill="#ebdbb2" font-weight="bold">CASO A: ELIMINACIÓN DE CARACTERES</text>
+    
+    <g transform="translate(20, 50)">
+      <rect width="320" height="110" rx="5" fill="#282828" stroke="#665c54" />
+      <text x="15" y="25" font-family="Arial" font-size="18" fill="#83a598">HTR</text>
+      <text x="15" y="55" font-family="Courier New" font-size="24" fill="#ebdbb2">e mi</text>
+      
+      <g transform="translate(340, 0)">
+        <rect width="320" height="110" rx="5" fill="#282828" stroke="#b8bb26" stroke-width="1"/>
+        <text x="15" y="25" font-family="Arial" font-size="18" fill="#b8bb26">GT</text>
+        <text x="15" y="55" font-family="Courier New" font-size="24" fill="#ebdbb2">ante mi</text>
+      </g>
+    </g>
+    
+    <g transform="translate(700, 50)" font-family="Arial" font-size="18" fill="#ebdbb2">
+      <text x="0" y="20" font-weight="bold" fill="#a89984">ANÁLISIS DEL CTC:</text>
+      <text x="0" y="50">• El modelo elimina <tspan font-weight="bold" fill="#fb4934">ant</tspan>.</text>
+    </g>
+  </g>
+
+  <g transform="translate(30, 400)">
+    <rect width="1140" height="220" rx="10" fill="#32302f" stroke="#665c54" stroke-width="1.5" />
+    <text x="20" y="30" font-family="Arial" font-size="18" fill="#ebdbb2" font-weight="bold">CASO B: INSERCIÓN DE CARACTERES</text>
+    
+    <g transform="translate(20, 50)">
+      <rect width="320" height="110" rx="5" fill="#282828" stroke="#665c54" />
+      <text x="15" y="25" font-family="Arial" font-size="18" fill="#83a598">HTR</text>
+      <text x="15" y="55" font-family="Courier New" font-size="24" fill="#ebdbb2">go bernador</text>
+      
+      <g transform="translate(340, 0)">
+        <rect width="320" height="110" rx="5" fill="#282828" stroke="#b8bb26" stroke-width="1"/>
+        <text x="15" y="25" font-family="Arial" font-size="18" fill="#b8bb26">GT</text>
+        <text x="15" y="55" font-family="Courier New" font-size="24" fill="#ebdbb2">gobernador</text>
+      </g>
+    </g>
+    
+    <g transform="translate(700, 50)" font-family="Arial" font-size="18" fill="#ebdbb2">
+      <text x="0" y="20" font-weight="bold" fill="#a89984">ANÁLISIS DEL CTC:</text>
+      <text x="0" y="50">• El modelo agrega un <tspan font-weight="bold" fill="#fb4934">espacio</tspan></text>
+      <text x="15" y="75"> y decodifica mal la secuencia.</text>
+    </g>
+  </g>
+</svg>

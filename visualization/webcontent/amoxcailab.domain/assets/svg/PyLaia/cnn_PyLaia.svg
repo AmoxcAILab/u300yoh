@@ -1,0 +1,45 @@
+<svg width="900" height="530" viewBox="0 0 900 530" xmlns="http://www.w3.org/2000/svg">
+  <rect x="2" y="2" width="896" height="526" rx="15" fill="#282828" stroke="#665c54" stroke-width="3" />
+  
+  <text x="60" y="55" font-family="Courier New, monospace" font-size="20" fill="#ebdbb2" font-weight="bold">PASO 2: EXTRACCIÓN DE CARACTERÍSTICAS</text>
+  <text x="510" y="55" font-family="Courier New, monospace" font-size="16" fill="#ebdbb2">(Convolutional neural network - CNN)</text>
+  <text x="60" y="80" font-family="Courier New, monospace" font-size="16" fill="#ebdbb2">HTR: "fazer unarios" - GT: "fazer un años"</text>
+  
+  <g transform="translate(60, 110)">
+    <rect width="650" height="100" fill="#3c3836" rx="2" stroke="#665c54" stroke-width="2" />
+    
+    <g id="ink-layer" fill="none" stroke="#fbf1c7" stroke-width="3" stroke-linecap="round">
+      <path d="M40 30 L40 80 M40 50 L60 50 M95 60 Q110 30 125 60 Q110 90 95 60 M145 40 L195 40 L145 80 L195 80 M215 60 Q235 30 255 60 L215 60 Q235 90 255 60 M285 60 L285 85 M285 60 Q305 35 325 60" />
+      <path d="M370 50 L370 80 Q390 85 400 80 L400 50 L400 80 M415 80 L415 50 Q430 50 430 65 L430 80" />
+      <path d="M455 70 Q470 40 485 70 Q470 100 455 70" /> 
+      <path d="M505 80 L505 50 Q520 50 520 65 L520 80 M500 35 Q512 25 525 35" />
+      <path d="M555 70 Q570 40 585 70 Q570 100 555 70 M600 80 Q630 80 630 65 Q630 50 600 55 Q570 60 570 45 Q570 30 600 30" />
+    </g>
+    
+    <line x1="0" y1="0" x2="0" y2="100" stroke="#8ec07c" stroke-width="3">
+      <animate attributeName="x1" values="0;650;0" dur="20s" repeatCount="indefinite" />
+      <animate attributeName="x2" values="0;650;0" dur="20s" repeatCount="indefinite" />
+    </line>
+  </g>
+
+  <g transform="translate(60, 260)">
+    
+    <path d="M0 40 L25 40 L35 12 L45 40 L85 40 L95 18 L105 40 L135 40 L145 10 L155 40 L200 40 L215 14 L225 40 L260 40 L285 12 L295 40 L345 40 L370 16 L380 40 L405 40 L415 12 L425 40 L475 40 L505 14 L515 40 L545 40 L555 12 L565 40 L595 40 L605 16 L615 40 L650 40"
+          fill="none" stroke="#458588" stroke-width="2.5" />
+    <text x="670" y="30" font-family="Arial" font-size="12" fill="#458588" font-weight="bold">Filtro vertical</text>
+
+    <path d="M0 90 L55 90 Q75 62 95 90 Q110 118 130 90 L150 90 Q170 68 190 90 L205 90 Q225 58 245 90 Q265 120 285 90 L305 90 Q325 68 345 90 L365 90 Q380 102 395 90 L415 90 Q445 58 475 90 Q495 116 515 90 L540 90 Q560 62 585 90 Q605 108 625 90 L650 90"
+          fill="none" stroke="#cc241d" stroke-width="2.5" />
+    <text x="670" y="85" font-family="Arial" font-size="12" fill="#cc241d" font-weight="bold">Filtro curvas</text>
+
+    <path d="M0 130 L20 130 L35 160 L60 160 L70 130 L85 130 L95 160 L120 160 L135 130 L150 130 L165 160 L190 160 L205 130 L220 130 L235 160 L265 160 L280 130 L305 130 L320 130 L335 130 L350 130 L365 130 L380 160 L405 160 L420 130 L440 130 L455 160 L480 160 L495 130 L515 130 L530 160 L555 160 L570 130 L590 130 L605 160 L650 160"
+          fill="none" stroke="#98971a" stroke-width="2.5" />
+    <text x="670" y="138" font-family="Arial" font-size="12" fill="#98971a" font-weight="bold">Detección de</text>
+    <text x="670" y="154" font-family="Arial" font-size="12" fill="#98971a" font-weight="bold">espacios (blanks)</text>
+
+    <line x1="0" y1="-50" x2="0" y2="200" stroke="#fabd2f" stroke-width="2" stroke-dasharray="6,4" opacity="0.4">
+      <animate attributeName="x1" values="0;650;0" dur="20s" repeatCount="indefinite" />
+      <animate attributeName="x2" values="0;650;0" dur="20s" repeatCount="indefinite" />
+    </line>
+  </g>
+</svg>

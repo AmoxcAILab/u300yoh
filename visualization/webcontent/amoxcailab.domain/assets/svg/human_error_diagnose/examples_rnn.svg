@@ -1,0 +1,62 @@
+<svg width="1200" height="650" viewBox="0 0 1200 650" xmlns="http://www.w3.org/2000/svg">
+  <rect x="0" y="0" width="1200" height="650" rx="15" fill="#282828" stroke="#665c54" stroke-width="3" />
+  
+  <rect x="0" y="0" width="1200" height="80" rx="15" fill="#3c3836" stroke="#665c54" stroke-width="2" />
+  <text x="600" y="48" font-family="Courier New, monospace" font-size="28" fill="#fabd2f" font-weight="bold" text-anchor="middle">ERRORES EN EL PASO 3: SECUENCIACIÓN Y LÓGICA (RNN)</text>
+
+  <g transform="translate(40, 100)" font-family="Arial" font-size="14" font-weight="bold">
+    <text x="0" y="20" fill="#a89984">CAPTURA:</text>
+    <rect x="90" y="0" width="210" height="30" rx="5" fill="#458588" fill-opacity="0.2" stroke="#458588" stroke-width="1"/>
+    <text x="100" y="20" fill="#83a598">FALLO DE SEGMENTACIÓN</text>
+    <rect x="320" y="0" width="200" height="30" rx="5" fill="#fabd2f" fill-opacity="0.1" stroke="#fabd2f" stroke-width="1"/>
+    <text x="340" y="20" fill="#fabd2f">CONTEXTO Y MEMORIA</text>
+  </g>
+
+  <g transform="translate(30, 150)">
+    <rect width="1140" height="220" rx="10" fill="#32302f" stroke="#665c54" stroke-width="1.5" />
+    <text x="20" y="30" font-family="Arial" font-size="18" fill="#ebdbb2" font-weight="bold">CASO A: UNIÓN DE PALABRAS (BLANKS)</text>
+    
+    <g transform="translate(20, 50)">
+      <rect width="320" height="110" rx="5" fill="#282828" stroke="#665c54" />
+      <text x="15" y="25" font-family="Arial" font-size="18" fill="#83a598">HTR</text>
+      <text x="15" y="55" font-family="Courier New" font-size="24" fill="#ebdbb2">dianes</text>
+      
+      <g transform="translate(340, 0)">
+        <rect width="320" height="110" rx="5" fill="#282828" stroke="#b8bb26" stroke-width="1"/>
+        <text x="15" y="25" font-family="Arial" font-size="18" fill="#b8bb26">GT</text>
+        <text x="15" y="55" font-family="Courier New" font-size="24" fill="#ebdbb2">día mes</text>
+      </g>
+    </g>
+    
+    <g transform="translate(700, 50)" font-family="Arial" font-size="18" fill="#ebdbb2">
+      <text x="0" y="20" font-weight="bold" fill="#a89984">ANÁLISIS DE LA RNN:</text>
+      <text x="0" y="50">• La RNN falla al predecir el carácter <tspan font-weight="bold" fill="#fb4934">espacio</tspan>.</text>
+      <text x="0" y="75">• El modelo prioriza la continuidad de la</text>
+      <text x="15" y="100"> secuencia sobre la gramática del GT.</text>
+      <text x="0" y="125">• Reemplaza <tspan font-weight="bold" fill="#fb4934">n:m</tspan>.</text>
+    </g>
+  </g>
+
+  <g transform="translate(30, 400)">
+    <rect width="1140" height="220" rx="10" fill="#32302f" stroke="#665c54" stroke-width="1.5" />
+    <text x="20" y="30" font-family="Arial" font-size="18" fill="#ebdbb2" font-weight="bold">CASO B: COLAPSO SINTÁCTICO</text>
+    
+    <g transform="translate(20, 50)">
+      <rect width="320" height="110" rx="5" fill="#282828" stroke="#665c54" />
+      <text x="15" y="25" font-family="Arial" font-size="18" fill="#83a598">HTR</text>
+      <text x="15" y="55" font-family="Courier New" font-size="24" fill="#ebdbb2">salmientienden</text>
+      
+      <g transform="translate(340, 0)">
+        <rect width="320" height="110" rx="5" fill="#282828" stroke="#b8bb26" stroke-width="1"/>
+        <text x="15" y="25" font-family="Arial" font-size="18" fill="#b8bb26">GT</text>
+        <text x="15" y="55" font-family="Courier New" font-size="24" fill="#ebdbb2">saben y entienden</text>
+      </g>
+    </g>
+    
+    <g transform="translate(700, 50)" font-family="Arial" font-size="18" fill="#ebdbb2">
+      <text x="0" y="20" font-weight="bold" fill="#a89984">ANÁLISIS DE LA RNN:</text>
+      <text x="0" y="50">• Reemplaza (<tspan font-weight="bold" fill="#fb4934">l:b</tspan>).</text>
+      <text x="0" y="75">• Fusión de varias palabras en un solo token.</text>
+    </g>
+  </g>
+</svg>

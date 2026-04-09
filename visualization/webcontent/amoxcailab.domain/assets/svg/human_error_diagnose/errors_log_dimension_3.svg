@@ -1,0 +1,117 @@
+<svg width="1200" height="900" viewBox="0 0 1200 900" xmlns="http://www.w3.org/2000/svg">
+  <rect x="0" y="0" width="1200" height="900" rx="15" fill="#282828" stroke="#665c54" stroke-width="3" />
+  
+  <rect x="0" y="0" width="1200" height="80" rx="15" fill="#3c3836" stroke="#665c54" stroke-width="2" />
+  <text x="600" y="48" font-family="Courier New, monospace" font-size="28" fill="#fabd2f" font-weight="bold" text-anchor="middle">DIMENSIÓN 3: IMPACTO SEMÁNTICO Y CATEGORIZACIÓN</text>
+
+  <g transform="translate(40, 130)">
+    <text x="0" y="-15" font-family="Arial" font-size="18" fill="#a89984" font-weight="bold">1. CATEGORÍA GRAMATICAL</text>
+    <rect width="350" height="380" rx="8" fill="#32302f" stroke="#83a598" stroke-width="2.5" />
+    <g transform="translate(25, 45)" font-family="Arial" font-size="18" fill="#ebdbb2">
+      <g transform="translate(0, 0)">
+        <circle cx="11" cy="9" r="9" fill="none" stroke="#ebdbb2" stroke-width="2" />
+        <circle cx="11" cy="9" r="5" fill="#b8bb26" /> <text x="35" y="15">Sustantivo</text>
+      </g>
+      <g transform="translate(0, 45)">
+        <circle cx="11" cy="9" r="9" fill="none" stroke="#ebdbb2" stroke-width="2" />
+        <text x="35" y="15" fill="#a89984">Artículo</text>
+      </g>
+      <g transform="translate(0, 90)">
+        <circle cx="11" cy="9" r="9" fill="none" stroke="#ebdbb2" stroke-width="2" />
+        <text x="35" y="15" fill="#a89984">Adjetivo</text>
+      </g>
+      <g transform="translate(0, 135)">
+        <circle cx="11" cy="9" r="9" fill="none" stroke="#ebdbb2" stroke-width="2" />
+        <text x="35" y="15" fill="#a89984">Verbo</text>
+      </g>
+      <g transform="translate(0, 180)">
+        <circle cx="11" cy="9" r="9" fill="none" stroke="#ebdbb2" stroke-width="2" />
+        <text x="35" y="15" fill="#a89984">Adverbio</text>
+      </g>
+      <g transform="translate(0, 225)">
+        <circle cx="11" cy="9" r="9" fill="none" stroke="#ebdbb2" stroke-width="2" />
+        <text x="35" y="15" fill="#a89984">Preposición / Conjunción</text>
+      </g>
+       <g transform="translate(0, 270)">
+        <circle cx="11" cy="9" r="9" fill="none" stroke="#ebdbb2" stroke-width="2" />
+        <text x="35" y="15" fill="#a89984">Pronombre</text>
+      </g>
+    </g>
+  </g>
+
+  <g transform="translate(425, 130)">
+    <text x="0" y="-15" font-family="Arial" font-size="18" fill="#a89984" font-weight="bold">2. ENTIDAD / VALOR CRÍTICO</text>
+    <rect width="350" height="380" rx="8" fill="#32302f" stroke="#fabd2f" stroke-width="2.5" />
+    <g transform="translate(25, 45)" font-family="Arial" font-size="18" fill="#ebdbb2">
+      <g transform="translate(0, 0)">
+        <circle cx="11" cy="9" r="9" fill="none" stroke="#ebdbb2" stroke-width="2" />
+        <text x="35" y="15" fill="#a89984">Nombre propio</text>
+      </g>
+      <g transform="translate(0, 50)">
+        <circle cx="11" cy="9" r="9" fill="none" stroke="#ebdbb2" stroke-width="2" />
+        <text x="35" y="15" fill="#a89984">Lugar (Topónimo)</text>
+      </g>
+      <g transform="translate(0, 100)">
+        <circle cx="11" cy="9" r="9" fill="none" stroke="#ebdbb2" stroke-width="2" />
+        <circle cx="11" cy="9" r="5" fill="#b8bb26" /> <text x="35" y="15">Fecha / Siglo</text>
+      </g>
+      <g transform="translate(0, 150)">
+        <circle cx="11" cy="9" r="9" fill="none" stroke="#ebdbb2" stroke-width="2" />
+        <text x="35" y="15" fill="#a89984">Abreviatura (Grafía)</text>
+      </g>
+      <g transform="translate(0, 200)">
+        <circle cx="11" cy="9" r="9" fill="none" stroke="#ebdbb2" stroke-width="2" />
+        <text x="35" y="15" fill="#a89984">Cifra / Cantidad</text>
+      </g>
+      <g transform="translate(0, 250)">
+        <circle cx="11" cy="9" r="9" fill="none" stroke="#ebdbb2" stroke-width="2" />
+        <text x="35" y="15" fill="#a89984">Ninguna (Léxico común)</text>
+      </g>
+    </g>
+  </g>
+
+  <g transform="translate(810, 130)">
+    <text x="0" y="-15" font-family="Arial" font-size="18" fill="#a89984" font-weight="bold">3. SEVERIDAD DEL ERROR</text>
+    <rect width="350" height="380" rx="8" fill="#32302f" stroke="#fb4934" stroke-width="2.5" />
+    <g transform="translate(25, 45)" font-family="Arial" font-size="18" fill="#ebdbb2">
+      <g transform="translate(0, 0)">
+        <rect width="300" height="70" rx="5" fill="#b8bb26" fill-opacity="0.2" stroke="#b8bb26" stroke-width="1" />
+        <circle cx="20" cy="30" r="9" fill="none" stroke="#ebdbb2" stroke-width="2" />
+        <circle cx="20" cy="30" r="5" fill="#b8bb26" />
+        <text x="45" y="35" font-weight="bold">LEVE</text>
+        <text x="45" y="58" font-size="14" fill="#a89984">Legible por contexto.</text>
+      </g>
+      <g transform="translate(0, 85)">
+        <rect width="300" height="70" rx="5" fill="#fabd2f" fill-opacity="0.1" stroke="#fabd2f" stroke-width="1" />
+        <circle cx="20" cy="30" r="9" fill="none" stroke="#ebdbb2" stroke-width="2" />
+        <text x="45" y="35" font-weight="bold" fill="#fabd2f">MODERADO</text>
+        <text x="45" y="58" font-size="14" fill="#a89984">Dificulta la lectura.</text>
+      </g>
+      <g transform="translate(0, 170)">
+        <rect width="300" height="70" rx="5" fill="#fb4934" fill-opacity="0.1" stroke="#fb4934" stroke-width="1" />
+        <circle cx="20" cy="30" r="9" fill="none" stroke="#ebdbb2" stroke-width="2" />
+        <text x="45" y="35" font-weight="bold" fill="#fb4934">CRÍTICO</text>
+        <text x="45" y="58" font-size="14" fill="#a89984">Cambia el sentido histórico.</text>
+      </g>
+    </g>
+  </g>
+
+  <g transform="translate(40, 550)">
+    <rect x="-10" y="-15" width="1140" height="350" rx="15" fill="#32302f" stroke="#665c54" stroke-width="1.5" stroke-dasharray="8,4" />
+    <text x="0" y="25" font-family="Arial" font-size="22" fill="#fabd2f" font-weight="bold">MATRIZ DE PRIORIZACIÓN SEMÁNTICA</text>
+    
+    <g transform="translate(0, 60)">
+      <rect width="1117" height="120" rx="10" fill="#282828" stroke="#83a598" stroke-width="2" />
+      <text x="20" y="35" font-family="Arial" font-size="18" fill="#83a598" font-weight="bold">¿POR QUÉ CATEGORIZAR?</text>
+      <text x="20" y="73" font-family="Arial" font-size="18" fill="#ebdbb2">• Los sustantivos y verbos suelen ser los núcleos de la información.</text>
+      <text x="20" y="103" font-family="Arial" font-size="18" fill="#ebdbb2">• Los artículos y preposiciones ayudan a medir la precisión del modelo en "ruido" gramatical.</text>
+    </g>
+
+    <g transform="translate(0, 200)">
+      <rect width="1117" height="120" rx="10" fill="#282828" stroke="#fb4934" stroke-width="2" />
+      <text x="20" y="35" font-family="Arial" font-size="18" fill="#fb4934" font-weight="bold">IDENTIFICACIÓN DE ERRORES CRÍTICOS</text>
+      <text x="20" y="72" font-family="Arial" font-size="18" fill="#ebdbb2">• Un error en un nombre propio o lugar impide la indexación del documento.</text>
+      <text x="20" y="97" font-family="Arial" font-size="18" fill="#ebdbb2">• Un error en una cifra o fecha invalida el dato histórico.</text>
+    </g>
+  </g>
+</svg>

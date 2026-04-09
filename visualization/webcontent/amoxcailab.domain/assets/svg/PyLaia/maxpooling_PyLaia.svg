@@ -1,0 +1,49 @@
+<svg width="800" height="430" viewBox="0 0 800 430" xmlns="http://www.w3.org/2000/svg">
+  <rect x="2" y="2" width="796" height="426" rx="15" fill="#282828" stroke="#665c54" stroke-width="3" />
+  
+  <text x="50" y="50" font-family="Courier New, monospace" font-size="18" fill="#ebdbb2" font-weight="bold">Efecto del maxpooling 2x2: Pérdida de resolución en la letra "e"</text>
+
+  <g id="original" transform="translate(50, 100)">
+    <text x="0" y="-15" font-family="Arial" font-size="12" fill="#a89984">Entrada CNN (Imagen original)</text>
+    <rect width="300" height="180" fill="#3c3836" rx="5" stroke="#665c54" stroke-width="2" />
+    
+    <path d="M100 90 
+             Q120 60 150 60 
+             Q180 60 200 90
+             L100 110
+             Q120 140 150 140
+             Q180 140 200 110" 
+          fill="none" stroke="#fbf1c7" stroke-width="6" stroke-linecap="round" />
+    
+    <circle cx="150" cy="85" r="5" fill="#fbf1c7" />
+
+    <rect id="pool-selector" width="60" height="60" fill="none" stroke="#8ec07c" stroke-width="3" rx="2">
+      <animate attributeName="x" values="70;170;70;170;70" keyTimes="0;0.25;0.5;0.75;1" dur="8s" repeatCount="indefinite" />
+      <animate attributeName="y" values="60;60;100;100;60" keyTimes="0;0.25;0.5;0.75;1" dur="8s" repeatCount="indefinite" />
+    </rect>
+  </g>
+
+  <path d="M 370 190 L 430 190" stroke="#504945" stroke-width="2" stroke-dasharray="8,5" />
+
+  <g id="compressed" transform="translate(450, 140)">
+    <text x="0" y="-15" font-family="Arial" font-size="12" fill="#a89984">Salida maxpooling (Valor promedio de los píxeles)</text>
+    <rect width="150" height="90" fill="#3c3836" rx="2" stroke="#665c54" stroke-width="2" />
+    
+    <g transform="scale(0.5) translate(0, 15)">
+      <path d="M100 90 
+               Q120 60 150 60 
+               Q180 60 200 90
+               L100 110
+               Q120 140 150 140
+               Q180 140 200 110" 
+            fill="none" stroke="#8ec07c" stroke-width="16" stroke-linecap="round" />
+      </g>
+  </g>
+
+  <g transform="translate(50, 315)">
+    <rect width="700" height="75" fill="#3c3836" rx="8" stroke="#504945"/>
+    <text x="20" y="25" font-family="Arial" font-size="12" fill="#ebdbb2" font-weight="bold">Análisis del procesamiento:</text>
+    <text x="20" y="45" font-family="Arial" font-size="12" fill="#a89984">• Izquierda: Detalle original donde el "ojo" de la 'e' es visible.</text>
+    <text x="20" y="62" font-family="Arial" font-size="12" fill="#a89984">• Derecha: El pooling abstrae las características más fuertes, se pierde detalle.</text>
+  </g>
+</svg>

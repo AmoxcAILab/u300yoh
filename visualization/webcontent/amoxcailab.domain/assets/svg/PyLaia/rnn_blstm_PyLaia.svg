@@ -1,0 +1,88 @@
+<svg width="900" height="700" viewBox="0 0 900 700" xmlns="http://www.w3.org/2000/svg">
+  <rect x="2" y="2" width="896" height="696" rx="15" fill="#282828" stroke="#665c54" stroke-width="3" />
+  
+  <text x="60" y="45" font-family="Courier New, monospace" font-size="20" fill="#ebdbb2" font-weight="bold">PASO 3: MODELADO SECUENCIAL (RNN/BLSTM)</text>
+  <text x="60" y="70" font-family="Courier New, monospace" font-size="16" fill="#a89984">Recurrent neural network - RNN / Bidirectional long short-term memory - BTLSM</text>
+  <text x="60" y="427" font-family="Courier New, monospace" font-size="14" fill="#a89984">Procesamiento de 13 caracteres | Ventana de contexto N=3 (Trigrama)</text>
+
+  <g transform="translate(60, 100)">
+    <rect width="650" height="300" fill="#32302f" rx="10" stroke="#504945" stroke-width="2" />
+    
+    <g stroke="#3c3836" stroke-width="1">
+      <line x1="50" y1="40" x2="50" y2="260" /> <line x1="100" y1="40" x2="100" y2="260" />
+      <line x1="150" y1="40" x2="150" y2="260" /> <line x1="200" y1="40" x2="200" y2="260" />
+      <line x1="250" y1="40" x2="250" y2="260" /> <line x1="300" y1="40" x2="300" y2="260" />
+      <line x1="350" y1="40" x2="350" y2="260" /> <line x1="400" y1="40" x2="400" y2="260" />
+      <line x1="450" y1="40" x2="450" y2="260" /> <line x1="500" y1="40" x2="500" y2="260" />
+      <line x1="550" y1="40" x2="550" y2="260" /> <line x1="600" y1="40" x2="600" y2="260" />
+    </g>
+
+    <g transform="translate(0, 60)">
+      <text x="670" y="15" font-family="Arial" font-size="12" fill="#ebdbb2" font-weight="bold">Probabilidad ( un_años )</text>
+      <text x="25" y="20" font-family="Courier New" font-size="24" fill="#ebdbb2" text-anchor="middle">f</text>
+      <text x="75" y="20" font-family="Courier New" font-size="24" fill="#ebdbb2" text-anchor="middle">a</text>
+      <text x="125" y="20" font-family="Courier New" font-size="24" fill="#ebdbb2" text-anchor="middle">z</text>
+      <text x="175" y="20" font-family="Courier New" font-size="24" fill="#ebdbb2" text-anchor="middle">e</text>
+      <text x="225" y="20" font-family="Courier New" font-size="24" fill="#ebdbb2" text-anchor="middle">r</text>
+      <text x="275" y="20" font-family="Courier New" font-size="24" fill="#98971a" text-anchor="middle">_</text>
+      <text x="325" y="20" font-family="Courier New" font-size="24" fill="#ebdbb2" text-anchor="middle">u</text>
+      <text x="375" y="20" font-family="Courier New" font-size="24" fill="#ebdbb2" text-anchor="middle">n</text>
+      <text x="425" y="20" font-family="Courier New" font-size="24" fill="#fabd2f" text-anchor="middle">_</text>
+      <text x="475" y="20" font-family="Courier New" font-size="24" fill="#ebdbb2" text-anchor="middle">a</text>
+      <text x="525" y="20" font-family="Courier New" font-size="24" fill="#ebdbb2" text-anchor="middle">ñ</text>
+      <text x="575" y="20" font-family="Courier New" font-size="24" fill="#ebdbb2" text-anchor="middle">o</text>
+      <text x="625" y="20" font-family="Courier New" font-size="24" fill="#ebdbb2" text-anchor="middle">s</text>
+      
+      <path d="M0 60 L250 60 L350 65 L400 65 L425 100 L650 100" fill="none" stroke="#fe8019" stroke-width="3">
+          <animate attributeName="stroke" values="#b8bb26;#fe8019;#fb4934;#fb4934" dur="15s" repeatCount="indefinite" />
+      </path>
+    </g>
+
+    <g transform="translate(0, 180)">
+      <text x="670" y="15" font-family="Arial" font-size="12" fill="#fb4934" font-weight="bold">Probabilidad ( unarios )</text>
+      <text x="25" y="20" font-family="Courier New" font-size="24" fill="#ebdbb2" text-anchor="middle">f</text>
+      <text x="75" y="20" font-family="Courier New" font-size="24" fill="#ebdbb2" text-anchor="middle">a</text>
+      <text x="125" y="20" font-family="Courier New" font-size="24" fill="#ebdbb2" text-anchor="middle">z</text>
+      <text x="175" y="20" font-family="Courier New" font-size="24" fill="#ebdbb2" text-anchor="middle">e</text>
+      <text x="225" y="20" font-family="Courier New" font-size="24" fill="#ebdbb2" text-anchor="middle">r</text>
+      <text x="275" y="20" font-family="Courier New" font-size="24" fill="#98971a" text-anchor="middle">_</text>
+      <text x="325" y="20" font-family="Courier New" font-size="24" fill="#ebdbb2" text-anchor="middle">u</text>
+      <text x="375" y="20" font-family="Courier New" font-size="24" fill="#ebdbb2" text-anchor="middle">n</text>
+      <text x="425" y="20" font-family="Courier New" font-size="24" fill="#fb4934" text-anchor="middle">a</text>
+      <text x="475" y="20" font-family="Courier New" font-size="24" fill="#fb4934" text-anchor="middle">r</text>
+      <text x="525" y="20" font-family="Courier New" font-size="24" fill="#fb4934" text-anchor="middle">i</text>
+      <text x="575" y="20" font-family="Courier New" font-size="24" fill="#ebdbb2" text-anchor="middle">o</text>
+      <text x="625" y="20" font-family="Courier New" font-size="24" fill="#ebdbb2" text-anchor="middle">s</text>
+
+      <path d="M0 60 L350 60 L425 40 L650 40" fill="none" stroke="#b8bb26" stroke-width="3">
+          <animate attributeName="stroke-width" values="3;5;3" dur="2s" repeatCount="indefinite" />
+      </path>
+    </g>
+
+    <g>
+      <rect x="-25" y="40" width="150" height="220" fill="#fabd2f" opacity="0.1" rx="5">
+        <animate attributeName="x" values="-25;525;-25" dur="15s" repeatCount="indefinite" />
+      </rect>
+      <line x1="50" y1="40" x2="50" y2="260" stroke="#fabd2f" stroke-width="3">
+        <animate attributeName="x1" values="25;625;25" dur="15s" repeatCount="indefinite" />
+        <animate attributeName="x2" values="25;625;25" dur="15s" repeatCount="indefinite" />
+      </line>
+    </g>
+  </g>
+
+  <g transform="translate(60, 450)">
+    <rect width="650" height="180" fill="#32302f" rx="10" stroke="#b8bb26" stroke-width="2" />
+    <text x="20" y="30" font-family="Arial" font-size="14" fill="#b8bb26" font-weight="bold">Output RNN - Matriz de probabilidades</text>
+    
+    <g transform="translate(325, 100)" font-family="Courier New" font-size="45" font-weight="bold" fill="#ebdbb2" text-anchor="middle">
+      <text y="0">fazer unarios</text>
+      <rect x="-190" y="-45" width="380" height="60" fill="none" stroke="#fb4934" stroke-width="2" stroke-dasharray="8,4">
+        <animate attributeName="opacity" values="1;0.2;1" dur="2s" repeatCount="indefinite" />
+      </rect>
+    </g>
+    
+    <text x="325" y="150" font-family="Arial" font-size="12" fill="#a89984" text-anchor="middle">
+      El modelo consolida "unarios", insertar un espacio es una acción destructiva dentro del contexto.
+    </text>
+  </g>
+</svg>

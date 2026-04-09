@@ -1,0 +1,194 @@
+<svg width="1200" height="950" viewBox="0 0 1200 950" xmlns="http://www.w3.org/2000/svg">
+
+  <!-- Background -->
+  <rect x="0" y="0" width="1200" height="950" rx="15" fill="#ffffff" stroke="#cccccc" stroke-width="3" />
+  
+  <!-- Header -->
+  <rect x="0" y="0" width="1200" height="80" rx="15" fill="#f0f0f0" stroke="#cccccc" stroke-width="2" />
+  <text x="600" y="48" font-family="Courier New, monospace" font-size="28" fill="#b58900" font-weight="bold" text-anchor="middle">
+    DIMENSION 2: SIGNAL ANALYSIS (HTR vs GT)
+  </text>
+
+  <!-- LEFT COLUMN -->
+  <g transform="translate(40, 130)">
+    <text x="0" y="-15" font-family="Arial" font-size="18" fill="#666666" font-weight="bold">
+      WORD-LEVEL COMPARISON
+    </text>
+
+    <g>
+      <rect width="350" height="85" rx="8" fill="#f7f7f7" stroke="#268bd2" stroke-width="2.5" />
+      <text x="15" y="28" font-family="Arial" font-size="14" fill="#268bd2" font-weight="bold">
+        OUTPUT (HTR)
+      </text>
+      <text x="15" y="65" font-family="Courier New" font-size="24" fill="#000000" font-weight="bold">
+        unarios
+      </text>
+    </g>
+
+    <g transform="translate(0, 105)">
+      <rect width="350" height="85" rx="8" fill="#f7f7f7" stroke="#859900" stroke-width="2.5" />
+      <text x="15" y="28" font-family="Arial" font-size="14" fill="#859900" font-weight="bold">
+        GROUND TRUTH (PALEOGRAPHY)
+      </text>
+      <text x="15" y="65" font-family="Courier New" font-size="24" fill="#000000" font-weight="bold">
+        un años
+      </text>
+    </g>
+
+    <g transform="translate(0, 210)">
+      <rect width="350" height="150" rx="8" fill="#f7f7f7" stroke="#cccccc" stroke-width="2" />
+      <text x="15" y="28" font-family="Arial" font-size="14" fill="#666666" font-weight="bold">
+        DESCRIPTION (word-level)
+      </text>
+      <text x="15" y="60" font-family="Arial" font-size="18" fill="#000000">
+        Words not properly separated
+      </text>
+      <text x="15" y="87" font-family="Arial" font-size="18" fill="#000000">
+        Confuses "ri" with "ñ"
+      </text>
+      <text x="15" y="114" font-family="Arial" font-size="18" fill="#000000">
+        Affects readability
+      </text>
+    </g>
+  </g>
+
+  <!-- MIDDLE COLUMN -->
+  <g transform="translate(425, 130)">
+    <text x="0" y="-15" font-family="Arial" font-size="18" fill="#666666" font-weight="bold">
+      PERCEIVED ERROR SOURCE
+    </text>
+
+    <rect width="350" height="360" rx="8" fill="#f7f7f7" stroke="#b58900" stroke-width="2.5" />
+
+    <g transform="translate(25, 55)" font-family="Arial" font-size="19" fill="#000000">
+      <g>
+        <circle cx="11" cy="11" r="11" fill="none" stroke="#000000" stroke-width="2" />
+        <text x="45" y="18">1. Layout (Segmentation)</text>
+      </g>
+
+      <g transform="translate(0, 70)">
+        <circle cx="11" cy="11" r="11" fill="none" stroke="#000000" stroke-width="2" />
+        <text x="45" y="18">2. CNN Extraction (Visual)</text>
+      </g>
+
+      <g transform="translate(0, 140)">
+        <circle cx="11" cy="11" r="11" fill="none" stroke="#000000" stroke-width="2" />
+        <circle cx="11" cy="11" r="7" fill="#859900" />
+        <text x="45" y="18">3. RNN Sequencing (Logic)</text>
+      </g>
+
+      <g transform="translate(0, 210)">
+        <circle cx="11" cy="11" r="11" fill="none" stroke="#000000" stroke-width="2" />
+        <text x="45" y="18">4. CTC Decoding (Cleanup)</text>
+      </g>
+    </g>
+  </g>
+
+  <!-- RIGHT COLUMN -->
+  <g transform="translate(810, 130)">
+    <text x="-15" y="-15" font-family="Arial" font-size="18" fill="#666666" font-weight="bold">
+      CHARACTER-LEVEL OPERATIONS (HTR:GT)
+    </text>
+
+    <g>
+      <rect width="350" height="105" rx="8" fill="#f7f7f7" stroke="#dc322f" stroke-width="2.5" />
+      <text x="15" y="28" font-family="Arial" font-size="14" fill="#dc322f" font-weight="bold">
+        INSERTION (I)
+      </text>
+    </g>
+
+    <g transform="translate(0, 125)">
+      <rect width="350" height="105" rx="8" fill="#f7f7f7" stroke="#b58900" stroke-width="2.5" />
+      <text x="15" y="28" font-family="Arial" font-size="14" fill="#b58900" font-weight="bold">
+        SUBSTITUTION (R)
+      </text>
+      <text x="15" y="65" font-family="Courier New" font-size="22" fill="#000000">
+        ri:ñ
+      </text>
+    </g>
+
+    <g transform="translate(0, 250)">
+      <rect width="350" height="110" rx="8" fill="#f7f7f7" stroke="#d33682" stroke-width="2.5" />
+      <text x="15" y="28" font-family="Arial" font-size="14" fill="#d33682" font-weight="bold">
+        DELETION (D)
+      </text>
+      <text x="15" y="65" font-family="Courier New" font-size="22" fill="#000000">
+        un:"_"
+      </text>
+    </g>
+  </g>
+
+  <!-- DIAGNOSTIC GUIDE -->
+  <g transform="translate(40, 530)">
+    <rect x="-10" y="-15" width="1140" height="390" rx="15" fill="#f9f9f9" stroke="#cccccc" stroke-width="1.5" stroke-dasharray="8,4" />
+    <text x="0" y="25" font-family="Arial" font-size="22" fill="#b58900" font-weight="bold">
+      DIAGNOSTIC GUIDE
+    </text>
+
+    <g transform="translate(0, 60)">
+      <g>
+        <rect width="540" height="140" rx="10" fill="#ffffff" stroke="#268bd2" stroke-width="2" />
+        <text x="20" y="35" font-family="Arial" font-size="18" fill="#268bd2" font-weight="bold">
+          1. LAYOUT (SEGMENTATION)
+        </text>
+        <text x="20" y="65" font-family="Arial" font-size="17" fill="#000000">
+          • Incorrect reading order (line/column jumps)
+        </text>
+        <text x="20" y="90" font-family="Arial" font-size="17" fill="#000000">
+          • Mixing adjacent lines into one output
+        </text>
+        <text x="20" y="115" font-family="Arial" font-size="17" fill="#000000">
+          • Missing lines, marginal notes, or blocks
+        </text>
+      </g>
+
+      <g transform="translate(570, 0)">
+        <rect width="540" height="140" rx="10" fill="#ffffff" stroke="#859900" stroke-width="2" />
+        <text x="20" y="35" font-family="Arial" font-size="18" fill="#859900" font-weight="bold">
+          2. CNN (VISUAL EXTRACTION)
+        </text>
+        <text x="20" y="65" font-family="Arial" font-size="17" fill="#000000">
+          • Confusion due to visual similarity (e.g. long s / f)
+        </text>
+        <text x="20" y="90" font-family="Arial" font-size="17" fill="#000000">
+          • Ignores accents, punctuation, fine details
+        </text>
+        <text x="20" y="115" font-family="Arial" font-size="17" fill="#000000">
+          • Fails to recognize abbreviations
+        </text>
+      </g>
+    </g>
+
+    <g transform="translate(0, 220)">
+      <g>
+        <rect width="540" height="140" rx="10" fill="#ffffff" stroke="#b58900" stroke-width="2" />
+        <text x="20" y="35" font-family="Arial" font-size="18" fill="#b58900" font-weight="bold">
+          3. RNN (SEQUENCE &amp; LOGIC)
+        </text>
+        <text x="20" y="65" font-family="Arial" font-size="17" fill="#000000">
+          • Word merging (missing spaces)
+        </text>
+        <text x="20" y="90" font-family="Arial" font-size="17" fill="#000000">
+          • Letter insertion to complete common words
+        </text>
+        <text x="20" y="115" font-family="Arial" font-size="17" fill="#000000">
+          • Alters grammatical meaning/context
+        </text>
+      </g>
+
+      <g transform="translate(570, 0)">
+        <rect width="540" height="140" rx="10" fill="#ffffff" stroke="#d33682" stroke-width="2" />
+        <text x="20" y="35" font-family="Arial" font-size="18" fill="#d33682" font-weight="bold">
+          4. CTC (DECODING &amp; CLEANUP)
+        </text>
+        <text x="20" y="65" font-family="Arial" font-size="17" fill="#000000">
+          • Repeated characters (e.g. "caassa")
+        </text>
+        <text x="20" y="90" font-family="Arial" font-size="17" fill="#000000">
+          • Removal of clearly visible characters
+        </text>
+      </g>
+    </g>
+  </g>
+
+</svg>
