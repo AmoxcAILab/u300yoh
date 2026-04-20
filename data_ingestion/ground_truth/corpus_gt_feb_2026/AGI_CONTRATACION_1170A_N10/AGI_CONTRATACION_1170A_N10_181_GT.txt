@@ -1,0 +1,52 @@
+Rego germo fz VeZino de sevilla Las mercadurias que
+Tiene cargado En esta flota que nro señor salve y gde
+a la probinçia de la na esPaña este presente año de mill
+y Seiscientos y Veynte y Uno de que ba por general ferdo
+de sossa En la nao que nuestro señor salve y guarde
+nonbrada santa ana de que ba por maestre fernan
+sanches franco Una de las del dho Cargo Para
+dar y entregar En la na Vera cruZ a franco de solarte
+y Por su auZencia a pedro de bertis Las quales dhas
+merCadurias declaro El dho geronimo fernandeZ
+ban por su quenta y Riesgo que son suyas y Le pertenecen
+marCadas con La de afuera que son las sigtes
+dies bariles de almendron de Valencia con quarenta
+aRobas a ochocientos mrs La aRoba de no Uno hasta dies
+ochenta baras de tocas de lino asetenta y sinco mrs
+32U
+dieZ Libras de hilo comun de lustre aquatro
+6U
+cientos yocho maravedis
+doZe Jubones de camqui a quatro cientos mrs
+4U080
+Veynte y sinco Libras de hilo galludero a sesenta y ocho mrs
+4U800
+ocho Resmas de papel a tresientos y quarenta mrs
+1U700
+doZe dozenas de guantes a quatro çientos y sesenta y seis mrs
+2U720
+5U712
+= caxon-  no - 1
+Veynte Resmas depapel atresientos y treyntay seis mrs
+6U720
+seis doZenas despejos a mill y ciento y Veynte y dos mrs dsa
+Veynte libras de hilo de acareto A sesenta y ocho mrs
+6U732
+Veynte y sinco Libras de ylo de cartas A ochenta mrs
+1U360
+quarenta Libras de basinicas A siento y dos mrs Libra
+2U
+4U080
+caxon = no - 2 -
+y ocho maravedis doZena
+tres doZenas de jeringas a dos mill y quatro cientos y quenta
+Seis doZenas de Candeleros a mill y duZientos y no
+7U344
+benta y dos mrs doZena
+7U752
+dos gras despuelas A quatro mill maravedis
+8U
+caxon - no - 1 -
+quinZe doZenas de piedras de amolar navaja a seis sienta mrs
+9U
+110U000

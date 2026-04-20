@@ -1,0 +1,19 @@
+El flujo de procesamiento sucede en 6 capas de abstracción: infrastructure, database, data_ingestion, pipeline, visualization y outputs. Cada una está representada con una carpeta en el repositorio, que contiene todos los scripts y archivos intermedios según su utilidad y propósito.
+
+La base de datos está compuesta por las siguientes tablas:
+
+import_collection.py descarga desde una fuente externa las imágenes originales dentro de la carpeta raw_collections_images, cada carpeta nueva representa una colección y dentro de ella habrá subcarpetas por volumen/expediente/documento (todas se consideran como un documento en el contexto de nuestra cadena de procesamiento). Cada colección incluye un archivo nombre_colección_metadata.csv que informa el proceso de etiquetado dentro de la base de datos. 
+
+register_collection.py recorre todas las subcarpetas dentro la carpeta de una colección y a cada una le asigna un doc_id, que será la llave primaria, cada imagen dentro de las subcarpetas debe estar relacionada a través de un page_id con su doc_id, además registra los metadatos contenidos en nombre_colección_metadata.csv y asigna un estado inicial para el documento en la tabla de observabilidad (new_untouched).
+
+image_pre_processing.py crea una versión modificada (ecualización del histograma para aumentar el contraste) de cada imagen y la guarda en la misma carpeta de la original, la registra en la base de datos con un page_processed_id, estas imágenes también deben estar vinculadas al doc_id y a la imagen original correspondiente con su page_id. Asigna un estado para el documento en la tabla de observabilidad (new_pages_processed).
+
+Existen dos caminos para pasar al siguiente paso, el primero usa las imágenes originales y el segundo las imágenes procesadas.
+
+send_to_layout_analysis.py hace llamadas a través de la API de transkribus para registrar la colección, los documentos y las imágenes (originales o procesadas según el camino que se use). El resultado será una carpeta por colección, y subcarpetas por cada documento que contienen un archivo layout_analysis.xml por cada imagen. Asigna un estado para el documento en la tabla de observabilidad (new_layout_retrieved), asigna la bandera image_original o image_processed dependiendo de cuál se usó para la llamada a transkribus en la tabla de observabilidad.
+
+typography_classification.py tomará como entrada las imágenes procesadas y los archivos .xml por cada imagen, luego informará a la base de datos del tipo de caligrafía detectado para cada page_processed_id. Asigna un estado para el documento en la tabla de observabilidad (new_classified_by_typography). El modelo clasificador está en HuggingFace, ¿cómo lo ejecuto en local?
+
+trigger_htr_transcription.py retomará el flujo de transkribus y hará las llamadas por API correspondientes para obtener la versión htr.txt de cada imagen, estos archivos serán guardados en la misma estructura de carpetas generada por send_to_layout_analysis.py, cada archivo htr.txt debe tener un htr_id asociado al page_id or page_processed_id y al doc_id correspondiente. Asigna un estado para el documento en la tabla de observabilidad (new_htr_generated).
+
+MIGRATION script AD HOC - register_ground_truth.py asume que se han importado las colecciones completas y que están disponibles y registradas en la base de datos, también asume que todos los archivos htr han sido generados. Recorre la carpeta data_ingestion/ground_truth que contiene una carpeta por documento, compara el nombre de la carpeta con los nombres de los documentos disponibles, identifica el doc_id, e identifica el page_id o page_processed_id
