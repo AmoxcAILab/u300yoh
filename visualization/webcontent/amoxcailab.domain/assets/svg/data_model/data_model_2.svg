@@ -1,0 +1,737 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-500 -100 4700 3200" width="100%" height="100%">
+  <defs>
+    <!-- Marcadores para flechas -->
+    <marker id="arrow-start" markerWidth="10" markerHeight="10" refX="2" refY="5" orient="auto">
+      <path d="M 10 0 L 0 5 L 10 10 z" fill="#1971c2" />
+    </marker>
+    <marker id="arrow-end" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#1971c2" />
+    </marker>
+    <marker id="arrow-start-purple" markerWidth="10" markerHeight="10" refX="2" refY="5" orient="auto">
+      <path d="M 10 0 L 0 5 L 10 10 z" fill="#9c36b5" />
+    </marker>
+    <marker id="arrow-end-purple" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#9c36b5" />
+    </marker>
+    <marker id="arrow-start-orange" markerWidth="10" markerHeight="10" refX="2" refY="5" orient="auto">
+      <path d="M 10 0 L 0 5 L 10 10 z" fill="#f08c00" />
+    </marker>
+    <marker id="arrow-end-orange" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#f08c00" />
+    </marker>
+    <marker id="arrow-start-green" markerWidth="10" markerHeight="10" refX="2" refY="5" orient="auto">
+      <path d="M 10 0 L 0 5 L 10 10 z" fill="#2f9e44" />
+    </marker>
+    <marker id="arrow-end-green" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#2f9e44" />
+    </marker>
+  </defs>
+
+  <!-- Estilos globales -->
+  <style>
+    .rect { fill: none; stroke: #1e1e1e; stroke-width: 1.5; }
+    .text-title { font-family: sans-serif; font-size: 20px; fill: #1e1e1e; dominant-baseline: hanging; }
+    .text-pk { font-family: sans-serif; font-size: 20px; fill: #e03131; dominant-baseline: hanging; }
+    .text-fk { font-family: sans-serif; font-size: 20px; fill: #2f9e44; dominant-baseline: hanging; }
+    .line-sep { stroke: #1e1e1e; stroke-width: 1.5; }
+    .arrow { fill: none; stroke-width: 1.5; }
+  </style>
+
+  <!-- ==================== RECTÁNGULOS (TABLAS) ==================== -->
+
+  <!-- documents_document_types -->
+  <rect x="155.98" y="120.09" width="301.87" height="148.11" class="rect" rx="4" />
+  <text x="172.12" y="127.63" class="text-title">documents_document_types</text>
+  <text x="174.91" y="179.51" class="text-pk">document_id</text>
+  <text x="416.91" y="181.17" class="text-pk">int</text>
+  <text x="176.30" y="218.71" class="text-fk">document_type_id</text>
+  <text x="417.40" y="220.38" class="text-fk">int</text>
+  <line x1="153.49" y1="159.62" x2="461.05" y2="159.62" class="line-sep" />
+
+  <!-- document_types -->
+  <rect x="-363.01" y="117.83" width="301.87" height="148.11" class="rect" rx="4" />
+  <text x="-291.04" y="124.83" class="text-title">document_types</text>
+  <text x="-344.08" y="178.26" class="text-pk">document_type_id</text>
+  <text x="-102.08" y="179.91" class="text-pk">int</text>
+  <text x="-342.69" y="215.71" class="text-title">document_type</text>
+  <text x="-118.59" y="217.38" class="text-title">text</text>
+  <line x1="-365.50" y1="157.36" x2="-57.94" y2="157.36" class="line-sep" />
+
+  <!-- document_statuses -->
+  <rect x="153.13" y="325.05" width="301.87" height="148.11" class="rect" rx="4" />
+  <text x="209.10" y="331.41" class="text-title">document_statuses</text>
+  <text x="172.06" y="385.48" class="text-pk">document_status_id</text>
+  <text x="414.05" y="387.14" class="text-pk">int</text>
+  <text x="173.45" y="422.94" class="text-title">document_status</text>
+  <text x="397.55" y="424.60" class="text-title">text</text>
+  <line x1="150.64" y1="364.59" x2="458.20" y2="364.59" class="line-sep" />
+
+  <!-- collection_types -->
+  <rect x="-355.50" y="876.64" width="301.87" height="148.11" class="rect" rx="4" />
+  <text x="-287.80" y="883.64" class="text-title">collection_types</text>
+  <text x="-336.57" y="935.58" class="text-pk">collection_type_id</text>
+  <text x="-94.58" y="937.72" class="text-pk">int</text>
+  <text x="-335.18" y="974.02" class="text-title">collection_type</text>
+  <text x="-112.75" y="976.43" class="text-title">text</text>
+  <line x1="-357.99" y1="916.17" x2="-50.43" y2="916.17" class="line-sep" />
+
+  <!-- collection_statuses -->
+  <rect x="-352.41" y="1078.64" width="301.87" height="148.11" class="rect" rx="4" />
+  <text x="-297.44" y="1085.54" class="text-title">collection_statuses</text>
+  <text x="-333.48" y="1139.07" class="text-pk">collection_status_id</text>
+  <text x="-91.49" y="1140.73" class="text-pk">int</text>
+  <text x="-332.32" y="1176.53" class="text-title">collection_status</text>
+  <text x="-107.99" y="1178.19" class="text-title">text</text>
+  <line x1="-354.90" y1="1118.18" x2="-47.34" y2="1118.18" class="line-sep" />
+
+  <!-- image_types -->
+  <rect x="153.46" y="2460.18" width="301.87" height="148.11" class="rect" rx="4" />
+  <text x="249.95" y="2466.24" class="text-title">image_types</text>
+  <text x="172.79" y="2520.61" class="text-pk">image_type_id</text>
+  <text x="414.39" y="2522.26" class="text-pk">int</text>
+  <text x="173.78" y="2557.67" class="text-title">image_type</text>
+  <text x="397.89" y="2559.73" class="text-title">text</text>
+  <line x1="150.98" y1="2499.72" x2="458.54" y2="2499.72" class="line-sep" />
+
+  <!-- layouts -->
+  <rect x="1678.98" y="2481.97" width="301.87" height="173.94" class="rect" rx="4" />
+  <text x="1794.99" y="2489.34" class="text-title">layouts</text>
+  <text x="1695.96" y="2538.97" class="text-pk">layout_id</text>
+  <text x="1936.56" y="2540.52" class="text-pk">int</text>
+  <text x="1697.92" y="2574.98" class="text-title">layout_filename</text>
+  <text x="1919.46" y="2573.67" class="text-title">text</text>
+  <text x="1697.10" y="2610.54" class="text-title">layout_path</text>
+  <text x="1919.11" y="2610.23" class="text-title">text</text>
+  <line x1="1676.81" y1="2522.77" x2="1982.95" y2="2522.77" class="line-sep" />
+
+  <!-- images_layouts -->
+  <rect x="1177.60" y="2495.35" width="301.87" height="150.26" class="rect" rx="4" />
+  <text x="1253.83" y="2502.55" class="text-title">images_layouts</text>
+  <text x="1196.53" y="2554.28" class="text-pk">image_id</text>
+  <text x="1438.53" y="2556.43" class="text-pk">int</text>
+  <text x="1197.92" y="2593.98" class="text-fk">layout_id</text>
+  <text x="1439.02" y="2595.64" class="text-fk">int</text>
+  <line x1="1175.11" y1="2534.88" x2="1482.67" y2="2534.88" class="line-sep" />
+
+  <!-- documents_transactions -->
+  <rect x="1171.09" y="785.60" width="301.87" height="145.85" class="rect" rx="4" />
+  <text x="1204.05" y="792.41" class="text-title">documents_transactions</text>
+  <text x="1190.02" y="846.02" class="text-pk">document_id</text>
+  <text x="1432.02" y="847.68" class="text-pk">int</text>
+  <text x="1189.91" y="885.76" class="text-fk">transaction_id</text>
+  <text x="1431.91" y="887.95" class="text-fk">int</text>
+  <line x1="1168.60" y1="825.13" x2="1476.16" y2="825.13" class="line-sep" />
+
+  <!-- transaction_types -->
+  <rect x="2159.82" y="604.92" width="301.87" height="148.11" class="rect" rx="4" />
+  <text x="2219.16" y="611.41" class="text-title">transaction_types</text>
+  <text x="2179.15" y="663.22" class="text-pk">transaction_type_id</text>
+  <text x="2420.75" y="666.01" class="text-pk">int</text>
+  <text x="2180.14" y="702.41" class="text-title">transaction_type</text>
+  <text x="2404.24" y="704.47" class="text-title">text</text>
+  <line x1="2157.33" y1="644.46" x2="2464.89" y2="644.46" class="line-sep" />
+
+  <!-- collections_transactions -->
+  <rect x="1174.08" y="987.56" width="301.87" height="145.85" class="rect" rx="4" />
+  <text x="1204.84" y="994.97" class="text-title">collections_transactions</text>
+  <text x="1193.00" y="1047.98" class="text-pk">collection_id</text>
+  <text x="1435.00" y="1049.64" class="text-pk">int</text>
+  <text x="1192.89" y="1087.72" class="text-fk">transaction_id</text>
+  <text x="1434.89" y="1089.91" class="text-fk">int</text>
+  <line x1="1171.59" y1="1027.09" x2="1479.15" y2="1027.09" class="line-sep" />
+
+  <!-- images_transactions -->
+  <rect x="1170.48" y="1187.99" width="301.87" height="145.85" class="rect" rx="4" />
+  <text x="1223.44" y="1194.81" class="text-title">images_transactions</text>
+  <text x="1189.41" y="1248.42" class="text-pk">image_id</text>
+  <text x="1431.41" y="1250.08" class="text-pk">int</text>
+  <text x="1189.30" y="1288.16" class="text-fk">transaction_id</text>
+  <text x="1431.30" y="1290.35" class="text-fk">int</text>
+  <line x1="1167.99" y1="1227.53" x2="1475.55" y2="1227.53" class="line-sep" />
+
+  <!-- ground_truth -->
+  <rect x="1168.71" y="1398.53" width="317.99" height="225.50" class="rect" rx="4" />
+  <text x="1265.68" y="1406.13" class="text-title">ground_truth</text>
+  <text x="1186.38" y="1457.86" class="text-pk">ground_truth_id</text>
+  <text x="1445.38" y="1460.01" class="text-pk">int</text>
+  <text x="1187.77" y="1497.56" class="text-fk">htr_id</text>
+  <text x="1445.88" y="1499.22" class="text-fk">int</text>
+  <text x="1187.65" y="1534.89" class="text-title">ground_truth_filename</text>
+  <text x="1427.90" y="1533.76" class="text-title">text</text>
+  <text x="1186.80" y="1575.70" class="text-title">ground_truth_path</text>
+  <text x="1427.16" y="1575.32" class="text-title">text</text>
+  <line x1="1166.40" y1="1438.46" x2="1489.53" y2="1438.46" class="line-sep" />
+
+  <!-- entities -->
+  <rect x="2636.67" y="1110.22" width="301.87" height="148.11" class="rect" rx="4" />
+  <text x="2752.81" y="1117.29" class="text-title">entities</text>
+  <text x="2655.60" y="1169.86" class="text-pk">entity_id</text>
+  <text x="2897.59" y="1171.77" class="text-pk">int</text>
+  <text x="2657.25" y="1208.14" class="text-title">entity_name</text>
+  <text x="2880.65" y="1208.00" class="text-title">text</text>
+  <line x1="2634.18" y1="1149.22" x2="2941.74" y2="1149.22" class="line-sep" />
+
+  <!-- entity_types -->
+  <rect x="3538.78" y="1115.22" width="301.87" height="148.11" class="rect" rx="4" />
+  <text x="3621.12" y="1122.27" class="text-title">entity_types</text>
+  <text x="3558.11" y="1174.27" class="text-pk">entity_type_id</text>
+  <text x="3799.71" y="1176.30" class="text-pk">int</text>
+  <text x="3559.10" y="1212.71" class="text-title">entity_type</text>
+  <text x="3783.20" y="1214.77" class="text-title">text</text>
+  <line x1="3536.29" y1="1154.75" x2="3843.85" y2="1154.75" class="line-sep" />
+
+  <!-- entities_entity_types -->
+  <rect x="3101.54" y="1114.63" width="301.87" height="148.11" class="rect" rx="4" />
+  <text x="3147.68" y="1121.10" class="text-title">entities_entity_types</text>
+  <text x="3120.47" y="1174.06" class="text-pk">entity_id</text>
+  <text x="3362.46" y="1175.71" class="text-pk">int</text>
+  <text x="3120.77" y="1213.26" class="text-fk">entity_type_id</text>
+  <text x="3362.96" y="1214.92" class="text-fk">int</text>
+  <line x1="3099.05" y1="1154.16" x2="3406.61" y2="1154.16" class="line-sep" />
+
+  <!-- htr_entities -->
+  <rect x="2162.93" y="1112.49" width="301.87" height="150.26" class="rect" rx="4" />
+  <text x="2258.61" y="1119.85" class="text-title">htr_entities</text>
+  <text x="2181.86" y="1171.42" class="text-pk">htr_id</text>
+  <text x="2423.85" y="1173.57" class="text-pk">int</text>
+  <text x="2183.25" y="1211.11" class="text-fk">entity_id</text>
+  <text x="2424.35" y="1212.78" class="text-fk">int</text>
+  <line x1="2160.44" y1="1152.02" x2="2468.00" y2="1152.02" class="line-sep" />
+
+  <!-- collaborators -->
+  <rect x="2162.94" y="807.39" width="301.87" height="148.11" class="rect" rx="4" />
+  <text x="2247.28" y="814.02" class="text-title">collaborators</text>
+  <text x="2181.87" y="867.81" class="text-pk">collaborator_id</text>
+  <text x="2423.87" y="869.47" class="text-pk">int</text>
+  <text x="2183.26" y="904.89" class="text-title">collaborator_name</text>
+  <text x="2407.36" y="906.93" class="text-title">text</text>
+  <line x1="2160.45" y1="846.92" x2="2468.01" y2="846.92" class="line-sep" />
+
+  <!-- collaborators_roles -->
+  <rect x="2636.61" y="802.17" width="301.87" height="148.11" class="rect" rx="4" />
+  <text x="2695.79" y="809.71" class="text-title">collaborators_roles</text>
+  <text x="2654.14" y="861.60" class="text-pk">collaborator_id</text>
+  <text x="2897.54" y="863.26" class="text-pk">int</text>
+  <text x="2656.93" y="899.61" class="text-fk">role_id</text>
+  <text x="2898.03" y="902.46" class="text-fk">int</text>
+  <line x1="2634.12" y1="841.71" x2="2941.68" y2="841.71" class="line-sep" />
+
+  <!-- roles -->
+  <rect x="3096.20" y="802.17" width="301.87" height="148.11" class="rect" rx="4" />
+  <text x="3225.28" y="809.68" class="text-title">roles</text>
+  <text x="3115.13" y="862.60" class="text-pk">role_id</text>
+  <text x="3357.13" y="864.26" class="text-pk">int</text>
+  <text x="3116.52" y="899.68" class="text-title">role_name</text>
+  <text x="3340.62" y="901.72" class="text-title">text</text>
+  <line x1="3093.71" y1="841.71" x2="3401.27" y2="841.71" class="line-sep" />
+
+  <!-- images_image_statuses -->
+  <rect x="152.79" y="2661.30" width="301.87" height="145.85" class="rect" rx="4" />
+  <text x="192.75" y="2669.12" class="text-title">images_image_statuses</text>
+  <text x="171.72" y="2721.72" class="text-pk">image_id</text>
+  <text x="413.72" y="2723.38" class="text-pk">int</text>
+  <text x="171.61" y="2760.97" class="text-fk">image_status_id</text>
+  <text x="413.60" y="2763.65" class="text-fk">int</text>
+  <line x1="150.30" y1="2700.83" x2="457.86" y2="2700.83" class="line-sep" />
+
+  <!-- image_statuses -->
+  <rect x="-291.78" y="2661.30" width="301.87" height="148.11" class="rect" rx="4" />
+  <text x="-219.29" y="2667.03" class="text-title">image_statuses</text>
+  <text x="-272.45" y="2721.72" class="text-pk">image_status_id</text>
+  <text x="-30.85" y="2723.38" class="text-pk">int</text>
+  <text x="-272.27" y="2758.52" class="text-title">image_status</text>
+  <text x="-47.35" y="2760.85" class="text-title">text</text>
+  <line x1="-294.26" y1="2700.83" x2="13.30" y2="2700.83" class="line-sep" />
+
+  <!-- images -->
+  <rect x="684.23" y="2275.99" width="301.87" height="354.21" class="rect" rx="4" />
+  <text x="804.24" y="2283.84" class="text-title">images</text>
+  <text x="701.21" y="2333.59" class="text-pk">image_id</text>
+  <text x="941.82" y="2335.14" class="text-pk">int</text>
+  <text x="702.62" y="2372.18" class="text-fk">document_id</text>
+  <text x="941.84" y="2371.84" class="text-fk">int</text>
+  <text x="704.07" y="2473.83" class="text-title">image_path</text>
+  <text x="924.10" y="2473.72" class="text-title">text</text>
+  <text x="703.27" y="2440.37" class="text-title">image_url</text>
+  <text x="924.12" y="2440.07" class="text-title">text</text>
+  <text x="703.24" y="2548.37" class="text-fk">calligraphy_type_id</text>
+  <text x="942.56" y="2510.45" class="text-fk">int</text>
+  <text x="703.74" y="2509.92" class="text-fk">language_id</text>
+  <text x="943.35" y="2548.28" class="text-fk">int</text>
+  <text x="703.05" y="2405.48" class="text-title">image_filename</text>
+  <text x="924.71" y="2407.29" class="text-title">text</text>
+  <text x="702.16" y="2588.38" class="text-fk">image_type_id</text>
+  <text x="943.76" y="2590.04" class="text-fk">int</text>
+  <line x1="682.07" y1="2316.39" x2="988.20" y2="2316.39" class="line-sep" />
+
+  <!-- languages -->
+  <rect x="156.27" y="2070.73" width="301.87" height="148.11" class="rect" rx="4" />
+  <text x="263.24" y="2076.78" class="text-title">languages</text>
+  <text x="175.59" y="2131.15" class="text-pk">language_id</text>
+  <text x="417.19" y="2132.81" class="text-pk">int</text>
+  <text x="176.58" y="2168.21" class="text-title">language</text>
+  <text x="400.69" y="2170.27" class="text-title">text</text>
+  <line x1="153.78" y1="2110.26" x2="461.34" y2="2110.26" class="line-sep" />
+
+  <!-- calligraphy_types -->
+  <rect x="155.35" y="2262.92" width="301.87" height="148.11" class="rect" rx="4" />
+  <text x="221.32" y="2269.98" class="text-title">calligraphy_types</text>
+  <text x="174.68" y="2322.91" class="text-pk">calligraphy_type_id</text>
+  <text x="416.28" y="2325.01" class="text-pk">int</text>
+  <text x="175.67" y="2360.41" class="text-title">calligraphy_type</text>
+  <text x="399.77" y="2362.47" class="text-title">text</text>
+  <line x1="152.86" y1="2302.46" x2="460.42" y2="2302.46" class="line-sep" />
+
+  <!-- images_htr -->
+  <rect x="1179.37" y="1687.19" width="301.87" height="150.26" class="rect" rx="4" />
+  <text x="1274.51" y="1694.39" class="text-title">images_htr</text>
+  <text x="1198.30" y="1746.12" class="text-pk">image_id</text>
+  <text x="1440.29" y="1748.27" class="text-pk">int</text>
+  <text x="1199.69" y="1785.82" class="text-fk">htr_id</text>
+  <text x="1440.79" y="1787.48" class="text-fk">int</text>
+  <line x1="1176.88" y1="1726.72" x2="1484.44" y2="1726.72" class="line-sep" />
+
+  <!-- htr -->
+  <rect x="1681.82" y="1657.87" width="301.87" height="176.49" class="rect" rx="4" />
+  <text x="1811.83" y="1666.06" class="text-title">htr</text>
+  <text x="1698.80" y="1715.22" class="text-pk">htr_id</text>
+  <text x="1939.41" y="1716.78" class="text-pk">int</text>
+  <text x="1698.76" y="1752.05" class="text-title">htr_filename</text>
+  <text x="1922.30" y="1750.92" class="text-title">text</text>
+  <text x="1698.60" y="1790.27" class="text-title">htr_path</text>
+  <text x="1921.96" y="1789.48" class="text-title">text</text>
+  <line x1="1679.66" y1="1699.03" x2="1985.79" y2="1699.03" class="line-sep" />
+
+  <!-- htr_transactions -->
+  <rect x="1682.29" y="1349.16" width="301.87" height="145.85" class="rect" rx="4" />
+  <text x="1751.24" y="1355.98" class="text-title">htr_transactions</text>
+  <text x="1701.21" y="1409.59" class="text-pk">htr_id</text>
+  <text x="1943.21" y="1411.24" class="text-pk">int</text>
+  <text x="1701.10" y="1449.33" class="text-fk">transaction_id</text>
+  <text x="1943.10" y="1451.51" class="text-fk">int</text>
+  <line x1="1679.80" y1="1388.69" x2="1987.36" y2="1388.69" class="line-sep" />
+
+  <!-- analysis_types -->
+  <rect x="1180.18" y="2262.25" width="301.87" height="148.11" class="rect" rx="4" />
+  <text x="1256.66" y="2268.99" class="text-title">analysis_types</text>
+  <text x="1199.50" y="2322.68" class="text-pk">analysis_type_id</text>
+  <text x="1441.11" y="2324.33" class="text-pk">int</text>
+  <text x="1199.69" y="2359.47" class="text-title">analysis_type</text>
+  <text x="1424.60" y="2361.80" class="text-title">text</text>
+  <line x1="1177.69" y1="2301.78" x2="1485.25" y2="2301.78" class="line-sep" />
+
+  <!-- descritpive_analysis (sic) -->
+  <rect x="1675.20" y="2153.99" width="317.99" height="260.96" class="rect" rx="4" />
+  <text x="1737.35" y="2160.82" class="text-title">descritpive_analysis</text>
+  <text x="1691.58" y="2213.63" class="text-pk">descritpive_analysis_id</text>
+  <text x="1951.57" y="2215.54" class="text-pk">int</text>
+  <text x="1694.32" y="2251.03" class="text-fk">document_id</text>
+  <text x="1952.83" y="2251.68" class="text-fk">int</text>
+  <text x="1691.39" y="2328.59" class="text-title">metric_1</text>
+  <text x="1933.29" y="2328.89" class="text-title">text</text>
+  <text x="1692.43" y="2364.57" class="text-title">metric_n</text>
+  <text x="1933.84" y="2365.14" class="text-title">text</text>
+  <text x="1694.09" y="2290.24" class="text-fk">analysis_type_id</text>
+  <text x="1952.70" y="2289.89" class="text-fk">int</text>
+  <line x1="1672.70" y1="2192.99" x2="1994.47" y2="2192.99" class="line-sep" />
+
+  <!-- expansion_type -->
+  <rect x="3101.42" y="1297.04" width="301.87" height="148.11" class="rect" rx="4" />
+  <text x="3175.18" y="1305.09" class="text-title">expansion_type</text>
+  <text x="3120.75" y="1356.10" class="text-pk">expansion_type_id</text>
+  <text x="3362.35" y="1358.12" class="text-pk">int</text>
+  <text x="3122.33" y="1394.53" class="text-title">expansion_type</text>
+  <text x="3346.43" y="1396.59" class="text-title">text</text>
+  <line x1="3098.93" y1="1336.57" x2="3406.49" y2="1336.57" class="line-sep" />
+
+  <!-- htr_abbreviations -->
+  <rect x="2167.89" y="1295.39" width="301.87" height="150.26" class="rect" rx="4" />
+  <text x="2230.57" y="1302.28" class="text-title">htr_abbreviations</text>
+  <text x="2186.81" y="1354.32" class="text-pk">htr_id</text>
+  <text x="2428.81" y="1356.47" class="text-pk">int</text>
+  <text x="2188.21" y="1394.02" class="text-fk">abbreviation_id</text>
+  <text x="2429.31" y="1395.68" class="text-fk">int</text>
+  <line x1="2165.40" y1="1334.93" x2="2472.96" y2="1334.93" class="line-sep" />
+
+  <!-- abbreviations_expansions -->
+  <rect x="3101.18" y="1509.64" width="301.87" height="150.26" class="rect" rx="4" />
+  <text x="3129.45" y="1515.94" class="text-title">abbreviations_expansions</text>
+  <text x="3120.11" y="1568.57" class="text-pk">abbreviation_id</text>
+  <text x="3362.10" y="1570.72" class="text-pk">int</text>
+  <text x="3121.50" y="1608.27" class="text-fk">expansion_id</text>
+  <text x="3362.60" y="1609.93" class="text-fk">int</text>
+  <line x1="3097.52" y1="1549.17" x2="3405.08" y2="1549.17" class="line-sep" />
+
+  <!-- expansions -->
+  <rect x="3562.14" y="1510.72" width="301.87" height="148.11" class="rect" rx="4" />
+  <text x="3663.49" y="1517.02" class="text-title">expansions</text>
+  <text x="3581.47" y="1569.77" class="text-pk">expansion_id</text>
+  <text x="3823.07" y="1571.80" class="text-pk">int</text>
+  <text x="3581.88" y="1607.62" class="text-title">expansion</text>
+  <text x="3806.56" y="1610.26" class="text-title">text</text>
+  <line x1="3559.65" y1="1550.25" x2="3867.21" y2="1550.25" class="line-sep" />
+
+  <!-- abbreviations -->
+  <rect x="2641.63" y="1293.13" width="301.87" height="224.62" class="rect" rx="4" />
+  <text x="2729.77" y="1300.20" class="text-title">abbreviations</text>
+  <text x="2660.56" y="1352.76" class="text-pk">abbreviation_id</text>
+  <text x="2902.55" y="1354.67" class="text-pk">int</text>
+  <text x="2660.49" y="1390.91" class="text-fk">image_id</text>
+  <text x="2901.60" y="1391.43" class="text-fk">int</text>
+  <text x="2664.06" y="1431.70" class="text-fk">expansion_type_id</text>
+  <text x="2904.81" y="1432.81" class="text-fk">int</text>
+  <text x="2661.75" y="1470.82" class="text-title">abbreviation</text>
+  <text x="2885.85" y="1474.05" class="text-title">text</text>
+  <line x1="2639.14" y1="1332.12" x2="2946.70" y2="1332.12" class="line-sep" />
+
+  <!-- notes -->
+  <rect x="2642.05" y="416.72" width="301.87" height="148.11" class="rect" rx="4" />
+  <text x="2760.40" y="423.22" class="text-title">notes</text>
+  <text x="2661.38" y="475.01" class="text-pk">note_id</text>
+  <text x="2902.98" y="477.80" class="text-pk">int</text>
+  <text x="2662.37" y="514.21" class="text-title">note</text>
+  <text x="2886.47" y="516.26" class="text-title">text</text>
+  <line x1="2639.56" y1="456.25" x2="2947.12" y2="456.25" class="line-sep" />
+
+  <!-- notes_transactions -->
+  <rect x="2160.21" y="419.77" width="301.87" height="148.11" class="rect" rx="4" />
+  <text x="2212.38" y="426.21" class="text-title">notes_transactions</text>
+  <text x="2177.73" y="478.51" class="text-pk">transaction_id</text>
+  <text x="2421.13" y="480.85" class="text-pk">int</text>
+  <text x="2180.53" y="517.21" class="text-fk">note_id</text>
+  <text x="2421.63" y="520.06" class="text-fk">int</text>
+  <line x1="2157.72" y1="459.30" x2="2465.28" y2="459.30" class="line-sep" />
+
+  <!-- htr_patterns -->
+  <rect x="2167.67" y="1653.49" width="301.87" height="150.26" class="rect" rx="4" />
+  <text x="2230.35" y="1660.38" class="text-title">htr_patterns</text>
+  <text x="2186.60" y="1711.87" class="text-pk">htr_id</text>
+  <text x="2428.59" y="1714.58" class="text-pk">int</text>
+  <text x="2189.08" y="1752.12" class="text-fk">pattern_id</text>
+  <text x="2429.09" y="1753.78" class="text-fk">int</text>
+  <line x1="2165.18" y1="1693.03" x2="2472.74" y2="1693.03" class="line-sep" />
+
+  <!-- htr_errors -->
+  <rect x="2165.40" y="1472.37" width="301.87" height="150.26" class="rect" rx="4" />
+  <text x="2228.88" y="1479.25" class="text-title">htr_errors</text>
+  <text x="2184.33" y="1530.74" class="text-pk">htr_id</text>
+  <text x="2426.32" y="1533.45" class="text-pk">int</text>
+  <text x="2186.81" y="1570.99" class="text-fk">error_id</text>
+  <text x="2426.82" y="1572.65" class="text-fk">int</text>
+  <line x1="2162.91" y1="1511.90" x2="2470.47" y2="1511.90" class="line-sep" />
+
+  <!-- errors -->
+  <rect x="2641.14" y="1554.16" width="301.87" height="259.83" class="rect" rx="4" />
+  <text x="2764.49" y="1560.46" class="text-title">errors</text>
+  <text x="2660.46" y="1613.21" class="text-pk">error_id</text>
+  <text x="2902.06" y="1615.24" class="text-pk">int</text>
+  <text x="2660.87" y="1686.06" class="text-title">htr_word</text>
+  <text x="2885.56" y="1688.71" class="text-title">text</text>
+  <text x="2662.08" y="1723.95" class="text-title">ground_truth_word</text>
+  <text x="2886.29" y="1727.79" class="text-title">text</text>
+  <text x="2661.01" y="1764.74" class="text-title">context</text>
+  <text x="2885.69" y="1768.59" class="text-title">text</text>
+  <text x="2659.67" y="1648.73" class="text-fk">descriptive_analysis_id</text>
+  <text x="2903.27" y="1651.38" class="text-fk">int</text>
+  <line x1="2638.65" y1="1593.69" x2="2946.21" y2="1593.69" class="line-sep" />
+
+  <!-- hist_clean -->
+  <rect x="3097.20" y="1933.28" width="331.87" height="206.21" class="rect" rx="4" />
+  <text x="3212.47" y="1941.05" class="text-title">hist_clean</text>
+  <text x="3115.92" y="1991.25" class="text-pk">hist_clean_id</text>
+  <text x="3375.52" y="1994.36" class="text-pk">int</text>
+  <text x="3116.33" y="2057.65" class="text-title">hist_clean_filename</text>
+  <text x="3359.02" y="2060.83" class="text-title">text</text>
+  <text x="3117.07" y="2093.07" class="text-title">hist_clean_path</text>
+  <text x="3359.75" y="2096.91" class="text-title">text</text>
+  <text x="3115.64" y="2024.97" class="text-fk">htr_id</text>
+  <text x="3375.80" y="2025.67" class="text-fk">int</text>
+  <line x1="3094.11" y1="1972.26" x2="3430.92" y2="1972.26" class="line-sep" />
+
+  <!-- corrections -->
+  <rect x="3112.93" y="2236.21" width="301.87" height="261.24" class="rect" rx="4" />
+  <text x="3214.28" y="2243.03" class="text-title">corrections</text>
+  <text x="3132.26" y="2295.17" class="text-pk">correction_id</text>
+  <text x="3373.86" y="2297.81" class="text-pk">int</text>
+  <text x="3132.67" y="2371.63" class="text-title">htr_finding</text>
+  <text x="3357.35" y="2374.27" class="text-title">text</text>
+  <text x="3133.45" y="2412.52" class="text-title">corrected_word</text>
+  <text x="3358.09" y="2416.36" class="text-title">text</text>
+  <text x="3131.46" y="2329.30" class="text-fk">error_id</text>
+  <text x="3375.06" y="2331.95" class="text-fk">int</text>
+  <text x="3132.17" y="2452.29" class="text-title">score</text>
+  <text x="3374.81" y="2456.13" class="text-title">int</text>
+  <line x1="3110.44" y1="2276.26" x2="3418.00" y2="2276.26" class="line-sep" />
+
+  <!-- clean_modern (no group, aparece en coordenadas altas) -->
+  <rect x="3551.12" y="1936.16" width="331.87" height="206.21" class="rect" rx="4" />
+  <text x="3655.39" y="1943.93" class="text-title">clean_modern</text>
+  <text x="3569.84" y="1994.13" class="text-pk">clean_modern_id</text>
+  <text x="3829.44" y="1997.24" class="text-pk">int</text>
+  <text x="3570.25" y="2060.53" class="text-title">clean_modern_filename</text>
+  <text x="3812.94" y="2063.71" class="text-title">text</text>
+  <text x="3570.99" y="2095.51" class="text-title">clean_modern_path</text>
+  <text x="3813.67" y="2099.79" class="text-title">text</text>
+  <text x="3569.56" y="2027.85" class="text-fk">hist_clean_id</text>
+  <text x="3829.72" y="2028.55" class="text-fk">int</text>
+  <line x1="3548.03" y1="1975.14" x2="3884.84" y2="1975.14" class="line-sep" />
+
+  <!-- documents_study_cases -->
+  <rect x="152.95" y="527.75" width="301.87" height="148.11" class="rect" rx="4" />
+  <text x="184.09" y="535.29" class="text-title">documents_study_cases</text>
+  <text x="171.88" y="587.18" class="text-pk">document_id</text>
+  <text x="413.87" y="588.83" class="text-pk">int</text>
+  <text x="173.27" y="626.38" class="text-fk">study_case_id</text>
+  <text x="414.37" y="628.04" class="text-fk">int</text>
+  <line x1="150.46" y1="567.29" x2="458.02" y2="567.29" class="line-sep" />
+
+  <!-- study_cases -->
+  <rect x="-353.08" y="527.23" width="301.87" height="148.11" class="rect" rx="4" />
+  <text x="-265.11" y="533.97" class="text-title">study_cases</text>
+  <text x="-334.15" y="587.65" class="text-pk">study_case_id</text>
+  <text x="-92.15" y="589.31" class="text-pk">int</text>
+  <text x="-332.76" y="625.11" class="text-title">study_case_name</text>
+  <text x="-108.66" y="626.78" class="text-title">text</text>
+  <line x1="-355.57" y1="566.76" x2="-48.01" y2="566.76" class="line-sep" />
+
+  <!-- models -->
+  <rect x="1168.62" y="384.42" width="301.87" height="263.23" class="rect" rx="4" />
+  <text x="1295.99" y="391.50" class="text-title">models</text>
+  <text x="1187.45" y="441.71" class="text-pk">model_id</text>
+  <text x="1428.78" y="442.97" class="text-pk">int</text>
+  <text x="1188.43" y="524.74" class="text-title">model_url</text>
+  <text x="1411.84" y="524.60" class="text-title">text</text>
+  <text x="1188.41" y="480.62" class="text-title">model_name</text>
+  <text x="1411.82" y="481.50" class="text-title">text</text>
+  <text x="1187.45" y="562.69" class="text-title">model_parameter_1</text>
+  <text x="1413.30" y="562.39" class="text-title">text</text>
+  <text x="1185.53" y="601.65" class="text-title">model_parameter_n</text>
+  <text x="1411.38" y="601.36" class="text-title">text</text>
+  <line x1="1165.69" y1="423.42" x2="1473.25" y2="423.42" class="line-sep" />
+
+  <!-- documents -->
+  <rect x="694.34" y="341.90" width="301.87" height="367.54" class="rect" rx="4" />
+  <text x="796.07" y="348.97" class="text-title">documents</text>
+  <text x="711.86" y="399.19" class="text-pk">document_id</text>
+  <text x="954.85" y="400.45" class="text-pk">int</text>
+  <text x="712.25" y="437.99" class="text-fk">collection_id</text>
+  <text x="955.35" y="439.65" class="text-fk">int</text>
+  <text x="713.51" y="520.21" class="text-title">document_path</text>
+  <text x="937.91" y="520.07" class="text-title">text</text>
+  <text x="713.50" y="562.00" class="text-fk">document_status_id</text>
+  <text x="955.68" y="561.96" class="text-fk">int</text>
+  <text x="715.91" y="599.88" class="text-title">document_url</text>
+  <text x="937.76" y="599.59" class="text-title">text</text>
+  <text x="713.49" y="476.70" class="text-title">document_filename</text>
+  <text x="937.89" y="476.98" class="text-title">text</text>
+  <text x="715.60" y="635.49" class="text-title">document_detail_1</text>
+  <text x="937.46" y="635.19" class="text-title">text</text>
+  <text x="714.78" y="666.29" class="text-title">document_detail_n</text>
+  <text x="936.63" y="666.00" class="text-title">text</text>
+  <line x1="691.76" y1="380.90" x2="999.32" y2="380.90" class="line-sep" />
+
+  <!-- collections -->
+  <rect x="160.25" y="903.49" width="301.87" height="354.80" class="rect" rx="4" />
+  <text x="261.39" y="910.57" class="text-title">collections</text>
+  <text x="179.18" y="957.60" class="text-pk">collection_id</text>
+  <text x="421.17" y="959.04" class="text-pk">int</text>
+  <text x="180.83" y="1032.22" class="text-title">collection_path</text>
+  <text x="404.23" y="1032.08" class="text-title">text</text>
+  <text x="180.36" y="1069.16" class="text-fk">collection_type_id</text>
+  <text x="422.35" y="1069.74" class="text-fk">int</text>
+  <text x="180.75" y="1108.21" class="text-fk">collection_status_id</text>
+  <text x="422.74" y="1108.86" class="text-fk">int</text>
+  <text x="184.13" y="1144.54" class="text-title">collection_url</text>
+  <text x="404.99" y="1144.24" class="text-title">text</text>
+  <text x="180.36" y="992.84" class="text-title">collection_name</text>
+  <text x="403.76" y="992.70" class="text-title">text</text>
+  <text x="184.39" y="1177.49" class="text-title">collection_detail_1</text>
+  <text x="405.25" y="1177.19" class="text-title">text</text>
+  <text x="184.39" y="1211.23" class="text-title">collection_detail_n</text>
+  <text x="405.25" y="1211.19" class="text-title">text</text>
+  <line x1="157.76" y1="942.49" x2="465.32" y2="942.49" class="line-sep" />
+
+  <!-- error_type -->
+  <rect x="3105.90" y="1725.32" width="301.87" height="148.11" class="rect" rx="4" />
+  <text x="3205.66" y="1732.88" class="text-title">error_type</text>
+  <text x="3125.22" y="1784.37" class="text-pk">error_type_id</text>
+  <text x="3366.82" y="1786.40" class="text-pk">int</text>
+  <text x="3126.80" y="1822.31" class="text-title">error_type</text>
+  <text x="3350.90" y="1824.86" class="text-title">text</text>
+  <line x1="3103.41" y1="1764.85" x2="3410.97" y2="1764.85" class="line-sep" />
+
+  <!-- patterns -->
+  <rect x="2172.98" y="2089.32" width="301.87" height="260.94" class="rect" rx="4" />
+  <text x="2272.98" y="2095.62" class="text-title">patterns</text>
+  <text x="2190.95" y="2148.06" class="text-pk">pattern_id</text>
+  <text x="2432.56" y="2150.40" class="text-pk">int</text>
+  <text x="2191.12" y="2220.71" class="text-title">htr</text>
+  <text x="2415.81" y="2224.11" class="text-title">text</text>
+  <text x="2191.85" y="2260.35" class="text-title">ground_truth</text>
+  <text x="2415.79" y="2264.20" class="text-title">text</text>
+  <text x="2190.97" y="2302.15" class="text-fk">pattern_type_id</text>
+  <text x="2432.80" y="2303.02" class="text-fk">int</text>
+  <text x="2190.29" y="2183.40" class="text-fk">descriptive_analysis_id</text>
+  <text x="2433.90" y="2186.05" class="text-fk">int</text>
+  <line x1="2169.14" y1="2128.85" x2="2476.70" y2="2128.85" class="line-sep" />
+
+  <!-- pattern_types -->
+  <rect x="2166.46" y="2484.83" width="301.87" height="173.94" class="rect" rx="4" />
+  <text x="2246.48" y="2491.66" class="text-title">pattern_types</text>
+  <text x="2183.45" y="2541.83" class="text-pk">pattern_type_id</text>
+  <text x="2424.05" y="2543.38" class="text-pk">int</text>
+  <text x="2185.41" y="2577.83" class="text-title">pattern_type</text>
+  <text x="2406.94" y="2576.53" class="text-title">text</text>
+  <text x="2185.12" y="2613.40" class="text-title">rule</text>
+  <text x="2406.60" y="2613.09" class="text-title">text</text>
+  <line x1="2164.30" y1="2525.63" x2="2470.43" y2="2525.63" class="line-sep" />
+
+  <!-- transactions -->
+  <rect x="1685.68" y="946.90" width="301.87" height="258.27" class="rect" rx="4" />
+  <text x="1771.02" y="954.15" class="text-title">transactions</text>
+  <text x="1704.61" y="1007.33" class="text-pk">transaction_id</text>
+  <text x="1946.61" y="1008.98" class="text-pk">int</text>
+  <text x="1704.50" y="1047.60" class="text-fk">transaction_type_id</text>
+  <text x="1946.50" y="1049.25" class="text-fk">int</text>
+  <text x="1704.74" y="1087.92" class="text-fk">collaborator_id</text>
+  <text x="1946.74" y="1090.11" class="text-fk">int</text>
+  <text x="1705.24" y="1161.99" class="text-title">logged_at</text>
+  <text x="1876.18" y="1163.22" class="text-title">timestamp</text>
+  <text x="1704.80" y="1128.39" class="text-fk">model_id</text>
+  <text x="1946.80" y="1130.04" class="text-fk">int</text>
+  <line x1="1683.19" y1="986.44" x2="1990.75" y2="986.44" class="line-sep" />
+
+  <!-- ==================== FLECHAS (CONEXIONES) ==================== -->
+
+  <!-- Flecha entre document_types y documents_document_types -->
+  <path d="M -56.79 191.68 L 146.91 191.68" class="arrow" stroke="#1971c2" marker-start="url(#arrow-start)" marker-end="url(#arrow-end)" />
+
+  <!-- Flecha entre collection_types y collections_transactions (varias) -->
+  <path d="M -48.63 950.60 L 53.31 950.60 L 53.31 1045.63 L 155.25 1045.63" class="arrow" stroke="#9c36b5" marker-start="url(#arrow-start-purple)" marker-end="url(#arrow-end-purple)" />
+
+  <!-- Flecha entre collection_statuses y collections (en el centro) -->
+  <path d="M -45.54 1163.71 L 54.85 1163.71 L 54.85 1112.93 L 155.25 1112.93" class="arrow" stroke="#9c36b5" marker-start="url(#arrow-start-purple)" marker-end="url(#arrow-end-purple)" />
+
+  <!-- Flecha entre images y images_layouts -->
+  <path d="M 991.10 2453.00 L 1081.85 2453.00 L 1081.85 2570.38 L 1172.60 2570.38" class="arrow" stroke="#1971c2" marker-start="url(#arrow-start)" marker-end="url(#arrow-end)" />
+
+  <!-- Flecha entre images y images_image_statuses -->
+  <path d="M 679.23 2579.98 L 569.44 2579.98 L 569.44 2734.13 L 459.66 2734.13" class="arrow" stroke="#1971c2" marker-start="url(#arrow-start)" marker-end="url(#arrow-end)" />
+
+  <!-- Flecha entre image_statuses y images_image_statuses -->
+  <path d="M 14.42 2739.27 L 149.03 2739.27" class="arrow" stroke="#1971c2" marker-start="url(#arrow-start)" marker-end="url(#arrow-end)" />
+
+  <!-- Flecha entre documents y documents_transactions -->
+  <path d="M 932.04 713.98 L 932.04 858.42 L 1166.09 858.42" class="arrow" stroke="#1971c2" marker-start="url(#arrow-start)" marker-end="url(#arrow-end)" />
+
+  <!-- Flecha entre transactions y documents_transactions -->
+  <path d="M 1477.96 858.42 L 1579.32 858.42 L 1579.32 1020.62 L 1680.68 1020.62" class="arrow" stroke="#1971c2" marker-start="url(#arrow-start)" marker-end="url(#arrow-end)" />
+
+  <!-- Flecha entre transactions y collections_transactions -->
+  <path d="M 1479.72 1071.31 L 1679.47 1071.31" class="arrow" stroke="#1971c2" marker-start="url(#arrow-start)" marker-end="url(#arrow-end)" />
+
+  <!-- Flecha entre transactions y images_transactions -->
+  <path d="M 1477.35 1260.82 L 1579.02 1260.82 L 1579.02 1142.20 L 1680.68 1142.20" class="arrow" stroke="#1971c2" marker-start="url(#arrow-start)" marker-end="url(#arrow-end)" />
+
+  <!-- Flecha entre images y ground_truth (a través de una línea larga) -->
+  <path d="M 1165.48 1260.82 L 798.41 1260.82 L 798.41 2271.21" class="arrow" stroke="#1971c2" marker-start="url(#arrow-start)" marker-end="url(#arrow-end)" />
+
+  <!-- Flecha entre ground_truth y htr (desde ground_truth hacia htr) -->
+  <path d="M 1491.71 1511.17 L 1584.27 1511.17 L 1584.27 1723.48 L 1676.82 1723.48" class="arrow" stroke="#9c36b5" marker-start="url(#arrow-start-purple)" marker-end="url(#arrow-end-purple)" />
+
+  <!-- Flecha entre images_htr y htr -->
+  <path d="M 1482.08 1769.50 L 1676.60 1769.50" class="arrow" stroke="#1971c2" marker-start="url(#arrow-start)" marker-end="url(#arrow-end)" />
+
+  <!-- Flecha entre htr y htr_transactions -->
+  <path d="M 1830.87 1501.85 L 1830.87 1650.06" class="arrow" stroke="#1971c2" marker-start="url(#arrow-start)" marker-end="url(#arrow-end)" />
+
+  <!-- Flecha entre htr_transactions y transactions -->
+  <path d="M 1832.38 1210.63 L 1832.38 1344.09" class="arrow" stroke="#1971c2" marker-start="url(#arrow-start)" marker-end="url(#arrow-end)" />
+
+  <!-- Flecha entre collections y documents_transactions (desde collections hacia la derecha) -->
+  <path d="M 464.68 1067.72 L 1169.10 1067.72" class="arrow" stroke="#1971c2" marker-start="url(#arrow-start)" marker-end="url(#arrow-end)" />
+
+  <!-- Flecha entre transaction_types y transactions -->
+  <path d="M 1921.50 941.30 L 1921.50 678.84 L 2154.82 678.84" class="arrow" stroke="#9c36b5" marker-start="url(#arrow-start-purple)" marker-end="url(#arrow-end-purple)" />
+
+  <!-- Flecha entre collaborators y collaborators_roles -->
+  <path d="M 2468.31 885.84 L 2632.37 885.84" class="arrow" stroke="#1971c2" marker-start="url(#arrow-start)" marker-end="url(#arrow-end)" />
+
+  <!-- Flecha entre collaborators_roles y roles -->
+  <path d="M 2943.48 876.13 L 3091.20 876.13" class="arrow" stroke="#1971c2" marker-start="url(#arrow-start)" marker-end="url(#arrow-end)" />
+
+  <!-- Flecha entre models y transactions -->
+  <path d="M 1475.49 497.39 L 1743.64 497.39 L 1743.64 941.30" class="arrow" stroke="#9c36b5" marker-start="url(#arrow-start-purple)" marker-end="url(#arrow-end-purple)" />
+
+  <!-- Flecha entre documents y documents_study_cases -->
+  <path d="M -46.21 610.54 L 147.95 610.54" class="arrow" stroke="#1971c2" marker-start="url(#arrow-start)" marker-end="url(#arrow-end)" />
+
+  <!-- Flecha entre documents_study_cases y study_cases -->
+  <path d="M 459.82 601.71 L 689.34 601.71" class="arrow" stroke="#1971c2" marker-start="url(#arrow-start)" marker-end="url(#arrow-end)" />
+
+  <!-- Flecha entre documents y documents_document_types -->
+  <path d="M 462.85 194.04 L 845.18 194.04 L 845.18 337.36" class="arrow" stroke="#1971c2" marker-start="url(#arrow-start)" marker-end="url(#arrow-end)" />
+
+  <!-- Flecha entre documents y collections -->
+  <path d="M 459.82 601.71 L 689.34 601.71" class="arrow" stroke="#1971c2" marker-start="url(#arrow-start)" marker-end="url(#arrow-end)" />
+
+  <!-- Flecha entre documents y collections (otra conexión ya dibujada, omitir duplicado) -->
+
+  <!-- Flecha entre notes y notes_transactions -->
+  <path d="M 2470.16 496.56 L 2637.85 496.56" class="arrow" stroke="#1971c2" marker-start="url(#arrow-start)" marker-end="url(#arrow-end)" />
+
+  <!-- Flecha entre notes_transactions y transactions -->
+  <path d="M 2155.21 493.73 L 1836.52 493.73 L 1836.52 941.30" class="arrow" stroke="#1971c2" marker-start="url(#arrow-start)" marker-end="url(#arrow-end)" />
+
+  <!-- Flecha entre htr_patterns y patterns -->
+  <path d="M 2162.67 1728.52 L 2109.87 1728.52 L 2109.87 1788.26 L 1988.69 1788.26" class="arrow" stroke="#1971c2" marker-start="url(#arrow-start)" marker-end="url(#arrow-end)" />
+
+  <!-- Flecha entre htr_errors y errors -->
+  <path d="M 2472.27 1547.39 L 2554.20 1547.39 L 2554.20 1684.00 L 2636.14 1684.00" class="arrow" stroke="#1971c2" marker-start="url(#arrow-start)" marker-end="url(#arrow-end)" />
+
+  <!-- Flecha entre htr_errors y transactions (por debajo) -->
+  <path d="M 1988.69 1755.05 L 2087.02 1755.05 L 2087.02 1547.39 L 2160.40 1547.39" class="arrow" stroke="#1971c2" marker-start="url(#arrow-start)" marker-end="url(#arrow-end)" />
+
+  <!-- Flecha entre abbreviations y abbreviations_expansions -->
+  <path d="M 2948.50 1420.32 L 3022.34 1420.32 L 3022.34 1584.68 L 3096.18 1584.68" class="arrow" stroke="#1971c2" marker-start="url(#arrow-start)" marker-end="url(#arrow-end)" />
+
+  <!-- Flecha entre abbreviations_expansions y expansions -->
+  <path d="M 3402.47 1590.62 L 3558.52 1590.62" class="arrow" stroke="#1971c2" marker-start="url(#arrow-start)" marker-end="url(#arrow-end)" />
+
+  <!-- Flecha entre abbreviations y htr_abbreviations -->
+  <path d="M 2472.27 1547.39 L 2554.20 1547.39 L 2554.20 1684.00 L 2636.14 1684.00" class="arrow" stroke="#1971c2" marker-start="url(#arrow-start)" marker-end="url(#arrow-end)" />
+
+  <!-- Flecha entre abbreviations y images (conexión larga) -->
+  <path d="M 2636.63 1433.39 L 2586.63 1433.39 L 2586.63 1891.48 L 906.63 1891.48 L 906.63 2271.21" class="arrow" stroke="#9c36b5" marker-start="url(#arrow-start-purple)" marker-end="url(#arrow-end-purple)" />
+
+  <!-- Flecha entre descriptive_analysis y patterns -->
+  <path d="M 1995.29 2229.51 L 2168.53 2229.51" class="arrow" stroke="#f08c00" marker-end="url(#arrow-end-orange)" />
+
+  <!-- Flecha entre errors y descriptive_analysis (conexión indirecta) -->
+  <path d="M 2825.87 1818.99 L 2825.87 2380.67 L 3107.93 2380.67" class="arrow" stroke="#9c36b5" marker-start="url(#arrow-start-purple)" marker-end="url(#arrow-end-purple)" />
+
+  <!-- Flecha entre htr y hist_clean -->
+  <path d="M 1855.31 1839.36 L 1855.31 2036.28 L 3092.20 2036.28" class="arrow" stroke="#f08c00" marker-end="url(#arrow-end-orange)" />
+
+  <!-- Flecha entre hist_clean y clean_modern -->
+  <path d="M 3433.21 2036.63 L 3546.13 2036.63" class="arrow" stroke="#9c36b5" />
+
+  <!-- Flecha entre descriptive_analysis y patterns (otra) -->
+  <path d="M 1998.20 2378.05 L 2764.99 2378.05 L 2764.99 1818.99" class="arrow" stroke="#f08c00" marker-end="url(#arrow-end-orange)" />
+
+  <!-- Flecha entre patterns y pattern_types -->
+  <path d="M 2319.36 2351.34 L 2319.36 2481.53" class="arrow" stroke="#9c36b5" marker-start="url(#arrow-start-purple)" marker-end="url(#arrow-end-purple)" />
+
+  <!-- Flecha entre document_statuses y documents -->
+  <path d="M 460.00 399.01 L 574.67 399.01 L 574.67 525.54 L 689.34 525.54" class="arrow" stroke="#9c36b5" marker-start="url(#arrow-start-purple)" marker-end="url(#arrow-end-purple)" />
+
+  <!-- Flecha entre entities y entities_entity_types -->
+  <path d="M 2942.75 1191.14 L 3096.20 1191.14" class="arrow" stroke="#1971c2" marker-start="url(#arrow-start)" marker-end="url(#arrow-end)" />
+
+  <!-- Flecha entre entities_entity_types y entity_types -->
+  <path d="M 3407.80 1192.89 L 3532.79 1192.89" class="arrow" stroke="#1971c2" marker-start="url(#arrow-start)" marker-end="url(#arrow-end)" />
+
+  <!-- Flecha entre errors y error_type -->
+  <path d="M 2948.01 1683.97 L 3024.45 1683.97 L 3024.45 1799.27 L 3100.90 1799.27" class="arrow" stroke="#9c36b5" marker-start="url(#arrow-start-purple)" marker-end="url(#arrow-end-purple)" />
+
+</svg>

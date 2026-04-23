@@ -1,28 +1,33 @@
 """
-pipeline/db.py
-──────────────
-Módulo de conexión a BD local (PostgreSQL + pgvector).
-Lee las variables de entorno exportadas por el flake de Nix.
-Usado por todos los pasos del pipeline para registrar
-observabilidad en el schema `pipeline`.
+database/migration/db.py
+────────────────────────
+API de acceso a la BD local (PostgreSQL + pgvector).
+Lee las variables de entorno exportadas por amoxcailab_flake.nix.
 
-Variables de entorno esperadas (setteadas por el flake):
-  HTR_DB_URL   postgresql://user@/htr_pipeline?host=/path/run&port=5433
-  HTR_PGHOST   directorio del socket Unix
-  HTR_PGPORT   puerto (default 5433)
-  HTR_PGDB     nombre de la base de datos
-  HTR_PGUSER   usuario
+Toda acción sobre el sistema se registra como una fila en public.operations
+más un registro en la tabla de unión de la entidad afectada.
+
+Variables de entorno (seteadas por el flake):
+  HTR_DB_URL             postgresql://user@/htr_pipeline?host=/path/run&port=5433
+  HTR_PGHOST / HTR_PGRUN directorio del socket Unix
+  HTR_PGPORT             puerto (default 5433)
+  HTR_PGDB               nombre de la base de datos
+  HTR_PGUSER             usuario
+  HTR_COLLABORATOR_ID    ID del colaborador activo (opcional)
 
 Uso típico:
-  from pipeline.db import get_conn, pipeline_runs, trace
+  from database.migration.db import get_conn, Operations, DescriptiveAnalysis
 
   with get_conn() as conn:
-      run_id = pipeline_runs.create(conn, batch_name="batch_001")
-      trace.upsert(conn, run_id=run_id, doc_id=42, status="in_progress")
+      op_id = Operations.record_and_link(
+          conn,
+          operation_type="collection_registered",
+          entity="collection",
+          entity_id=collection_id,
+      )
 """
 
 import os
-import uuid
 import json
 from contextlib import contextmanager
 from datetime import datetime, timezone
@@ -31,7 +36,6 @@ from typing import Optional
 import psycopg2
 import psycopg2.extras
 
-# Registrar el adaptador de UUID para que psycopg2 lo maneje nativamente
 psycopg2.extras.register_uuid()
 
 
@@ -68,8 +72,7 @@ def get_conn(autocommit: bool = False):
 
     Uso:
         with get_conn() as conn:
-            cur = conn.cursor()
-            cur.execute(...)
+            op_id = Operations.record_and_link(conn, ...)
     """
     dsn  = _build_dsn()
     conn = psycopg2.connect(dsn, cursor_factory=psycopg2.extras.RealDictCursor)
@@ -98,436 +101,497 @@ def check_connection() -> bool:
 
 
 # ──────────────────────────────────────────────────────────────
-# pipeline.pipeline_runs
+# RESOLUCIÓN DE COLLABORATOR ID
 # ──────────────────────────────────────────────────────────────
 
-class PipelineRuns:
-    """Operaciones sobre pipeline.pipeline_runs."""
+def resolve_collaborator_id(conn, collaborator_id: Optional[int] = None) -> Optional[int]:
+    """
+    Resuelve el collaborator_id activo con este orden de precedencia:
+    1. El valor pasado explícitamente
+    2. Variable de entorno HTR_COLLABORATOR_ID
+    3. Buscar por $USER en public.collaborators (y crear si no existe)
+    4. None si ninguna opción es posible
+    """
+    if collaborator_id is not None:
+        return collaborator_id
+
+    env_id = os.environ.get("HTR_COLLABORATOR_ID")
+    if env_id:
+        return int(env_id)
+
+    username = os.environ.get("USER") or os.environ.get("USERNAME")
+    if not username:
+        return None
+
+    cur = conn.cursor()
+    cur.execute(
+        "SELECT collaborator_id FROM public.collaborators WHERE collaborator_name = %(name)s",
+        {"name": username},
+    )
+    row = cur.fetchone()
+    if row:
+        return row["collaborator_id"]
+
+    # Crear el colaborador automáticamente
+    cur.execute(
+        "INSERT INTO public.collaborators (collaborator_name) VALUES (%(name)s) "
+        "RETURNING collaborator_id",
+        {"name": username},
+    )
+    row = cur.fetchone()
+    return row["collaborator_id"] if row else None
+
+
+# ──────────────────────────────────────────────────────────────
+# OPERATION TYPES — cache de IDs por nombre
+# ──────────────────────────────────────────────────────────────
+
+class OperationTypes:
+    """Cache en memoria de operation_type_id por nombre."""
+
+    _cache: dict[str, int] = {}
+
+    @classmethod
+    def get_id(cls, conn, operation_type: str) -> int:
+        """
+        Devuelve el operation_type_id correspondiente al nombre.
+        Lanza ValueError si el tipo no existe en la BD.
+        """
+        if operation_type in cls._cache:
+            return cls._cache[operation_type]
+
+        cur = conn.cursor()
+        cur.execute(
+            "SELECT operation_type_id FROM public.operation_types "
+            "WHERE operation_type = %(operation_type)s",
+            {"operation_type": operation_type},
+        )
+        row = cur.fetchone()
+        if row is None:
+            raise ValueError(
+                f"Tipo de operación desconocido: '{operation_type}'. "
+                f"Verifica el catálogo en public.operation_types."
+            )
+        cls._cache[operation_type] = row["operation_type_id"]
+        return cls._cache[operation_type]
+
+    @classmethod
+    def clear_cache(cls):
+        """Limpia el cache (útil en tests)."""
+        cls._cache.clear()
+
+
+# ──────────────────────────────────────────────────────────────
+# OPERATIONS — registro central de todas las acciones
+# ──────────────────────────────────────────────────────────────
+
+# Mapeo de nombre de entidad a tabla de unión y columna FK
+_ENTITY_JUNCTION = {
+    "collection": ("public.collections_operations", "collection_id"),
+    "document":   ("public.documents_operations",   "document_id"),
+    "image":      ("public.images_operations",       "image_id"),
+    "htr":        ("public.htr_operations",          "htr_id"),
+    "model":      ("public.models_operations",       "model_id"),
+}
+
+
+class Operations:
+    """Registro central de operaciones del pipeline."""
 
     @staticmethod
-    def create(
+    def record(
         conn,
-        batch_name: str,
-        total_docs: int = 0,
-        parent_run_id: Optional[uuid.UUID] = None,
-        is_reentry: bool = False,
-        reentry_triggered_by_kb3_count: Optional[int] = None,
+        operation_type: str,
+        collaborator_id: Optional[int] = None,
         slurm_job_id: Optional[str] = None,
-        notes: Optional[str] = None,
-    ) -> uuid.UUID:
-        """Crea un nuevo pipeline_run y devuelve su UUID."""
-        run_id = uuid.uuid4()
-        cur = conn.cursor()
-        cur.execute(
-            """
-            INSERT INTO pipeline.pipeline_runs (
-                id, parent_run_id, is_reentry,
-                reentry_triggered_by_kb3_count,
-                batch_name, total_docs, status,
-                slurm_job_id, launched_by, notes
-            ) VALUES (
-                %(id)s, %(parent_run_id)s, %(is_reentry)s,
-                %(reentry_triggered_by_kb3_count)s,
-                %(batch_name)s, %(total_docs)s, 'running',
-                %(slurm_job_id)s, %(launched_by)s, %(notes)s
-            )
-            """,
-            {
-                "id": run_id,
-                "parent_run_id": parent_run_id,
-                "is_reentry": is_reentry,
-                "reentry_triggered_by_kb3_count": reentry_triggered_by_kb3_count,
-                "batch_name": batch_name,
-                "total_docs": total_docs,
-                "slurm_job_id": slurm_job_id,
-                "launched_by": os.environ.get("USER"),
-                "notes": notes,
-            },
-        )
-        return run_id
-
-    @staticmethod
-    def complete(
-        conn,
-        run_id: uuid.UUID,
-        n_clean: int = 0,
-        n_provisional: int = 0,
-        n_blocked: int = 0,
-        n_rejected: int = 0,
+        transkribus_job_id: Optional[str] = None,
         status: str = "completed",
-    ) -> None:
+    ) -> int:
+        """
+        Inserta una fila en public.operations y devuelve el operation_id.
+
+        Para operaciones sin entidad específica (system-level), úsalo directamente.
+        Para operaciones sobre una entidad, preferir record_and_link().
+        """
+        collaborator_id = resolve_collaborator_id(conn, collaborator_id)
+        operation_type_id = OperationTypes.get_id(conn, operation_type)
+
         cur = conn.cursor()
         cur.execute(
             """
-            UPDATE pipeline.pipeline_runs SET
-                status       = %(status)s,
-                completed_at = NOW(),
-                n_clean      = %(n_clean)s,
-                n_provisional= %(n_provisional)s,
-                n_blocked    = %(n_blocked)s,
-                n_rejected   = %(n_rejected)s
-            WHERE id = %(id)s
-            """,
-            {
-                "id": run_id,
-                "status": status,
-                "n_clean": n_clean,
-                "n_provisional": n_provisional,
-                "n_blocked": n_blocked,
-                "n_rejected": n_rejected,
-            },
-        )
-
-    @staticmethod
-    def fail(conn, run_id: uuid.UUID, notes: Optional[str] = None) -> None:
-        cur = conn.cursor()
-        cur.execute(
-            """
-            UPDATE pipeline.pipeline_runs SET
-                status = 'failed', completed_at = NOW(),
-                notes  = COALESCE(%(notes)s, notes)
-            WHERE id = %(id)s
-            """,
-            {"id": run_id, "notes": notes},
-        )
-
-
-# ──────────────────────────────────────────────────────────────
-# pipeline.pipeline_document_trace
-# ──────────────────────────────────────────────────────────────
-
-class DocumentTrace:
-    """Operaciones sobre pipeline.pipeline_document_trace."""
-
-    @staticmethod
-    def init(
-        conn,
-        run_id: uuid.UUID,
-        doc_id: int,
-        parent_run_id: Optional[uuid.UUID] = None,
-        reentry_count: int = 0,
-    ) -> uuid.UUID:
-        """Crea el registro inicial para un documento en una corrida."""
-        trace_id = uuid.uuid4()
-        cur = conn.cursor()
-        cur.execute(
-            """
-            INSERT INTO pipeline.pipeline_document_trace (
-                id, run_id, doc_id, parent_run_id,
-                reentry_count, status, paso0_at
+            INSERT INTO public.operations (
+                operation_type_id, collaborator_id,
+                slurm_job_id, transkribus_job_id, status
             ) VALUES (
-                %(id)s, %(run_id)s, %(doc_id)s, %(parent_run_id)s,
-                %(reentry_count)s, 'in_progress', NOW()
+                %(operation_type_id)s, %(collaborator_id)s,
+                %(slurm_job_id)s, %(transkribus_job_id)s, %(status)s
             )
-            ON CONFLICT (run_id, doc_id) DO NOTHING
+            RETURNING operation_id
             """,
             {
-                "id": trace_id,
-                "run_id": run_id,
-                "doc_id": doc_id,
-                "parent_run_id": parent_run_id,
-                "reentry_count": reentry_count,
+                "operation_type_id":  operation_type_id,
+                "collaborator_id":    collaborator_id,
+                "slurm_job_id":       slurm_job_id,
+                "transkribus_job_id": transkribus_job_id,
+                "status":             status,
             },
         )
-        return trace_id
+        return cur.fetchone()["operation_id"]
 
     @staticmethod
-    def update(conn, run_id: uuid.UUID, doc_id: int, **fields) -> None:
+    def link(conn, operation_id: int, entity: str, entity_id: int) -> None:
         """
-        Actualiza campos arbitrarios del trace.
-        Todos los campos de pipeline_document_trace son válidos como kwargs.
+        Vincula una operación a una entidad vía su tabla de unión.
 
-        Uso:
-            trace.update(conn, run_id, doc_id,
-                         handwriting_type="Procesal",
-                         cer_baseline=8.5,
-                         pc1_at="NOW()")
+        entity: 'collection' | 'document' | 'image' | 'htr' | 'model'
         """
-        if not fields:
-            return
-        set_clauses = ", ".join(
-            f"{k} = %({k})s" for k in fields
-        )
-        fields.update({"run_id": run_id, "doc_id": doc_id,
-                       "updated_at_val": datetime.now(timezone.utc)})
+        if entity not in _ENTITY_JUNCTION:
+            raise ValueError(
+                f"Entidad desconocida: '{entity}'. "
+                f"Opciones: {list(_ENTITY_JUNCTION.keys())}"
+            )
+        junction_table, fk_col = _ENTITY_JUNCTION[entity]
         cur = conn.cursor()
         cur.execute(
-            f"""
-            UPDATE pipeline.pipeline_document_trace
-            SET {set_clauses}, updated_at = %(updated_at_val)s
-            WHERE run_id = %(run_id)s AND doc_id = %(doc_id)s
-            """,
-            fields,
+            f"INSERT INTO {junction_table} (operation_id, {fk_col}) "
+            f"VALUES (%(op_id)s, %(entity_id)s) ON CONFLICT DO NOTHING",
+            {"op_id": operation_id, "entity_id": entity_id},
         )
 
     @staticmethod
-    def set_status(
+    def record_and_link(
         conn,
-        run_id: uuid.UUID,
-        doc_id: int,
-        status: str,
-        pc_timestamp_field: Optional[str] = None,
-    ) -> None:
+        operation_type: str,
+        entity: str,
+        entity_id: int,
+        collaborator_id: Optional[int] = None,
+        slurm_job_id: Optional[str] = None,
+        transkribus_job_id: Optional[str] = None,
+        status: str = "completed",
+    ) -> int:
         """
-        Actualiza el status y opcionalmente el timestamp de un PC.
+        Conveniencia: inserta la operación y la vincula a la entidad.
+        Devuelve el operation_id.
 
-        Uso:
-            trace.set_status(conn, run_id, 42, 'blocked_entities',
-                             pc_timestamp_field='pc3_at')
+        Uso típico:
+            op_id = Operations.record_and_link(
+                conn,
+                operation_type="image_registered",
+                entity="image",
+                entity_id=image_id,
+            )
         """
-        extra = f", {pc_timestamp_field} = NOW()" if pc_timestamp_field else ""
+        op_id = Operations.record(
+            conn,
+            operation_type=operation_type,
+            collaborator_id=collaborator_id,
+            slurm_job_id=slurm_job_id,
+            transkribus_job_id=transkribus_job_id,
+            status=status,
+        )
+        Operations.link(conn, op_id, entity, entity_id)
+        return op_id
+
+    @staticmethod
+    def update_status(conn, operation_id: int, status: str) -> None:
+        """
+        Actualiza el status de una operación asíncrona.
+        Útil para jobs de Slurm y jobs de Transkribus.
+
+        status: 'pending' | 'running' | 'completed' | 'failed'
+        """
         cur = conn.cursor()
         cur.execute(
-            f"""
-            UPDATE pipeline.pipeline_document_trace
-            SET status = %(status)s, updated_at = NOW() {extra}
-            WHERE run_id = %(run_id)s AND doc_id = %(doc_id)s
-            """,
-            {"run_id": run_id, "doc_id": doc_id, "status": status},
+            "UPDATE public.operations SET status = %(status)s "
+            "WHERE operation_id = %(op_id)s",
+            {"status": status, "op_id": operation_id},
         )
 
     @staticmethod
-    def get(conn, run_id: uuid.UUID, doc_id: int) -> Optional[dict]:
+    def get_last(
+        conn,
+        operation_type: str,
+        entity: str,
+        entity_id: int,
+        status: Optional[str] = None,
+    ) -> Optional[dict]:
+        """
+        Devuelve la última operación de un tipo sobre una entidad (o None).
+        Si status no es None, filtra por ese status.
+        """
+        if entity not in _ENTITY_JUNCTION:
+            raise ValueError(f"Entidad desconocida: '{entity}'")
+
+        junction_table, fk_col = _ENTITY_JUNCTION[entity]
+        status_clause = "AND o.status = %(status)s" if status else ""
+
         cur = conn.cursor()
+        cur.execute(
+            f"""
+            SELECT o.*
+            FROM public.operations o
+            JOIN {junction_table} j ON o.operation_id = j.operation_id
+            JOIN public.operation_types ot ON o.operation_type_id = ot.operation_type_id
+            WHERE j.{fk_col} = %(entity_id)s
+              AND ot.operation_type = %(operation_type)s
+              {status_clause}
+            ORDER BY o.logged_at DESC
+            LIMIT 1
+            """,
+            {
+                "entity_id":      entity_id,
+                "operation_type": operation_type,
+                "status":         status,
+            },
+        )
+        row = cur.fetchone()
+        return dict(row) if row else None
+
+    @staticmethod
+    def has_completed(
+        conn,
+        operation_type: str,
+        entity: str,
+        entity_id: int,
+    ) -> bool:
+        """
+        Devuelve True si la entidad ya tiene una operación de ese tipo
+        con status='completed'.
+        """
+        return Operations.get_last(
+            conn, operation_type, entity, entity_id, status="completed"
+        ) is not None
+
+    @staticmethod
+    def get_transkribus_job_id(
+        conn,
+        operation_type: str,
+        entity: str,
+        entity_id: int,
+    ) -> Optional[str]:
+        """
+        Devuelve el transkribus_job_id de la última operación asíncrona
+        de un tipo sobre una entidad.
+        """
+        op = Operations.get_last(conn, operation_type, entity, entity_id)
+        return op["transkribus_job_id"] if op else None
+
+
+# ──────────────────────────────────────────────────────────────
+# DESCRIPTIVE ANALYSIS — métricas de calidad por documento/HTR
+# ──────────────────────────────────────────────────────────────
+
+class DescriptiveAnalysis:
+    """Registro de métricas de calidad en public.descriptive_analysis."""
+
+    @staticmethod
+    def record(
+        conn,
+        document_id: int,
+        analysis_type: str,
+        htr_id: Optional[int] = None,
+        model_id: Optional[int] = None,
+        cer: Optional[float] = None,
+        wer: Optional[float] = None,
+        bleu: Optional[float] = None,
+        chrf_pp: Optional[float] = None,
+        abbrev_accuracy: Optional[float] = None,
+        entity_preservation: Optional[float] = None,
+        rules_compliance_score: Optional[float] = None,
+        n_errors: Optional[int] = None,
+        n_patterns: Optional[int] = None,
+        n_corrections: Optional[int] = None,
+    ) -> int:
+        """
+        Crea un registro de análisis descriptivo. Devuelve el descriptive_analysis_id.
+
+        analysis_type debe coincidir con un valor en public.analysis_types:
+          'htr_baseline' | 'post_historical_clean' | 'post_clean_modern' |
+          'ground_truth_comparison' | 'human_review'
+
+        Uso:
+            da_id = DescriptiveAnalysis.record(
+                conn,
+                document_id=42,
+                analysis_type="post_historical_clean",
+                htr_id=100,
+                cer=0.035,
+                wer=0.08,
+                abbrev_accuracy=0.96,
+                entity_preservation=0.99,
+            )
+        """
+        cur = conn.cursor()
+        cur.execute(
+            "SELECT analysis_type_id FROM public.analysis_types "
+            "WHERE analysis_type = %(analysis_type)s",
+            {"analysis_type": analysis_type},
+        )
+        row = cur.fetchone()
+        if row is None:
+            raise ValueError(
+                f"Tipo de análisis desconocido: '{analysis_type}'. "
+                f"Opciones en public.analysis_types."
+            )
+        analysis_type_id = row["analysis_type_id"]
+
         cur.execute(
             """
-            SELECT * FROM pipeline.pipeline_document_trace
-            WHERE run_id = %(run_id)s AND doc_id = %(doc_id)s
+            INSERT INTO public.descriptive_analysis (
+                document_id, htr_id, analysis_type_id, model_id,
+                cer, wer, bleu, chrf_pp,
+                abbrev_accuracy, entity_preservation, rules_compliance_score,
+                n_errors, n_patterns, n_corrections
+            ) VALUES (
+                %(document_id)s, %(htr_id)s, %(analysis_type_id)s, %(model_id)s,
+                %(cer)s, %(wer)s, %(bleu)s, %(chrf_pp)s,
+                %(abbrev_accuracy)s, %(entity_preservation)s, %(rules_compliance_score)s,
+                %(n_errors)s, %(n_patterns)s, %(n_corrections)s
+            )
+            RETURNING descriptive_analysis_id
             """,
-            {"run_id": run_id, "doc_id": doc_id},
+            {
+                "document_id":            document_id,
+                "htr_id":                 htr_id,
+                "analysis_type_id":       analysis_type_id,
+                "model_id":               model_id,
+                "cer":                    cer,
+                "wer":                    wer,
+                "bleu":                   bleu,
+                "chrf_pp":               chrf_pp,
+                "abbrev_accuracy":        abbrev_accuracy,
+                "entity_preservation":    entity_preservation,
+                "rules_compliance_score": rules_compliance_score,
+                "n_errors":               n_errors,
+                "n_patterns":             n_patterns,
+                "n_corrections":          n_corrections,
+            },
+        )
+        return cur.fetchone()["descriptive_analysis_id"]
+
+    @staticmethod
+    def get_latest(
+        conn,
+        document_id: int,
+        analysis_type: Optional[str] = None,
+    ) -> Optional[dict]:
+        """
+        Devuelve el análisis más reciente de un documento.
+        Si analysis_type se especifica, filtra por ese tipo.
+        """
+        type_clause = (
+            "AND at.analysis_type = %(analysis_type)s"
+            if analysis_type else ""
+        )
+        cur = conn.cursor()
+        cur.execute(
+            f"""
+            SELECT da.*, at.analysis_type
+            FROM public.descriptive_analysis da
+            JOIN public.analysis_types at ON da.analysis_type_id = at.analysis_type_id
+            WHERE da.document_id = %(document_id)s
+            {type_clause}
+            ORDER BY da.analyzed_at DESC
+            LIMIT 1
+            """,
+            {"document_id": document_id, "analysis_type": analysis_type},
         )
         row = cur.fetchone()
         return dict(row) if row else None
 
 
 # ──────────────────────────────────────────────────────────────
-# pipeline.pipeline_review_queue
+# PIPELINE STATUS — queries de estado del pipeline
 # ──────────────────────────────────────────────────────────────
 
-class ReviewQueue:
-    """Operaciones sobre pipeline.pipeline_review_queue."""
+class PipelineStatus:
+    """Consultas de estado del pipeline por colección o entidad."""
 
     @staticmethod
-    def enqueue(
-        conn,
-        run_id: uuid.UUID,
-        doc_id: int,
-        trace_id: uuid.UUID,
-        reason: str,
-        n_entities_pending: int = 0,
-    ) -> None:
+    def get_documents_pending(conn, operation_type: str) -> list[dict]:
         """
-        Agrega un documento a la cola de revisión.
-        Prioridad alta si reason = 'blocked_entities'.
+        Devuelve documentos que aún no tienen completada una operación de un tipo dado.
+        Útil para construir batch files para jobs de Slurm.
         """
-        priority = "high" if reason == "blocked_entities" else "low"
         cur = conn.cursor()
         cur.execute(
             """
-            INSERT INTO pipeline.pipeline_review_queue (
-                run_id, doc_id, trace_id,
-                priority, reason, n_entities_pending
-            ) VALUES (
-                %(run_id)s, %(doc_id)s, %(trace_id)s,
-                %(priority)s, %(reason)s, %(n_entities_pending)s
+            SELECT d.document_id, d.document_filename, d.document_path,
+                   c.collection_name
+            FROM public.documents d
+            JOIN public.collections c ON d.collection_id = c.collection_id
+            WHERE NOT EXISTS (
+                SELECT 1
+                FROM public.documents_operations dop
+                JOIN public.operations o ON dop.operation_id = o.operation_id
+                JOIN public.operation_types ot ON o.operation_type_id = ot.operation_type_id
+                WHERE dop.document_id = d.document_id
+                  AND ot.operation_type = %(operation_type)s
+                  AND o.status = 'completed'
             )
-            ON CONFLICT (run_id, doc_id) DO UPDATE SET
-                priority           = EXCLUDED.priority,
-                n_entities_pending = EXCLUDED.n_entities_pending,
-                updated_at         = NOW()
+            ORDER BY c.collection_name, d.document_filename
             """,
-            {
-                "run_id": run_id,
-                "doc_id": doc_id,
-                "trace_id": trace_id,
-                "priority": priority,
-                "reason": reason,
-                "n_entities_pending": n_entities_pending,
-            },
+            {"operation_type": operation_type},
         )
-
-
-# ──────────────────────────────────────────────────────────────
-# pipeline.pipeline_run_metrics
-# ──────────────────────────────────────────────────────────────
-
-class RunMetrics:
-    """Registro granular de métricas por paso."""
-
-    @staticmethod
-    def record(
-        conn,
-        run_id: uuid.UUID,
-        step_name: str,
-        metric_name: str,
-        metric_value: Optional[float] = None,
-        metric_text: Optional[str] = None,
-        doc_id: Optional[int] = None,
-    ) -> None:
-        cur = conn.cursor()
-        cur.execute(
-            """
-            INSERT INTO pipeline.pipeline_run_metrics (
-                run_id, doc_id, step_name,
-                metric_name, metric_value, metric_text
-            ) VALUES (
-                %(run_id)s, %(doc_id)s, %(step_name)s,
-                %(metric_name)s, %(metric_value)s, %(metric_text)s
-            )
-            """,
-            {
-                "run_id": run_id,
-                "doc_id": doc_id,
-                "step_name": step_name,
-                "metric_name": metric_name,
-                "metric_value": metric_value,
-                "metric_text": metric_text,
-            },
-        )
-
-    @staticmethod
-    def record_batch(
-        conn,
-        run_id: uuid.UUID,
-        step_name: str,
-        metrics: dict,
-        doc_id: Optional[int] = None,
-    ) -> None:
-        """
-        Registra múltiples métricas de un paso de una vez.
-
-        Uso:
-            metrics.record_batch(conn, run_id, "pc2",
-                {"cer_delta": -0.3, "abbreviation_expansion_rate": 97.2},
-                doc_id=42)
-        """
-        for name, value in metrics.items():
-            if isinstance(value, (int, float)):
-                RunMetrics.record(conn, run_id, step_name, name,
-                                  metric_value=float(value), doc_id=doc_id)
-            else:
-                RunMetrics.record(conn, run_id, step_name, name,
-                                  metric_text=str(value), doc_id=doc_id)
-
-
-# ──────────────────────────────────────────────────────────────
-# pipeline_config
-# ──────────────────────────────────────────────────────────────
-
-class PipelineConfig:
-    """Lee y escribe parámetros de pipeline.pipeline_config."""
-
-    _cache: dict = {}
-
-    @classmethod
-    def get(cls, conn, key: str, default=None):
-        cur = conn.cursor()
-        cur.execute(
-            "SELECT value FROM pipeline.pipeline_config WHERE key = %(key)s",
-            {"key": key},
-        )
-        row = cur.fetchone()
-        if row is None:
-            return default
-        return row["value"]
-
-    @classmethod
-    def get_float(cls, conn, key: str, default: float = 0.0) -> float:
-        return float(cls.get(conn, key, default))
-
-    @classmethod
-    def get_int(cls, conn, key: str, default: int = 0) -> int:
-        return int(cls.get(conn, key, default))
-
-    @classmethod
-    def set(cls, conn, key: str, value: str, updated_by: Optional[str] = None) -> None:
-        cur = conn.cursor()
-        cur.execute(
-            """
-            INSERT INTO pipeline.pipeline_config (key, value, updated_by)
-            VALUES (%(key)s, %(value)s, %(updated_by)s)
-            ON CONFLICT (key) DO UPDATE SET
-                value      = EXCLUDED.value,
-                updated_by = EXCLUDED.updated_by,
-                updated_at = NOW()
-            """,
-            {
-                "key": key,
-                "value": str(value),
-                "updated_by": updated_by or os.environ.get("USER"),
-            },
-        )
-
-
-# ──────────────────────────────────────────────────────────────
-# Re-entrada — consulta de candidatos y trigger
-# ──────────────────────────────────────────────────────────────
-
-class ReentryManager:
-    """Gestión del ciclo de re-entrada desde PASO 6."""
-
-    @staticmethod
-    def should_trigger(conn) -> bool:
-        """
-        Devuelve True si KB-3 ha acumulado suficientes entidades
-        verificadas nuevas desde la última re-entrada para disparar
-        un nuevo ciclo (umbral en pipeline_config).
-        """
-        threshold = PipelineConfig.get_int(conn, "umbral_reentrada", 50)
-        cur = conn.cursor()
-        cur.execute(
-            """
-            SELECT COUNT(*) AS nuevas
-            FROM rag.knowledge_base
-            WHERE kb_type = 'entity'
-              AND verified = TRUE
-              AND added_at > COALESCE(
-                  (SELECT MAX(started_at)
-                   FROM pipeline.pipeline_runs
-                   WHERE is_reentry = TRUE),
-                  '1900-01-01'::timestamptz
-              )
-            """
-        )
-        row = cur.fetchone()
-        nuevas = row["nuevas"] if row else 0
-        return nuevas >= threshold
-
-    @staticmethod
-    def get_candidates(conn) -> list[dict]:
-        """
-        Devuelve documentos candidatos a re-entrada ordenados
-        por n_unmatched DESC (los más probables de desbloquear primero).
-        """
-        cur = conn.cursor()
-        cur.execute("SELECT * FROM pipeline.v_reentry_candidates")
         return [dict(r) for r in cur.fetchall()]
 
     @staticmethod
-    def create_reentry_run(
-        conn,
-        parent_run_id: uuid.UUID,
-        triggered_by_kb3_count: int,
-        batch_name: Optional[str] = None,
-    ) -> uuid.UUID:
-        """Crea el pipeline_run de re-entrada."""
-        name = batch_name or f"reentry_{datetime.now(timezone.utc).strftime('%Y%m%d_%H%M%S')}"
-        return PipelineRuns.create(
-            conn,
-            batch_name=name,
-            parent_run_id=parent_run_id,
-            is_reentry=True,
-            reentry_triggered_by_kb3_count=triggered_by_kb3_count,
-            notes=f"Re-entrada automática desde run {parent_run_id}",
+    def get_images_pending(conn, operation_type: str) -> list[dict]:
+        """
+        Devuelve imágenes que no tienen completada una operación de un tipo dado.
+        """
+        cur = conn.cursor()
+        cur.execute(
+            """
+            SELECT i.image_id, i.image_filename, i.image_path,
+                   i.document_id, it.image_type
+            FROM public.images i
+            JOIN public.image_types it ON i.image_type_id = it.image_type_id
+            WHERE NOT EXISTS (
+                SELECT 1
+                FROM public.images_operations io
+                JOIN public.operations o ON io.operation_id = o.operation_id
+                JOIN public.operation_types ot ON o.operation_type_id = ot.operation_type_id
+                WHERE io.image_id = i.image_id
+                  AND ot.operation_type = %(operation_type)s
+                  AND o.status = 'completed'
+            )
+            ORDER BY i.document_id, i.page_number
+            """,
+            {"operation_type": operation_type},
         )
+        return [dict(r) for r in cur.fetchall()]
+
+    @staticmethod
+    def get_htr_pending(conn, operation_type: str) -> list[dict]:
+        """
+        Devuelve HTR files que no tienen completada una operación de un tipo dado.
+        """
+        cur = conn.cursor()
+        cur.execute(
+            """
+            SELECT h.htr_id, h.htr_path, h.image_id
+            FROM public.htr h
+            WHERE NOT EXISTS (
+                SELECT 1
+                FROM public.htr_operations ho
+                JOIN public.operations o ON ho.operation_id = o.operation_id
+                JOIN public.operation_types ot ON o.operation_type_id = ot.operation_type_id
+                WHERE ho.htr_id = h.htr_id
+                  AND ot.operation_type = %(operation_type)s
+                  AND o.status = 'completed'
+            )
+            ORDER BY h.htr_id
+            """,
+            {"operation_type": operation_type},
+        )
+        return [dict(r) for r in cur.fetchall()]
 
 
 # ──────────────────────────────────────────────────────────────
 # Singletons para importación directa
 # ──────────────────────────────────────────────────────────────
-pipeline_runs = PipelineRuns()
-trace         = DocumentTrace()
-review_queue  = ReviewQueue()
-metrics       = RunMetrics()
-config        = PipelineConfig()
-reentry       = ReentryManager()
+operations        = Operations()
+analysis          = DescriptiveAnalysis()
+operation_types   = OperationTypes()
+pipeline_status   = PipelineStatus()
