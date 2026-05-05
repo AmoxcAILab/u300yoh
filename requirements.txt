@@ -1,0 +1,48 @@
+# ── Procesamiento de datos ─────────────────────────────────────────────────────
+numpy>=2.0
+scipy>=1.17
+scikit-learn>=1.8
+pandas>=2.0
+matplotlib>=3.9
+
+# ── Imágenes ───────────────────────────────────────────────────────────────────
+pillow>=10.0
+
+# ── Texto / strings ────────────────────────────────────────────────────────────
+regex>=2024.0
+rapidfuzz>=3.0
+tqdm>=4.66
+unicodecsv>=0.14
+
+# ── Base de datos ──────────────────────────────────────────────────────────────
+# psycopg2 ya lo provee Nix; psycopg2-binary es fallback para entornos sin Nix.
+psycopg2-binary>=2.9
+pgvector>=0.3
+
+# ── Machine Learning / HTR ─────────────────────────────────────────────────────
+torch>=2.2
+torchvision>=0.17
+transformers>=4.40
+sentence-transformers>=3.0
+accelerate>=0.28
+
+# ── Servidor de clasificación tipográfica ──────────────────────────────────────
+gradio>=4.0
+
+# ── Base de conocimiento vectorial ─────────────────────────────────────────────
+chromadb>=0.5
+
+# ── APIs externas ──────────────────────────────────────────────────────────────
+openai>=1.30
+requests>=2.31
+
+# ── Utilidades generales ───────────────────────────────────────────────────────
+python-dotenv>=1.0
+openpyxl>=3.1
+packaging>=24.0
+python-dateutil>=2.9
+six>=1.17
+
+# ── Tests ──────────────────────────────────────────────────────────────────────
+pytest>=7.0
+pytest-cov>=4.0

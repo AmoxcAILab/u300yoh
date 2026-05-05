@@ -665,6 +665,111 @@ PYEOF
 
 
         # ══════════════════════════════════════════════════════════
+        # EXPLORADOR DE DEPENDENCIAS PYTHON
+        # ══════════════════════════════════════════════════════════
+
+        requirementsScript = pkgs.writeShellScriptBin "htr_requirements" ''
+          set -euo pipefail
+
+          REQUIREMENTS="''${HTR_REQUIREMENTS:-requirements.txt}"
+          VENV_DIR="''${HTR_VENV:-.venv}"
+
+          if [ ! -f "$REQUIREMENTS" ]; then
+            echo "✗ No se encontró $REQUIREMENTS"
+            exit 1
+          fi
+
+          # Líneas que son paquetes reales (no comentarios, no vacías)
+          _pkg_lines() {
+            grep -E '^[A-Za-z]' "$REQUIREMENTS" || true
+          }
+
+          # Preview: pip show si el venv está activo, si no muestra la línea tal cual
+          _preview_cmd() {
+            local pkg
+            pkg=$(echo "{}" | sed 's/[>=<!].*//' | tr -d ' ')
+            if [ -f "$VENV_DIR/bin/pip" ]; then
+              "$VENV_DIR/bin/pip" show "$pkg" 2>/dev/null \
+                || echo "(no instalado en venv: $pkg)"
+            else
+              echo "(venv no disponible)"
+              echo ""
+              echo "Entrada en $REQUIREMENTS:"
+              echo "  {}"
+            fi
+          }
+
+          # Acción principal: modo de exploración
+          ACCION="''${1:-}"
+
+          case "$ACCION" in
+            --install)
+              shift
+              if [ $# -gt 0 ]; then
+                htr_pip_install "$@"
+              else
+                echo "▶ Paquete a instalar (ej: torch>=2.2):"
+                read -r pkg
+                [ -n "$pkg" ] && htr_pip_install "$pkg"
+              fi
+              ;;
+
+            --remove)
+              if [ ! -f "$VENV_DIR/bin/pip" ]; then
+                echo "✗ Venv no disponible."
+                exit 1
+              fi
+              pkg=$(_pkg_lines \
+                | ${pkgs.fzf}/bin/fzf \
+                    --prompt "Desinstalar > " \
+                    --header "Selecciona paquete a eliminar (ESC para cancelar)" \
+                    --preview "$(declare -f _preview_cmd); _preview_cmd" \
+                    --preview-window right:50% \
+                    --height 60% --border \
+                    --select-1 || true)
+              if [ -n "$pkg" ]; then
+                pkg_name=$(echo "$pkg" | sed 's/[>=<!].*//' | tr -d ' ')
+                htr_pip_remove "$pkg_name"
+              fi
+              ;;
+
+            *)
+              # Exploración: fzf sobre requirements.txt con preview de pip show
+              selected=$(_pkg_lines \
+                | ${pkgs.fzf}/bin/fzf \
+                    --prompt "Dependencias > " \
+                    --header "$(printf 'requirements.txt  |  [i] instalar  [d] desinstalar\n%s paquetes' "$(  _pkg_lines | wc -l | tr -d ' ')")" \
+                    --preview "
+                      pkg=\$(echo {} | sed 's/[>=<!].*//' | tr -d ' ')
+                      if [ -f '$VENV_DIR/bin/pip' ]; then
+                        '$VENV_DIR/bin/pip' show \"\$pkg\" 2>/dev/null \
+                          || echo \"(no instalado en venv: \$pkg)\"
+                      else
+                        echo '(venv no disponible — ejecuta htr_setup_venv)'
+                        echo ''
+                        echo 'Entrada en requirements.txt:'
+                        echo \"  {}\"
+                      fi
+                    " \
+                    --preview-window right:50% \
+                    --height 70% --border \
+                    --bind "i:execute(htr_pip_install \$(echo {} | sed 's/[>=<!].*//' | tr -d ' '))+reload(_pkg_lines)" \
+                    --bind "d:execute(htr_pip_remove \$(echo {} | sed 's/[>=<!].*//' | tr -d ' '))+reload(_pkg_lines)" \
+                    --expect ctrl-n \
+                  || true)
+
+              # ctrl-n: instalar paquete nuevo
+              if echo "$selected" | head -1 | grep -q "ctrl-n"; then
+                echo "▶ Nombre del paquete nuevo:"
+                read -r pkg
+                [ -n "$pkg" ] && htr_pip_install "$pkg"
+              fi
+              ;;
+          esac
+        '';
+
+
+        # ══════════════════════════════════════════════════════════
         # MENÚ INTERACTIVO PRINCIPAL
         # ══════════════════════════════════════════════════════════
 
@@ -830,6 +935,30 @@ PYEOF
             esac
           }
 
+          _menu_python_packages() {
+            local opcion
+            opcion=$(printf \
+              "explorar_requirements\ninstalar_paquete\ndesinstalar_paquete\nsetup_venv\nvolver" \
+              | ${pkgs.fzf}/bin/fzf \
+                  --prompt "Python packages > " \
+                  --header "$(printf 'Venv: %s\nReqs: %s' "''${HTR_VENV:-.venv}" "''${HTR_REQUIREMENTS:-requirements.txt}")" \
+                  --height 12 --border)
+            case "$opcion" in
+              explorar_requirements)
+                htr_requirements
+                ;;
+              instalar_paquete)
+                htr_requirements --install
+                ;;
+              desinstalar_paquete)
+                htr_requirements --remove
+                ;;
+              setup_venv)
+                htr_setup_venv
+                ;;
+            esac
+          }
+
           _menu_modelos() {
             local opcion
             opcion=$(printf \
@@ -863,23 +992,24 @@ PYEOF
           # ── Bucle principal del menú ─────────────────────────────
           while true; do
             OPCION=$(printf \
-              "colecciones\nhtr\nmodelos\nbase_de_datos\nanotaciones\nknowledge_base\nsalir" \
+              "colecciones\nhtr\nmodelos\nbase_de_datos\nanotaciones\nknowledge_base\npython_packages\nsalir" \
               | ${pkgs.fzf}/bin/fzf \
                   --prompt "AmoxcAILab > " \
                   --header "$(printf '═══ AmoxcAILab HTR Pipeline ═══\n%s' "$(_db_status_line)")" \
-                  --height 14 \
+                  --height 15 \
                   --border \
                   --no-info \
                   --cycle) || break
 
             case "$OPCION" in
-              colecciones)    _menu_colecciones ;;
-              htr)            _menu_htr ;;
-              modelos)        _menu_modelos ;;
-              base_de_datos)  _menu_base_de_datos ;;
-              anotaciones)    _menu_anotaciones ;;
-              knowledge_base) _menu_knowledge_base ;;
-              salir|"")       break ;;
+              colecciones)      _menu_colecciones ;;
+              htr)              _menu_htr ;;
+              modelos)          _menu_modelos ;;
+              base_de_datos)    _menu_base_de_datos ;;
+              anotaciones)      _menu_anotaciones ;;
+              knowledge_base)   _menu_knowledge_base ;;
+              python_packages)  _menu_python_packages ;;
+              salir|"")         break ;;
             esac
           done
 
@@ -906,6 +1036,7 @@ PYEOF
           htr_setup_venv  = { type = "app"; program = "${setupVenvScript}/bin/htr_setup_venv"; };
           htr_pip_install = { type = "app"; program = "${pipInstallScript}/bin/htr_pip_install"; };
           htr_pip_remove  = { type = "app"; program = "${pipRemoveScript}/bin/htr_pip_remove"; };
+          htr_requirements = { type = "app"; program = "${requirementsScript}/bin/htr_requirements"; };
 
           # Ingesta
           htr_register_collection  = { type = "app"; program = "${registerCollectionScript}/bin/htr_register_collection"; };
@@ -943,7 +1074,7 @@ PYEOF
             pkgs.fzf pkgs.jq pkgs.git
             # Scripts htr_*
             dbInitScript dbStartScript dbStopScript dbSchemaScript dbStatusScript
-            setupVenvScript pipInstallScript pipRemoveScript
+            setupVenvScript pipInstallScript pipRemoveScript requirementsScript
             registerCollectionScript downloadImagesScript registerGroundTruthScript
             registerModelScript knowledgeBaseRebuildScript
             exportForAnnotationScript syncAnnotationsScript
