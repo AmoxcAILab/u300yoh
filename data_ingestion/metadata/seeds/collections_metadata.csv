@@ -1,0 +1,8 @@
+data_type,data_field,separator,data_value
+int,collection_id,:,
+text,collection_name,:,
+text,collection_path,:,
+int,collection_type_id,:,
+int,collection_status_id,:,
+text,collection_url,:,
+int,collection_archival_institution_id,:,

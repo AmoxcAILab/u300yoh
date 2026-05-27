@@ -1,0 +1,20 @@
+BP_documents_fields,,,,,,
+data_type,data_field,separator,data_value,correspondencia_metadatos_archivo,ejemplo_metadatos_archivo,notas
+int,document_id,:,,,,
+int,collection_id,:,,,,
+text,document_path,:,,,,
+int,document_status_id,:,,,,
+text,document_url,:,,,,
+text,document_archive,:,,,,
+text,document_Fondo,:,,(BibPalaf) Fondo,,
+text,document_Volumen,:,,(BibPalaf) Volumen,,
+text,document_Expediente,:,,(BibPalaf) Expediente,,integer (mín_ 3 / a veces 4)
+text,document_Fecha_creacion,:,,(BibPalaf) Fecha de creación,,
+text,document_Año_creacion,:,,(BibPalaf) Año de creación,,integer -- puede ser escrito o calculado a partir de AGN_Fecha_creacion
+text,document_Lugar_creacion,:,,(BibPalaf) Lugar de creación,,
+text,document_Descripcion,:,,,,
+text,document_Rango_fojas,:,,Rango de fojas,,
+text,document_Num_pags,:,, ,,"integer -- calcular a partir de AGN_Rango_fojas (1foja=2pags)
+num_pags = (rango_fojas max - (rango_fojas min - 1))*2"
+text,document_Num_pags_escritas,:,,Número de páginas escritas,,integer (pensar cómo calcularlo)
+text,document_Notas,:,,Notas,,

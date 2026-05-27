@@ -1,0 +1,5 @@
+collection_status_id,collection_status
+int,text
+1,new
+2,documents_in_queue
+3,ready

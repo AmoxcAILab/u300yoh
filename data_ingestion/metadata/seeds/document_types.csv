@@ -1,0 +1,5 @@
+document_type_id,document_type
+int,text
+1,pictorial
+2,textual
+3,blank

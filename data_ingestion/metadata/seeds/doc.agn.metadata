@@ -1,0 +1,24 @@
+AGN_documents_fields,,,,,,
+data_type,data_field,separator,data_value,correspondencia_metadatos_archivo,ejemplo_metadatos_archivo,notas
+int,document_id,:,,,,
+int,collection_id,:,,,,
+text,document_path,:,,,,
+int,document_status_id,:,,,,
+text,document_url,:,,,,
+text,document_archive,:,,,,
+text,document_Fondo,:,,(AGN) Fondo,Marina,
+text,document_Volumen,:,,(AGN) Unidad de instalación - Volumen,Volumen 1(1),integer (mín_ 3 / a veces 4)
+text,document_Caja,:,,(AGN) Unidad de instalación - Caja,Caja 205,integer (mín_ 3 / a veces 4)
+text,document_Legajo,:,,(AGN) Legajo,107,integer (mín_ 3 / a veces 4)
+text,document_Expediente,:,,(AGN) Expediente,1,integer (mín_ 3 / a veces 4)
+text,document_Fecha_creacion,:,,(AGN) Fechas ,1578/octubre/11 ,
+text,document_Año_creacion,:,, ,,integer -- puede ser escrito o calculado a partir de AGN_Fecha_creacion
+text,document_Lugar_creacion,:,,(AGN) Lugar de expedición  ,Tabasco,
+text,document_Soporte,:,,(AGN) Soporte  ,Papel,
+text,document_Descripcion,:,,(AGN) Alcance y contenido,"Registro de las mercaderías que transportaría desde el puerto de Tabasco hasta el de San Juan de Ulua la barca nuestra señora de Guadalupe, siendo su dueño y maestre Antonio Hernández_ Dicha embarcación llego al puerto de la Veracruz el día 21 del mismo mes_",
+text,document_Rango_fojas,:,,(AGN) Volumen de la unidad de descripción  ,Fojas 1-3,
+text,document_Num_pags,:,, ,,"integer -- calcular a partir de AGN_Rango_fojas (1foja=2pags)
+num_pags = (rango_fojas max - (rango_fojas min - 1))*2"
+text,document_Num_pags_escritas,:,,,,integer (pensar cómo calcularlo)
+text,document_Notas,:,,(AGN) Notas / Estado de conservación,Las fojas 4 y 5 se encuentran en blanco_,
+text,---,:,,(AGN) Nivel de descripción  ,Unidad documental compuesta,

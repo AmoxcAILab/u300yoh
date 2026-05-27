@@ -1,0 +1,6 @@
+archival_institution_id,archival_institution_name,archival_institution_country
+int,text,text
+1,Archivo General de la Nación,México
+2,Archivo Municipal de Puebla,México
+3,Biblioteca Palafoxiana,México
+4,Archivo General de Indias,España

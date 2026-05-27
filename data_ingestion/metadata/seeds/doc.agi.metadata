@@ -1,0 +1,28 @@
+AGI_documents_fields,,,,,,
+data_type,data_field,separator,data_value,correspondencia_metadatos_archivo,ejemplo_metadatos_archivo,notas
+int,document_id,:,,,,
+int,collection_id,:,,,,
+text,document_path,:,,,,
+int,document_status_id,:,,,,
+text,document_url,:,,web-scraper-start-url,,
+text,document_archive,:,,,,
+text,document_Titulo,:,,(AGI) Titulo,ANSELMO LOPEZ RAMIREZ,
+text,document_Signatura,:,,(AGI) Signatura,"CONTRATACION,5225A,N.1,R.4",
+text,document_Fecha_creacion,:,,(AGI) Fecha_formacion,1576-06-08,
+text,document_Año_creacion,:,, ,,integer -- puede ser escrito o calculado a partir de AGI_Fecha_creacion
+text,document_Productores,:,,(AGI) Productores,Casa de la Contratación de las Indias (España),
+text,document_Descripcion,:,,(AGI) Alcance_y_contenido,"Expediente de información y licencia de pasajero a indias de Anselmo López Ramírez, natural de Fuentelencina, hijo de Alonso López Ramírez y María de Montoya, a Nueva España_ Fecha de la licencia",
+text,document_Indices_de_Descripcion,:,,(AGI) Indices_de_Descripcion,"Fuentelencina (Guadalajara, España)
+
+Nueva España (virreinato, jurisdicción antigua)",
+text,document_Lugar_creacion,:,, ,,AGN_Lugar_creacion – text -- extraer topónimos a partir de AGI_Indices_de_Descripcion
+text,document_Soporte,:,,(AGI) Soporte,"1
+									Expediente(s)
+									_",
+text,document_Num_pags,:,,,,
+text,document_Num_pags_escritas,:,, ,,integer --  calcular a partir de número de imágenes
+text,document_Notas,:,,,,integer (pensar cómo calcularlo)
+text,---,:,,(AGI) Nivel_descripcion,Unidad Documental Compuesta_en,
+text,---,:,,(AGI) Codigo_referencia,"ES_41091_AGI//CONTRATACION,5225A,N_1_R,4",
+text,---,:,,(AGI) Condiciones_de_accesibilidad,Las imágenes/documentos no tienen restricciones de acceso,
+text,---,:,,(AGI) Documentacion_asociada,Digitized,

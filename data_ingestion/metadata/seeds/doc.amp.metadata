@@ -1,0 +1,22 @@
+AMP_documents_fields,,,,,,
+data_type,data_field,separator,data_value,correspondencia_metadatos_archivo,ejemplo_metadatos_archivo,notas
+int,document_id,:,,,,
+int,collection_id,:,,,,
+text,document_path,:,,,,
+int,document_status_id,:,,,,
+text,document_url,:,,,,
+text,document_archive,:,,,,
+text,document_Fondo,:,,(AMPue) Fondo,Memoria Urbana 1519-1910,
+text,document_Volumen,:,,(AMPue) Volumen,,integer (mín_ 3 / a veces 4)
+text,document_Tomo,:,,(AMPue) Tomo,151,integer (mín_ 3 / a veces 4)
+text,document_Legajo,:,,(AMPue) Legajo,1494,integer (mín_ 3 / a veces 4)
+text,document_Documento,:,,(AMPue) Documento,,integer (mín_ 3 / a veces 4)
+text,document_Fecha_creacion,:,,(AMPue) Fecha de creación,,
+text,document_Año_creacion,:,,{calculado a partir de Fecha de creación},,integer -- puede ser escrito o calculado a partir de AGN_Fecha_creacion
+text,document_Lugar_creacion,:,,(AMPue) Lugar de creación,,
+text,document_Descripcion,:,,(AMPue) Alcance y contenido,,
+text,document_Rango_fojas,:,,(AMPue) Rango de fojas,,
+text,document_Num_pags,:,, ,,"integer -- calcular a partir de AGN_Rango_fojas (1foja=2pags)
+num_pags = (rango_fojas max - (rango_fojas min - 1))*2"
+text,document_Num_pags_escritas,:,,(AMPue) Número de páginas escritas,,integer (pensar cómo calcularlo)
+text,document_Notas,:,,(AMPue) Notas,,

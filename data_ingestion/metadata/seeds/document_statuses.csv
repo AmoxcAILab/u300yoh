@@ -1,0 +1,8 @@
+document_status_id,document_status
+int,text
+1,new
+2,htr_available
+3,hist_clean
+4,clean_modern
+5,annotated
+6,nlp_ready
