@@ -78,9 +78,6 @@ erDiagram
         uuid study_case_id PK
         text study_case_name
     }
-    models {
-        uuid model_id PK
-    }
 
     %% ── Acceso ──────────────────────────────────────────────────────
     collaborators {
@@ -153,6 +150,15 @@ erDiagram
     notes {
         uuid note_id PK
         text note
+    }
+    models {
+        uuid model_id PK
+        text model_name
+        text model_filename
+        text model_version
+        text model_url
+        text model_parameter_1
+        text model_parameter_n
     }
 
     %% ── Pipeline HTR ────────────────────────────────────────────────
@@ -297,6 +303,10 @@ erDiagram
         uuid image_id FK
         uuid operation_id FK
     }
+    models_operations {
+        uuid model_id FK
+        uuid operation_id FK
+    }
 
     %% ── Junctions: notes ────────────────────────────────────────────
     notes_collections {
@@ -385,6 +395,8 @@ erDiagram
     operations             ||--o{ documents_operations   : ""
     images                 ||--o{ images_operations      : ""
     operations             ||--o{ images_operations      : ""
+    models                 ||--o{ models_operations      : ""
+    operations             ||--o{ models_operations      : ""
 
     %% Junctions documentos / imágenes
     documents              ||--o{ documents_document_types : ""
@@ -427,19 +439,19 @@ erDiagram
 | `collaborators` | Personas que realizan operaciones en el pipeline |
 | `notes` | Notas que extienden la descripción de collections, documents, images, htr u operations |
 | `operations` | Registro central de cada acción ejecutada en el pipeline |
+| `models` | Modelos de ML/AI (Transkribus, language models) con sus parámetros de configuración |
+| `htr` | Transcripción automática (resultado Transkribus HTR) de una imagen |
+| `ground_truth` | Transcripción corregida manualmente (referencia gold) vinculada a un HTR |
+| `hist_clean` | Versión histórica normalizada generada por `spanish_historical_clean` |
+| `clean_modern` | Versión modernizada generada por `spanish_clean_modern` |
 
 ### Pipeline HTR / limpieza
 
 | Tabla | Propósito |
 |---|---|
 | `layouts` | Resultado del análisis de layout (Transkribus) para una imagen |
-| `htr` | Transcripción automática (Transkribus HTR) de una imagen |
-| `ground_truth` | Transcripción corregida (referencia gold) vinculada a un HTR |
-| `hist_clean` | Versión histórica normalizada generada por `spanish_historical_clean` |
-| `clean_modern` | Versión modernizada generada por `spanish_clean_modern` |
 | `modernization_pairs` | Par (hallazgo en ground_truth, versión moderna) extraído del ground_truth |
 | `modernizations` | Modernización de una palabra encontrada en hist_clean, con score de confianza |
-| `models` | Modelos de ML registrados (referenciado como FK en operations) |
 
 ### NLP / análisis
 
@@ -486,6 +498,7 @@ erDiagram
 | `images_htr` | images ↔ htr |
 | `images_image_statuses` | images ↔ image_statuses |
 | `images_operations` | images ↔ operations |
+| `models_operations` | models ↔ operations (n:n; `operations.model_id` ya cubre el modelo primario via FK directo) |
 | `htr_patterns` | htr ↔ patterns |
 | `htr_entities` | htr ↔ entities |
 | `htr_abbreviations` | htr ↔ abbreviations |

@@ -26779,7 +26779,7 @@
 			"width": 301.87082399999997,
 			"height": 375.2741859324973,
 			"angle": 0,
-			"strokeColor": "#1e1e1e",
+			"strokeColor": "#cacd18",
 			"backgroundColor": "#96f2d7",
 			"fillStyle": "cross-hatch",
 			"strokeWidth": 1,
@@ -26793,12 +26793,10 @@
 			],
 			"frameId": null,
 			"index": "bYg",
-			"roundness": {
-				"type": 3
-			},
+			"roundness": null,
 			"seed": 943854055,
-			"version": 5989,
-			"versionNonce": 1401258689,
+			"version": 5991,
+			"versionNonce": 1041849249,
 			"isDeleted": false,
 			"boundElements": [
 				{
@@ -26834,7 +26832,7 @@
 					"type": "arrow"
 				}
 			],
-			"updated": 1779982487804,
+			"updated": 1780085148626,
 			"link": null,
 			"locked": false
 		},
@@ -29001,10 +28999,10 @@
 		"currentItemStartArrowhead": "arrow",
 		"currentItemEndArrowhead": "arrow",
 		"currentItemArrowType": "elbow",
-		"scrollX": 2712.743744774778,
-		"scrollY": 3462.6936721841357,
+		"scrollX": -1649.0353503537583,
+		"scrollY": 1480.6531734728155,
 		"zoom": {
-			"value": 0.15
+			"value": 0.432127
 		},
 		"currentItemRoundness": "sharp",
 		"gridSize": 20,
