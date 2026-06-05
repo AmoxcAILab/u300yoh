@@ -1,0 +1,487 @@
+{
+  "C:\\Users\\coyote\\helios\\sarasvati\\currently_working\\AmoxcAILab\\u300yoh\\data_ingestion\\build_knowledge_base.py": {
+    "mtime": 1776780893.2602837,
+    "ast_hash": "3ef5d32dc808ba51b969f44595458f83",
+    "semantic_hash": "3ef5d32dc808ba51b969f44595458f83"
+  },
+  "C:\\Users\\coyote\\helios\\sarasvati\\currently_working\\AmoxcAILab\\u300yoh\\data_ingestion\\image_pre_processing.py": {
+    "mtime": 1776846789.8497782,
+    "ast_hash": "c97e1feca750daac44e3c8a8faa8b7c6",
+    "semantic_hash": "c97e1feca750daac44e3c8a8faa8b7c6"
+  },
+  "C:\\Users\\coyote\\helios\\sarasvati\\currently_working\\AmoxcAILab\\u300yoh\\data_ingestion\\import_collection.py": {
+    "mtime": 1776780728.45868,
+    "ast_hash": "1393c46f3b01e10ffb33643d53d5e7bb",
+    "semantic_hash": "1393c46f3b01e10ffb33643d53d5e7bb"
+  },
+  "C:\\Users\\coyote\\helios\\sarasvati\\currently_working\\AmoxcAILab\\u300yoh\\data_ingestion\\pdf_to_metadata.py": {
+    "mtime": 1779905114.692518,
+    "ast_hash": "4fd7748feac4c88008053f1df2d0dafd",
+    "semantic_hash": "4fd7748feac4c88008053f1df2d0dafd"
+  },
+  "C:\\Users\\coyote\\helios\\sarasvati\\currently_working\\AmoxcAILab\\u300yoh\\data_ingestion\\register_collection.py": {
+    "mtime": 1776780703.8116379,
+    "ast_hash": "4ca6018a23e2e3837d64c47403a33086",
+    "semantic_hash": "4ca6018a23e2e3837d64c47403a33086"
+  },
+  "C:\\Users\\coyote\\helios\\sarasvati\\currently_working\\AmoxcAILab\\u300yoh\\data_ingestion\\register_ground_truth.py": {
+    "mtime": 1776780756.763131,
+    "ast_hash": "d7c529230e5793ee2fea7a981ff99606",
+    "semantic_hash": "d7c529230e5793ee2fea7a981ff99606"
+  },
+  "C:\\Users\\coyote\\helios\\sarasvati\\currently_working\\AmoxcAILab\\u300yoh\\data_ingestion\\send_to_layout_analysis.py": {
+    "mtime": 1776846831.1591852,
+    "ast_hash": "89fcb1177f54a5ce2cec6223550a4c21",
+    "semantic_hash": "89fcb1177f54a5ce2cec6223550a4c21"
+  },
+  "C:\\Users\\coyote\\helios\\sarasvati\\currently_working\\AmoxcAILab\\u300yoh\\data_ingestion\\tests\\import_collection_test.py": {
+    "mtime": 1776780794.5048268,
+    "ast_hash": "1e4093f6e558d48b3ca407f1f3d9c9fa",
+    "semantic_hash": "1e4093f6e558d48b3ca407f1f3d9c9fa"
+  },
+  "C:\\Users\\coyote\\helios\\sarasvati\\currently_working\\AmoxcAILab\\u300yoh\\data_ingestion\\tests\\register_collection_test.py": {
+    "mtime": 1776780782.2928207,
+    "ast_hash": "4660315dc40c4775bfa0a7d8cd7138df",
+    "semantic_hash": "4660315dc40c4775bfa0a7d8cd7138df"
+  },
+  "C:\\Users\\coyote\\helios\\sarasvati\\currently_working\\AmoxcAILab\\u300yoh\\data_ingestion\\tests\\register_ground_truth_test.py": {
+    "mtime": 1776780812.7951612,
+    "ast_hash": "d1ab2c528ba327cc27f21a139cf16dfb",
+    "semantic_hash": "d1ab2c528ba327cc27f21a139cf16dfb"
+  },
+  "C:\\Users\\coyote\\helios\\sarasvati\\currently_working\\AmoxcAILab\\u300yoh\\data_ingestion\\tests\\send_to_layout_analysis_test.py": {
+    "mtime": 1776846943.5795581,
+    "ast_hash": "e41f3d4afc9b41b7875a2e59f427c8f3",
+    "semantic_hash": "e41f3d4afc9b41b7875a2e59f427c8f3"
+  },
+  "C:\\Users\\coyote\\helios\\sarasvati\\currently_working\\AmoxcAILab\\u300yoh\\data_ingestion\\tests\\trigger_htr_transcription_test.py": {
+    "mtime": 1776846971.452139,
+    "ast_hash": "d7fb289e754071383efd0ec2ada85e99",
+    "semantic_hash": "d7fb289e754071383efd0ec2ada85e99"
+  },
+  "C:\\Users\\coyote\\helios\\sarasvati\\currently_working\\AmoxcAILab\\u300yoh\\data_ingestion\\tests\\typography_classification_test.py": {
+    "mtime": 1776846995.218956,
+    "ast_hash": "9a0d15f6b7eefe68fc3447a1661f4b36",
+    "semantic_hash": "9a0d15f6b7eefe68fc3447a1661f4b36"
+  },
+  "C:\\Users\\coyote\\helios\\sarasvati\\currently_working\\AmoxcAILab\\u300yoh\\data_ingestion\\trigger_htr_transcription.py": {
+    "mtime": 1776846880.332272,
+    "ast_hash": "c3ffcd66e90f5b7097ffeee07dc4f808",
+    "semantic_hash": "c3ffcd66e90f5b7097ffeee07dc4f808"
+  },
+  "C:\\Users\\coyote\\helios\\sarasvati\\currently_working\\AmoxcAILab\\u300yoh\\data_ingestion\\typography_classification.py": {
+    "mtime": 1776846913.4172752,
+    "ast_hash": "e07095c8baca4001a695bb8423ae66ca",
+    "semantic_hash": "e07095c8baca4001a695bb8423ae66ca"
+  },
+  "C:\\Users\\coyote\\helios\\sarasvati\\currently_working\\AmoxcAILab\\u300yoh\\data_ingestion\\typography_classification\\migration\\NSF-RAG-Codex\\app.py": {
+    "mtime": 1776159475.46838,
+    "ast_hash": "31ef604b3422f004eae68a36b48d9087",
+    "semantic_hash": "31ef604b3422f004eae68a36b48d9087"
+  },
+  "C:\\Users\\coyote\\helios\\sarasvati\\currently_working\\AmoxcAILab\\u300yoh\\data_ingestion\\typography_classification\\migration\\NSF-RAG-Codex\\corpus_loader.py": {
+    "mtime": 1776159476.2359605,
+    "ast_hash": "1c942a6c4e08412e623f9ef5aab3a489",
+    "semantic_hash": "1c942a6c4e08412e623f9ef5aab3a489"
+  },
+  "C:\\Users\\coyote\\helios\\sarasvati\\currently_working\\AmoxcAILab\\u300yoh\\data_ingestion\\typography_classification\\migration\\NSF-RAG-Codex\\evaluator.py": {
+    "mtime": 1776159476.2377398,
+    "ast_hash": "4ad8d144d5a5dfcecb7f65eabb2af3c9",
+    "semantic_hash": "4ad8d144d5a5dfcecb7f65eabb2af3c9"
+  },
+  "C:\\Users\\coyote\\helios\\sarasvati\\currently_working\\AmoxcAILab\\u300yoh\\data_ingestion\\typography_classification\\migration\\NSF-RAG-Codex\\knowledge_base.py": {
+    "mtime": 1776159476.2377398,
+    "ast_hash": "98a5a78e85971dcb6ee6692ac3265c2f",
+    "semantic_hash": "98a5a78e85971dcb6ee6692ac3265c2f"
+  },
+  "C:\\Users\\coyote\\helios\\sarasvati\\currently_working\\AmoxcAILab\\u300yoh\\data_ingestion\\typography_classification\\migration\\NSF-RAG-Codex\\rag_corrector.py": {
+    "mtime": 1776159476.2389143,
+    "ast_hash": "7cf25c18a510a0fef18f92541d702e4d",
+    "semantic_hash": "7cf25c18a510a0fef18f92541d702e4d"
+  },
+  "C:\\Users\\coyote\\helios\\sarasvati\\currently_working\\AmoxcAILab\\u300yoh\\data_ingestion\\typography_classification\\migration\\NSF-RAG-Codex\\vector_store.py": {
+    "mtime": 1776159476.2394168,
+    "ast_hash": "9d77688d0feed7eee79e5b0265f6cf39",
+    "semantic_hash": "9d77688d0feed7eee79e5b0265f6cf39"
+  },
+  "C:\\Users\\coyote\\helios\\sarasvati\\currently_working\\AmoxcAILab\\u300yoh\\data_ingestion\\typography_classification\\migration\\clasificacion-api\\app.py": {
+    "mtime": 1776159039.1450188,
+    "ast_hash": "829bb2a46327469ee98a07c3c09d380b",
+    "semantic_hash": "829bb2a46327469ee98a07c3c09d380b"
+  },
+  "C:\\Users\\coyote\\helios\\sarasvati\\currently_working\\AmoxcAILab\\u300yoh\\data_ingestion\\typography_classification\\migration\\clasificacion-api\\predictor.py": {
+    "mtime": 1776159039.9887145,
+    "ast_hash": "220a9b7f11cc87846c488116b3b26a5e",
+    "semantic_hash": "220a9b7f11cc87846c488116b3b26a5e"
+  },
+  "C:\\Users\\coyote\\helios\\sarasvati\\currently_working\\AmoxcAILab\\u300yoh\\database\\create_backup.py": {
+    "mtime": 1776847031.1335797,
+    "ast_hash": "2e286f40a21db81725f58325f996a93d",
+    "semantic_hash": "2e286f40a21db81725f58325f996a93d"
+  },
+  "C:\\Users\\coyote\\helios\\sarasvati\\currently_working\\AmoxcAILab\\u300yoh\\database\\crud_operations.py": {
+    "mtime": 1776780449.8746912,
+    "ast_hash": "6cd26ea7d5a5131e69e5b6a2140e44ff",
+    "semantic_hash": "6cd26ea7d5a5131e69e5b6a2140e44ff"
+  },
+  "C:\\Users\\coyote\\helios\\sarasvati\\currently_working\\AmoxcAILab\\u300yoh\\database\\export_for_annotation.py": {
+    "mtime": 1776780485.658859,
+    "ast_hash": "0560090370123954a6416642be59ddcb",
+    "semantic_hash": "0560090370123954a6416642be59ddcb"
+  },
+  "C:\\Users\\coyote\\helios\\sarasvati\\currently_working\\AmoxcAILab\\u300yoh\\database\\migration\\db.py": {
+    "mtime": 1776780383.5931284,
+    "ast_hash": "0de3977f920140375aa2d3470730d75a",
+    "semantic_hash": "0de3977f920140375aa2d3470730d75a"
+  },
+  "C:\\Users\\coyote\\helios\\sarasvati\\currently_working\\AmoxcAILab\\u300yoh\\database\\sync_annotations.py": {
+    "mtime": 1776780549.1225092,
+    "ast_hash": "913206a7509afdf50199dcc152f2df5b",
+    "semantic_hash": "913206a7509afdf50199dcc152f2df5b"
+  },
+  "C:\\Users\\coyote\\helios\\sarasvati\\currently_working\\AmoxcAILab\\u300yoh\\database\\tests\\create_backup_test.py": {
+    "mtime": 1776847052.088914,
+    "ast_hash": "52e2994c32a8a54de295a58ced49e2a3",
+    "semantic_hash": "52e2994c32a8a54de295a58ced49e2a3"
+  },
+  "C:\\Users\\coyote\\helios\\sarasvati\\currently_working\\AmoxcAILab\\u300yoh\\database\\tests\\crud_operations_test.py": {
+    "mtime": 1776780616.688966,
+    "ast_hash": "fa05980af4c37f3a2ad0e0520511c258",
+    "semantic_hash": "fa05980af4c37f3a2ad0e0520511c258"
+  },
+  "C:\\Users\\coyote\\helios\\sarasvati\\currently_working\\AmoxcAILab\\u300yoh\\infrastructure\\slurm\\job_clean_modern.sh": {
+    "mtime": 1776846740.3878686,
+    "ast_hash": "00deeac1a7946ba3c1f4356caca82926",
+    "semantic_hash": "00deeac1a7946ba3c1f4356caca82926"
+  },
+  "C:\\Users\\coyote\\helios\\sarasvati\\currently_working\\AmoxcAILab\\u300yoh\\infrastructure\\slurm\\job_historical_clean.sh": {
+    "mtime": 1776846705.0785835,
+    "ast_hash": "e37315fca4649c73c2a30f69334c6df8",
+    "semantic_hash": "e37315fca4649c73c2a30f69334c6df8"
+  },
+  "C:\\Users\\coyote\\helios\\sarasvati\\currently_working\\AmoxcAILab\\u300yoh\\infrastructure\\slurm\\job_htr_transcription.sh": {
+    "mtime": 1776846683.5391128,
+    "ast_hash": "e79e94299c06c31cc0dbc13ef2eb0441",
+    "semantic_hash": "e79e94299c06c31cc0dbc13ef2eb0441"
+  },
+  "C:\\Users\\coyote\\helios\\sarasvati\\currently_working\\AmoxcAILab\\u300yoh\\infrastructure\\slurm\\job_typography_classification.sh": {
+    "mtime": 1776846663.6631212,
+    "ast_hash": "d215fbcd05400109512fc9f87c2a2091",
+    "semantic_hash": "d215fbcd05400109512fc9f87c2a2091"
+  },
+  "C:\\Users\\coyote\\helios\\sarasvati\\currently_working\\AmoxcAILab\\u300yoh\\pipeline\\htr_descriptive_analysis\\pre\\bootstrap_for_deletion.py": {
+    "mtime": 1771866527.9761891,
+    "ast_hash": "23c1c9435661e0910c8f5d909cf96784",
+    "semantic_hash": "23c1c9435661e0910c8f5d909cf96784"
+  },
+  "C:\\Users\\coyote\\helios\\sarasvati\\currently_working\\AmoxcAILab\\u300yoh\\pipeline\\htr_descriptive_analysis\\pre\\diagnose_matches.py": {
+    "mtime": 1773677179.3705587,
+    "ast_hash": "6517e2eec7ccb0488848045efa905220",
+    "semantic_hash": "6517e2eec7ccb0488848045efa905220"
+  },
+  "C:\\Users\\coyote\\helios\\sarasvati\\currently_working\\AmoxcAILab\\u300yoh\\pipeline\\htr_descriptive_analysis\\pre\\diagnostics\\alignment_count.py": {
+    "mtime": 1774882272.030609,
+    "ast_hash": "577bb533ebf37b5d8e734efe620bbfc3",
+    "semantic_hash": "577bb533ebf37b5d8e734efe620bbfc3"
+  },
+  "C:\\Users\\coyote\\helios\\sarasvati\\currently_working\\AmoxcAILab\\u300yoh\\pipeline\\htr_descriptive_analysis\\pre\\diagnostics\\drift_count.py": {
+    "mtime": 1774882272.0316143,
+    "ast_hash": "f639d94e37cc8740d169023cb5cf6e2b",
+    "semantic_hash": "f639d94e37cc8740d169023cb5cf6e2b"
+  },
+  "C:\\Users\\coyote\\helios\\sarasvati\\currently_working\\AmoxcAILab\\u300yoh\\pipeline\\htr_descriptive_analysis\\pre\\diagnostics\\drift_diagnostics.py": {
+    "mtime": 1774882272.0328808,
+    "ast_hash": "7ea8af32df68152d6f3410251bccb81c",
+    "semantic_hash": "7ea8af32df68152d6f3410251bccb81c"
+  },
+  "C:\\Users\\coyote\\helios\\sarasvati\\currently_working\\AmoxcAILab\\u300yoh\\pipeline\\htr_descriptive_analysis\\pre\\diagnostics\\text_diagnostics.py": {
+    "mtime": 1774882272.0328808,
+    "ast_hash": "f3b3b92507aea5b66eda2c71fa9dffb0",
+    "semantic_hash": "f3b3b92507aea5b66eda2c71fa9dffb0"
+  },
+  "C:\\Users\\coyote\\helios\\sarasvati\\currently_working\\AmoxcAILab\\u300yoh\\pipeline\\htr_descriptive_analysis\\pre\\export_missing_to_excel.py": {
+    "mtime": 1773677179.3705587,
+    "ast_hash": "a052961b0324728693ca06aa20f363e5",
+    "semantic_hash": "a052961b0324728693ca06aa20f363e5"
+  },
+  "C:\\Users\\coyote\\helios\\sarasvati\\currently_working\\AmoxcAILab\\u300yoh\\pipeline\\htr_descriptive_analysis\\pre\\pipeline\\__init__.py": {
+    "mtime": 1771866527.9761891,
+    "ast_hash": "d41d8cd98f00b204e9800998ecf8427e",
+    "semantic_hash": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "C:\\Users\\coyote\\helios\\sarasvati\\currently_working\\AmoxcAILab\\u300yoh\\pipeline\\htr_descriptive_analysis\\pre\\pipeline\\allocate_reviews.py": {
+    "mtime": 1774882272.0328808,
+    "ast_hash": "141e69bd274ddf9e22b628f7db93d61e",
+    "semantic_hash": "141e69bd274ddf9e22b628f7db93d61e"
+  },
+  "C:\\Users\\coyote\\helios\\sarasvati\\currently_working\\AmoxcAILab\\u300yoh\\pipeline\\htr_descriptive_analysis\\pre\\pipeline\\assign_issue_ids.py": {
+    "mtime": 1774882272.0328808,
+    "ast_hash": "48bedfba15adc59c7b4b48e6b5ba95d2",
+    "semantic_hash": "48bedfba15adc59c7b4b48e6b5ba95d2"
+  },
+  "C:\\Users\\coyote\\helios\\sarasvati\\currently_working\\AmoxcAILab\\u300yoh\\pipeline\\htr_descriptive_analysis\\pre\\pipeline\\build_corpus_report.py": {
+    "mtime": 1775742440.6766198,
+    "ast_hash": "76fa0882c91f0ab2c01fd71c2e568a86",
+    "semantic_hash": "76fa0882c91f0ab2c01fd71c2e568a86"
+  },
+  "C:\\Users\\coyote\\helios\\sarasvati\\currently_working\\AmoxcAILab\\u300yoh\\pipeline\\htr_descriptive_analysis\\pre\\pipeline\\build_corpus_report_orig.py": {
+    "mtime": 1775742440.6766198,
+    "ast_hash": "5fe05f6cb6c654917009b7ddd934f205",
+    "semantic_hash": "5fe05f6cb6c654917009b7ddd934f205"
+  },
+  "C:\\Users\\coyote\\helios\\sarasvati\\currently_working\\AmoxcAILab\\u300yoh\\pipeline\\htr_descriptive_analysis\\pre\\pipeline\\build_review_pool.py": {
+    "mtime": 1774882272.0363722,
+    "ast_hash": "89e1ed23e22f0c0afdca82811e5e63e8",
+    "semantic_hash": "89e1ed23e22f0c0afdca82811e5e63e8"
+  },
+  "C:\\Users\\coyote\\helios\\sarasvati\\currently_working\\AmoxcAILab\\u300yoh\\pipeline\\htr_descriptive_analysis\\pre\\pipeline\\rank_and_sample_reviews.py": {
+    "mtime": 1774882272.0376422,
+    "ast_hash": "b95b8348ae7ec3d47a72597b5939e650",
+    "semantic_hash": "b95b8348ae7ec3d47a72597b5939e650"
+  },
+  "C:\\Users\\coyote\\helios\\sarasvati\\currently_working\\AmoxcAILab\\u300yoh\\pipeline\\htr_descriptive_analysis\\pre\\pipeline\\report_html.py": {
+    "mtime": 1775742440.6766198,
+    "ast_hash": "9c1bb22262d61689542e61d497453bf3",
+    "semantic_hash": "9c1bb22262d61689542e61d497453bf3"
+  },
+  "C:\\Users\\coyote\\helios\\sarasvati\\currently_working\\AmoxcAILab\\u300yoh\\pipeline\\htr_descriptive_analysis\\pre\\pipeline\\run_split.py": {
+    "mtime": 1773677179.374568,
+    "ast_hash": "00cfab829fce252b102e3a8f67548a47",
+    "semantic_hash": "00cfab829fce252b102e3a8f67548a47"
+  },
+  "C:\\Users\\coyote\\helios\\sarasvati\\currently_working\\AmoxcAILab\\u300yoh\\pipeline\\htr_descriptive_analysis\\pre\\pipeline\\run_step1.py": {
+    "mtime": 1771866527.9774928,
+    "ast_hash": "6a8a449b7279141c559b5b95e44b488d",
+    "semantic_hash": "6a8a449b7279141c559b5b95e44b488d"
+  },
+  "C:\\Users\\coyote\\helios\\sarasvati\\currently_working\\AmoxcAILab\\u300yoh\\pipeline\\htr_descriptive_analysis\\pre\\pipeline\\run_step2.py": {
+    "mtime": 1774882272.0387397,
+    "ast_hash": "9e4151f2823496652947e3008a3f6508",
+    "semantic_hash": "9e4151f2823496652947e3008a3f6508"
+  },
+  "C:\\Users\\coyote\\helios\\sarasvati\\currently_working\\AmoxcAILab\\u300yoh\\pipeline\\htr_descriptive_analysis\\pre\\pipeline\\run_step3.py": {
+    "mtime": 1774882272.0387397,
+    "ast_hash": "bf4825503065d2b2e33e7382804c49ad",
+    "semantic_hash": "bf4825503065d2b2e33e7382804c49ad"
+  },
+  "C:\\Users\\coyote\\helios\\sarasvati\\currently_working\\AmoxcAILab\\u300yoh\\pipeline\\htr_descriptive_analysis\\pre\\run_pipeline.py": {
+    "mtime": 1774882272.039243,
+    "ast_hash": "60f9ee5ac5b7529fe59ba8a3aa8e2437",
+    "semantic_hash": "60f9ee5ac5b7529fe59ba8a3aa8e2437"
+  },
+  "C:\\Users\\coyote\\helios\\sarasvati\\currently_working\\AmoxcAILab\\u300yoh\\pipeline\\htr_descriptive_analysis\\pre\\utils\\__init__.py": {
+    "mtime": 1771866527.978566,
+    "ast_hash": "d41d8cd98f00b204e9800998ecf8427e",
+    "semantic_hash": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "C:\\Users\\coyote\\helios\\sarasvati\\currently_working\\AmoxcAILab\\u300yoh\\pipeline\\htr_descriptive_analysis\\pre\\utils\\alignment.py": {
+    "mtime": 1774882272.0403073,
+    "ast_hash": "b6b954b4c954f58f4a93c15601a39b3b",
+    "semantic_hash": "b6b954b4c954f58f4a93c15601a39b3b"
+  },
+  "C:\\Users\\coyote\\helios\\sarasvati\\currently_working\\AmoxcAILab\\u300yoh\\pipeline\\htr_descriptive_analysis\\pre\\utils\\alignment_char_level.py": {
+    "mtime": 1773677179.3765726,
+    "ast_hash": "260ca492acd3a02ff40082fa30bd8457",
+    "semantic_hash": "260ca492acd3a02ff40082fa30bd8457"
+  },
+  "C:\\Users\\coyote\\helios\\sarasvati\\currently_working\\AmoxcAILab\\u300yoh\\pipeline\\htr_descriptive_analysis\\pre\\utils\\alignment_legacy_difflib.py": {
+    "mtime": 1773677179.3765726,
+    "ast_hash": "664b5a3f09c2aadd4e05287e6c08630c",
+    "semantic_hash": "664b5a3f09c2aadd4e05287e6c08630c"
+  },
+  "C:\\Users\\coyote\\helios\\sarasvati\\currently_working\\AmoxcAILab\\u300yoh\\pipeline\\htr_descriptive_analysis\\pre\\utils\\alignment_word_level.py": {
+    "mtime": 1774882272.040985,
+    "ast_hash": "f2317e8188b42fce166df851a5a3424e",
+    "semantic_hash": "f2317e8188b42fce166df851a5a3424e"
+  },
+  "C:\\Users\\coyote\\helios\\sarasvati\\currently_working\\AmoxcAILab\\u300yoh\\pipeline\\htr_descriptive_analysis\\pre\\utils\\build_alignment_diagnostics.py": {
+    "mtime": 1774882272.040985,
+    "ast_hash": "83274680cdb1704fd343046aa8239595",
+    "semantic_hash": "83274680cdb1704fd343046aa8239595"
+  },
+  "C:\\Users\\coyote\\helios\\sarasvati\\currently_working\\AmoxcAILab\\u300yoh\\pipeline\\htr_descriptive_analysis\\pre\\utils\\build_issue_index.py": {
+    "mtime": 1774882272.040985,
+    "ast_hash": "90e6a1f0fba2623c8b533007059511f9",
+    "semantic_hash": "90e6a1f0fba2623c8b533007059511f9"
+  },
+  "C:\\Users\\coyote\\helios\\sarasvati\\currently_working\\AmoxcAILab\\u300yoh\\pipeline\\htr_descriptive_analysis\\pre\\utils\\config.py": {
+    "mtime": 1771866527.978566,
+    "ast_hash": "c38422f57a8c05a18a60d93c8bcd9230",
+    "semantic_hash": "c38422f57a8c05a18a60d93c8bcd9230"
+  },
+  "C:\\Users\\coyote\\helios\\sarasvati\\currently_working\\AmoxcAILab\\u300yoh\\pipeline\\htr_descriptive_analysis\\pre\\utils\\delete.py": {
+    "mtime": 1771866527.978566,
+    "ast_hash": "ba35866c1c3ec3a0e2b2afa4e133e1ed",
+    "semantic_hash": "ba35866c1c3ec3a0e2b2afa4e133e1ed"
+  },
+  "C:\\Users\\coyote\\helios\\sarasvati\\currently_working\\AmoxcAILab\\u300yoh\\pipeline\\htr_descriptive_analysis\\pre\\utils\\file_io.py": {
+    "mtime": 1774882272.040985,
+    "ast_hash": "ae4f02ee686b710dd8c1889d3be793b4",
+    "semantic_hash": "ae4f02ee686b710dd8c1889d3be793b4"
+  },
+  "C:\\Users\\coyote\\helios\\sarasvati\\currently_working\\AmoxcAILab\\u300yoh\\pipeline\\htr_descriptive_analysis\\pre\\utils\\issue_ids.py": {
+    "mtime": 1773677179.3785765,
+    "ast_hash": "e8667c8de2298a7a2538b1615bfd57d0",
+    "semantic_hash": "e8667c8de2298a7a2538b1615bfd57d0"
+  },
+  "C:\\Users\\coyote\\helios\\sarasvati\\currently_working\\AmoxcAILab\\u300yoh\\pipeline\\htr_descriptive_analysis\\pre\\utils\\logging.py": {
+    "mtime": 1774882272.0423582,
+    "ast_hash": "5bc1594c54e7e90695b08a1ba1e8c2a4",
+    "semantic_hash": "5bc1594c54e7e90695b08a1ba1e8c2a4"
+  },
+  "C:\\Users\\coyote\\helios\\sarasvati\\currently_working\\AmoxcAILab\\u300yoh\\pipeline\\htr_descriptive_analysis\\pre\\utils\\normalisation.py": {
+    "mtime": 1771866527.9832163,
+    "ast_hash": "a33ad2eddc18e204a7b685e1dbbb066e",
+    "semantic_hash": "a33ad2eddc18e204a7b685e1dbbb066e"
+  },
+  "C:\\Users\\coyote\\helios\\sarasvati\\currently_working\\AmoxcAILab\\u300yoh\\pipeline\\htr_descriptive_analysis\\pre\\utils\\posthoc_analysis.py": {
+    "mtime": 1774882272.0423582,
+    "ast_hash": "e2eca0ad1d4107b7083d2a3692ad888b",
+    "semantic_hash": "e2eca0ad1d4107b7083d2a3692ad888b"
+  },
+  "C:\\Users\\coyote\\helios\\sarasvati\\currently_working\\AmoxcAILab\\u300yoh\\pipeline\\htr_descriptive_analysis\\pre\\utils\\processing.py": {
+    "mtime": 1774882272.0423582,
+    "ast_hash": "50a35e2152edd7e526931e1cbd090607",
+    "semantic_hash": "50a35e2152edd7e526931e1cbd090607"
+  },
+  "C:\\Users\\coyote\\helios\\sarasvati\\currently_working\\AmoxcAILab\\u300yoh\\pipeline\\htr_descriptive_analysis\\pre\\utils\\report_metrics.py": {
+    "mtime": 1775742440.6766198,
+    "ast_hash": "48918e71ff664f1bb1ae2f9eba91037d",
+    "semantic_hash": "48918e71ff664f1bb1ae2f9eba91037d"
+  },
+  "C:\\Users\\coyote\\helios\\sarasvati\\currently_working\\AmoxcAILab\\u300yoh\\pipeline\\htr_descriptive_analysis\\pre\\utils\\tag_rules.py": {
+    "mtime": 1774882272.0436623,
+    "ast_hash": "d792b85778b2391846ddee333a81b34f",
+    "semantic_hash": "d792b85778b2391846ddee333a81b34f"
+  },
+  "C:\\Users\\coyote\\helios\\sarasvati\\currently_working\\AmoxcAILab\\u300yoh\\pipeline\\htr_descriptive_analysis\\pre\\utils\\visualise.py": {
+    "mtime": 1771866527.9842513,
+    "ast_hash": "c6634aa1f45c5f22482eb169fb64c9a1",
+    "semantic_hash": "c6634aa1f45c5f22482eb169fb64c9a1"
+  },
+  "C:\\Users\\coyote\\helios\\sarasvati\\currently_working\\AmoxcAILab\\u300yoh\\README.md": {
+    "mtime": 1776938761.6236327,
+    "ast_hash": "56620b0c2dca39f8c98ba0e558f0f8db",
+    "semantic_hash": "56620b0c2dca39f8c98ba0e558f0f8db"
+  },
+  "C:\\Users\\coyote\\helios\\sarasvati\\currently_working\\AmoxcAILab\\u300yoh\\data_ingestion\\data_ingestion.md": {
+    "mtime": 1779853888.806098,
+    "ast_hash": "36429941e9ceedc9e8f2c787e8cce259",
+    "semantic_hash": "36429941e9ceedc9e8f2c787e8cce259"
+  },
+  "C:\\Users\\coyote\\helios\\sarasvati\\currently_working\\AmoxcAILab\\u300yoh\\data_ingestion\\typography_classification\\migration\\NSF-RAG-Codex\\README.md": {
+    "mtime": 1776159475.4612122,
+    "ast_hash": "90eaa4653438340c99ac6693034bb4cc",
+    "semantic_hash": "90eaa4653438340c99ac6693034bb4cc"
+  },
+  "C:\\Users\\coyote\\helios\\sarasvati\\currently_working\\AmoxcAILab\\u300yoh\\data_ingestion\\typography_classification\\migration\\clasificacion-api\\README.md": {
+    "mtime": 1776159039.1422732,
+    "ast_hash": "024a8c2c127e499014c6342c2da12935",
+    "semantic_hash": "024a8c2c127e499014c6342c2da12935"
+  },
+  "C:\\Users\\coyote\\helios\\sarasvati\\currently_working\\AmoxcAILab\\u300yoh\\database\\data_base.md": {
+    "mtime": 1780086121.5322304,
+    "ast_hash": "918a328906f9d5db2c98043842ee87e2",
+    "semantic_hash": "918a328906f9d5db2c98043842ee87e2"
+  },
+  "C:\\Users\\coyote\\helios\\sarasvati\\currently_working\\AmoxcAILab\\u300yoh\\infrastructure\\infrastructure.md": {
+    "mtime": 1775670572.040842,
+    "ast_hash": "d41d8cd98f00b204e9800998ecf8427e",
+    "semantic_hash": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "C:\\Users\\coyote\\helios\\sarasvati\\currently_working\\AmoxcAILab\\u300yoh\\observability.md": {
+    "mtime": 1775754947.5562918,
+    "ast_hash": "52d19d12173dbcd90e34c252182990dd",
+    "semantic_hash": "52d19d12173dbcd90e34c252182990dd"
+  },
+  "C:\\Users\\coyote\\helios\\sarasvati\\currently_working\\AmoxcAILab\\u300yoh\\outputs\\data_descriptive_analysis\\corpus_report.html": {
+    "mtime": 1774952209.4663415,
+    "ast_hash": "c75b3c0068d1aea3e09c5c9ff055e4ea",
+    "semantic_hash": "c75b3c0068d1aea3e09c5c9ff055e4ea"
+  },
+  "C:\\Users\\coyote\\helios\\sarasvati\\currently_working\\AmoxcAILab\\u300yoh\\outputs\\outputs.md": {
+    "mtime": 1775670572.040842,
+    "ast_hash": "d41d8cd98f00b204e9800998ecf8427e",
+    "semantic_hash": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "C:\\Users\\coyote\\helios\\sarasvati\\currently_working\\AmoxcAILab\\u300yoh\\pipeline\\htr_cleaning\\htr_cleaning.md": {
+    "mtime": 1775670572.040842,
+    "ast_hash": "d41d8cd98f00b204e9800998ecf8427e",
+    "semantic_hash": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "C:\\Users\\coyote\\helios\\sarasvati\\currently_working\\AmoxcAILab\\u300yoh\\pipeline\\htr_descriptive_analysis\\htr_descriptive_analysis.md": {
+    "mtime": 1771866527.9761891,
+    "ast_hash": "9fc8f1941b0d864040db91172bd0c537",
+    "semantic_hash": "9fc8f1941b0d864040db91172bd0c537"
+  },
+  "C:\\Users\\coyote\\helios\\sarasvati\\currently_working\\AmoxcAILab\\u300yoh\\pipeline\\htr_human_feedback_loop\\htr_human_feedback_loop.md": {
+    "mtime": 1775670572.040842,
+    "ast_hash": "d41d8cd98f00b204e9800998ecf8427e",
+    "semantic_hash": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "C:\\Users\\coyote\\helios\\sarasvati\\currently_working\\AmoxcAILab\\u300yoh\\pipeline\\htr_modernization\\htr_modernization.md": {
+    "mtime": 1775670572.040842,
+    "ast_hash": "d41d8cd98f00b204e9800998ecf8427e",
+    "semantic_hash": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "C:\\Users\\coyote\\helios\\sarasvati\\currently_working\\AmoxcAILab\\u300yoh\\pipeline\\htr_nlp\\htr_nlp.md": {
+    "mtime": 1775670572.040842,
+    "ast_hash": "d41d8cd98f00b204e9800998ecf8427e",
+    "semantic_hash": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "C:\\Users\\coyote\\helios\\sarasvati\\currently_working\\AmoxcAILab\\u300yoh\\pipeline\\pipeline.md": {
+    "mtime": 1776780300.0330265,
+    "ast_hash": "d2789f8746e21445a17f53321003da50",
+    "semantic_hash": "d2789f8746e21445a17f53321003da50"
+  },
+  "C:\\Users\\coyote\\helios\\sarasvati\\currently_working\\AmoxcAILab\\u300yoh\\project.md": {
+    "mtime": 1776684059.8632958,
+    "ast_hash": "e110c7ce2a087210b5d47ff68bb2c45f",
+    "semantic_hash": "e110c7ce2a087210b5d47ff68bb2c45f"
+  },
+  "C:\\Users\\coyote\\helios\\sarasvati\\currently_working\\AmoxcAILab\\u300yoh\\visualization\\visualization.md": {
+    "mtime": 1775670572.040842,
+    "ast_hash": "d41d8cd98f00b204e9800998ecf8427e",
+    "semantic_hash": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "C:\\Users\\coyote\\helios\\sarasvati\\currently_working\\AmoxcAILab\\u300yoh\\visualization\\webcontent\\amoxcailab.domain\\index.html": {
+    "mtime": 1775670509.5063515,
+    "ast_hash": "d41d8cd98f00b204e9800998ecf8427e",
+    "semantic_hash": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "C:\\Users\\coyote\\helios\\sarasvati\\currently_working\\AmoxcAILab\\u300yoh\\data_ingestion\\typography_classification\\migration\\NSF-RAG-Codex\\corpus\\corpus.json": {
+    "mtime": 1776159476.2359605,
+    "ast_hash": "452d8e07fb0e7a225a835c40557d5256",
+    "semantic_hash": "452d8e07fb0e7a225a835c40557d5256"
+  },
+  "C:\\Users\\coyote\\helios\\sarasvati\\currently_working\\AmoxcAILab\\u300yoh\\database\\backup\\flotas_original.sql": {
+    "mtime": 1773671287.5252903,
+    "ast_hash": "75706c34f0689d632e46a564b4066742",
+    "semantic_hash": "75706c34f0689d632e46a564b4066742"
+  },
+  "C:\\Users\\coyote\\helios\\sarasvati\\currently_working\\AmoxcAILab\\u300yoh\\database\\migration\\flotas_pipeline.sql": {
+    "mtime": 1773679959.8998823,
+    "ast_hash": "2e56532539fe50fa2dcb215678a0f1c6",
+    "semantic_hash": "2e56532539fe50fa2dcb215678a0f1c6"
+  },
+  "C:\\Users\\coyote\\helios\\sarasvati\\currently_working\\AmoxcAILab\\u300yoh\\database\\schema.sql": {
+    "mtime": 1779853739.3763835,
+    "ast_hash": "4b35a1af7fb0cbb0d39cbcdf5d36b538",
+    "semantic_hash": "4b35a1af7fb0cbb0d39cbcdf5d36b538"
+  },
+  "C:\\Users\\coyote\\helios\\sarasvati\\currently_working\\AmoxcAILab\\u300yoh\\pipeline\\htr_descriptive_analysis\\pre\\schemas_and_manifests\\spanish_stopwords.json": {
+    "mtime": 1774882272.0403073,
+    "ast_hash": "1153117a614519f19ce2e4e6887f904e",
+    "semantic_hash": "1153117a614519f19ce2e4e6887f904e"
+  },
+  "C:\\Users\\coyote\\helios\\sarasvati\\currently_working\\AmoxcAILab\\u300yoh\\pipeline\\htr_descriptive_analysis\\pre\\schemas_and_manifests\\tag_schema.json": {
+    "mtime": 1771866527.978566,
+    "ast_hash": "afd77c3d68d97d4f924d4997400af589",
+    "semantic_hash": "afd77c3d68d97d4f924d4997400af589"
+  },
+  "C:\\Users\\coyote\\helios\\sarasvati\\currently_working\\AmoxcAILab\\u300yoh\\pipeline\\htr_descriptive_analysis\\pre\\schemas_and_manifests\\zip_manifest.json": {
+    "mtime": 1773677179.374568,
+    "ast_hash": "6f0eca02cab5a34de4732da683884d77",
+    "semantic_hash": "6f0eca02cab5a34de4732da683884d77"
+  }
+}
