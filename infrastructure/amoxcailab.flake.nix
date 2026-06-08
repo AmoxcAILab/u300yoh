@@ -133,7 +133,7 @@
 # HTR pipeline — configuración generada por htr_db_init
 unix_socket_directories = 'HTR_PGRUN_PLACEHOLDER'
 port = HTR_PGPORT_PLACEHOLDER
-listen_addresses = ''
+listen_addresses = ''''
 shared_preload_libraries = 'vector'
 log_min_messages = warning
 log_min_error_statement = error
