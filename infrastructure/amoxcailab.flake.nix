@@ -118,12 +118,20 @@
 
           if [ ! -f "$HTR_PGDATA/PG_VERSION" ]; then
             echo "▶ Inicializando cluster PostgreSQL..."
-            ${postgresql}/bin/initdb \
-              --pgdata="$HTR_PGDATA" \
-              --auth=trust \
-              --no-locale \
-              --encoding=UTF8 \
-              --username="$HTR_PGUSER"
+            # nss_wrapper: crea entrada temporal en /etc/passwd para este UID
+            # (necesario en entornos HPC/LDAP donde getpwuid(UID) falla)
+            _PASSWD_FILE=$(mktemp)
+            echo "$HTR_PGUSER:x:$(id -u):$(id -g):HTR Pipeline:$HOME:/bin/sh" > "$_PASSWD_FILE"
+            NSS_WRAPPER_PASSWD="$_PASSWD_FILE" \
+            NSS_WRAPPER_GROUP=/dev/null \
+            LD_PRELOAD="${pkgs.nss_wrapper}/lib/libnss_wrapper.so" \
+              ${postgresql}/bin/initdb \
+                --pgdata="$HTR_PGDATA" \
+                --auth=trust \
+                --no-locale \
+                --encoding=UTF8 \
+                --username="$HTR_PGUSER"
+            rm -f "$_PASSWD_FILE"
             echo "✓ Cluster inicializado."
           else
             echo "✓ Cluster ya existe. Saltando initdb."
@@ -1072,7 +1080,7 @@ PYEOF
             postgresql
             pythonEnv
             pkgs.gcc pkgs.gnumake pkgs.zlib pkgs.openssl pkgs.libffi
-            pkgs.fzf pkgs.jq pkgs.git
+            pkgs.fzf pkgs.jq pkgs.git pkgs.nss_wrapper
             # Scripts htr_*
             dbInitScript dbStartScript dbStopScript dbSchemaScript dbStatusScript
             setupVenvScript pipInstallScript pipRemoveScript requirementsScript
