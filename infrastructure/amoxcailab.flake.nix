@@ -122,7 +122,8 @@
               --pgdata="$HTR_PGDATA" \
               --auth=trust \
               --no-locale \
-              --encoding=UTF8
+              --encoding=UTF8 \
+              --username="$HTR_PGUSER"
             echo "✓ Cluster inicializado."
           else
             echo "✓ Cluster ya existe. Saltando initdb."
