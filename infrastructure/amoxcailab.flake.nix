@@ -142,7 +142,7 @@
 # HTR pipeline — configuración generada por htr_db_init
 unix_socket_directories = 'HTR_PGRUN_PLACEHOLDER'
 port = HTR_PGPORT_PLACEHOLDER
-listen_addresses = ''''
+listen_addresses = '''
 shared_preload_libraries = 'vector'
 log_min_messages = warning
 log_min_error_statement = error
@@ -515,7 +515,7 @@ PYEOF
                 o.status,
                 to_char(o.logged_at, 'YYYY-MM-DD HH24:MI') AS logged_at,
                 COALESCE(c.collaborator_name, '—') AS collaborator,
-                COALESCE(o.slurm_job_id, o.transkribus_job_id, '''') AS job_id
+                COALESCE(o.slurm_job_id, o.transkribus_job_id, ''') AS job_id
               FROM public.operations o
               JOIN public.operation_types ot USING (operation_type_id)
               LEFT JOIN public.collaborators c USING (collaborator_id)
@@ -755,7 +755,7 @@ PYEOF
                           || echo \"(no instalado en venv: \$pkg)\"
                       else
                         echo '(venv no disponible — ejecuta htr_setup_venv)'
-                        echo ''''
+                        echo '''
                         echo 'Entrada en requirements.txt:'
                         echo \"  {}\"
                       fi
