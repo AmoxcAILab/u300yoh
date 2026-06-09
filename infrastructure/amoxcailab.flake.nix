@@ -1042,7 +1042,7 @@ DELSQL
                              COALESCE(d.document_productores,                              'N/A'),
                              REPLACE(COALESCE(d.document_indices_de_descripcion,           'N/A'),'|','/'),
                              COALESCE(d.document_fecha_creacion,                           'N/A'),
-                             COALESCE(d.\"document_Año_creacion\",                         'N/A'),
+                             COALESCE(d.document_año_creacion,                            'N/A'),
                              COALESCE(d.document_lugar_creacion,                           'N/A'),
                              COALESCE(d.document_soporte,                                  'N/A'),
                              REPLACE(COALESCE(d.document_descripcion,                      'N/A'),'|','/'),
