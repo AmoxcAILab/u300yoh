@@ -949,6 +949,7 @@ PYEOF
                   return
                 fi
                 metadata_file=$(find "$METADATA_DIR" -maxdepth 2 -name "*.metadata" \
+                  -not -path "*/seeds/*" \
                   | sed "s|$HTR_PIPELINE_DIR/||" \
                   | sort \
                   | ${pkgs.fzf}/bin/fzf \
