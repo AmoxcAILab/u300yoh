@@ -1039,8 +1039,8 @@ DELSQL
                     --delimiter '[|]' \
                     --with-nth '5,2,1' \
                     --height 80% --border \
-                    --preview "echo 'Nombre:     {2}'; echo 'Expediente: {3}'; echo 'Fecha:      {4}'; echo 'Estado:     {5}'; echo 'Fondo:      {6}'; echo 'Volumen:    {7}'; echo 'Lugar:      {8}'; echo 'Soporte:    {9}'; echo; echo 'Descripcion:'; echo '{10}'" \
-                    --preview-window 'right:45%:wrap' \
+                    --preview "${postgresql}/bin/psql -h '$HTR_PGRUN' -p '$HTR_PGPORT' -d '$HTR_PGDB' -x -c \"SELECT * FROM public.documents WHERE document_id = '{1}'; SELECT n.note AS notas FROM public.notes n JOIN public.notes_documents nd USING (note_id) WHERE nd.document_id = '{1}';\" 2>/dev/null" \
+                    --preview-window 'right:50%:wrap' \
                 || true
                 ;;
             esac
@@ -1337,8 +1337,8 @@ DELSQL
                     --prompt "Notas > " \
                     --header "note_id | documento | nota" \
                     --delimiter '[|]' --height 80% --border \
-                    --preview "echo '{3}'" \
-                    --preview-window bottom:40%:wrap \
+                    --preview "${postgresql}/bin/psql -h '$HTR_PGRUN' -p '$HTR_PGPORT' -d '$HTR_PGDB' -Atc \"SELECT note FROM public.notes WHERE note_id = '{1}';\" 2>/dev/null" \
+                    --preview-window 'bottom:40%:wrap' \
                 || true
                 ;;
             esac
