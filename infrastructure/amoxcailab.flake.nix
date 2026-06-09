@@ -1051,7 +1051,7 @@ DELSQL
                     --delimiter '[|]' \
                     --with-nth '5,2,1' \
                     --height 80% --border \
-                    --preview "echo 'Nombre:      {2}'; echo 'Expediente:  {3}'; echo 'Fecha:       {4}'; echo 'Estado:      {5}'; echo 'Fondo:       {6}'; echo 'Volumen:     {7}'; echo 'Caja:        {8}'; echo 'Legajo:      {9}'; echo 'Archivo:     {10}'; echo 'Lugar:       {11}'; echo 'Soporte:     {12}'; echo 'Rango fojas: {13}'; echo 'Num pags:    {14}'; echo; echo 'Descripcion:'; echo '{15}'; echo; echo 'Notas:'; echo '{16}'" \
+                    --preview "echo 'Nombre:      {2}'; echo 'Expediente:  {3}'; echo 'Fecha:       {4}'; echo 'Estado:      {5}'; echo 'Fondo:       {6}'; echo 'Volumen:     {7}'; echo 'Caja:        {8}'; echo 'Legajo:      {9}'; echo 'Archivo:     {10}'; echo 'Lugar:       {11}'; echo 'Soporte:     {12}'; echo 'Rango fojas: {13}'; echo 'Num pags:    {14}'; echo; echo 'Descripcion:'; echo \"{15}\"; echo; echo 'Notas:'; echo \"{16}\"" \
                     --preview-window 'right:50%:wrap' \
                 || true
                 ;;
