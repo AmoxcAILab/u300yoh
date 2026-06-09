@@ -1121,6 +1121,7 @@ DELSQL
 
             case "$OPCION" in
               colecciones)      _menu_colecciones ;;
+              documentos)       _menu_documentos ;;
               htr)              _menu_htr ;;
               modelos)          _menu_modelos ;;
               base_de_datos)    _menu_base_de_datos ;;
