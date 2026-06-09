@@ -923,10 +923,25 @@ PYEOF
               ver_colecciones)
                 ${postgresql}/bin/psql \
                   -h "$HTR_PGRUN" -p "$HTR_PGPORT" -d "$HTR_PGDB" \
-                  -c "SELECT collection_id, collection_name, collection_type,
-                             collection_status, archival_institution_name
-                      FROM public.v_collections
-                      ORDER BY collection_type, collection_name;"
+                  -tAF'|' \
+                  -c "SELECT c.collection_id, c.collection_name,
+                             ct.collection_type, cs.collection_status,
+                             COALESCE(ai.archival_institution_name,'—'),
+                             COALESCE(c.collection_path,'—')
+                      FROM public.collections c
+                      JOIN public.collection_types ct USING (collection_type_id)
+                      JOIN public.collection_statuses cs USING (collection_status_id)
+                      LEFT JOIN public.archival_institutions ai USING (archival_institution_id)
+                      ORDER BY ct.collection_type, c.collection_name;" \
+                2>/dev/null \
+                | ${pkgs.fzf}/bin/fzf \
+                    --prompt "Colecciones > " \
+                    --header "id | nombre | tipo | estado | institución | ruta" \
+                    --delimiter '|' \
+                    --height 80% --border \
+                    --preview "cat '{6}' 2>/dev/null || echo '(sin archivo .metadata)'" \
+                    --preview-window right:50% \
+                || true
                 ;;
               registrar)
                 METADATA_DIR="$HTR_PIPELINE_DIR/data_ingestion/metadata"
@@ -1007,7 +1022,8 @@ DELSQL
                   -tAF'|' \
                   -c "SELECT d.document_id, d.document_name,
                              COALESCE(d.document_Expediente,'—'),
-                             COALESCE(d.document_Fecha_creacion,'—'), ds.document_status
+                             COALESCE(d.document_Fecha_creacion,'—'), ds.document_status,
+                             COALESCE(d.document_path,'—')
                       FROM public.documents d
                       JOIN public.document_statuses ds USING (document_status_id)
                       WHERE d.collection_id = '$COL_ID'
@@ -1015,18 +1031,19 @@ DELSQL
                 2>/dev/null \
                 | ${pkgs.fzf}/bin/fzf \
                     --prompt "$COL_NAME > " \
-                    --header "ID | nombre | expediente | fecha | estado" \
+                    --header "ID | nombre | expediente | fecha | estado | ruta" \
                     --delimiter '|' \
                     --height 80% --border \
                     --preview "
-                      ${postgresql}/bin/psql \
-                        -h '$HTR_PGRUN' -p '$HTR_PGPORT' -d '$HTR_PGDB' \
-                        -c \"SELECT document_name, document_Fondo, document_Volumen,
-                                    document_Expediente, document_Fecha_creacion,
-                                    document_Lugar_creacion, document_Soporte,
-                                    document_Descripcion
-                             FROM public.documents
-                             WHERE document_id = '{1}';\" 2>/dev/null
+                      cat '{6}' 2>/dev/null \
+                      || ${postgresql}/bin/psql \
+                           -h '$HTR_PGRUN' -p '$HTR_PGPORT' -d '$HTR_PGDB' \
+                           -c \"SELECT document_name, document_Fondo, document_Volumen,
+                                       document_Expediente, document_Fecha_creacion,
+                                       document_Lugar_creacion, document_Soporte,
+                                       document_Descripcion
+                                FROM public.documents
+                                WHERE document_id = '{1}';\" 2>/dev/null
                     " \
                     --preview-window right:50% \
                 || true
@@ -1314,24 +1331,19 @@ DELSQL
                 ${postgresql}/bin/psql \
                   -h "$HTR_PGRUN" -p "$HTR_PGPORT" -d "$HTR_PGDB" \
                   -tAF'|' \
-                  -c "SELECT n.note_id, 'colección' AS scope, '''' AS documento, n.note
-                      FROM public.notes n
-                      JOIN public.notes_collections nc USING (note_id)
-                      WHERE nc.collection_id = '$COL_ID'
-                      UNION ALL
-                      SELECT n.note_id, 'documento', d.document_name, n.note
+                  -c "SELECT n.note_id, d.document_name, n.note
                       FROM public.notes n
                       JOIN public.notes_documents nd USING (note_id)
                       JOIN public.documents d USING (document_id)
                       WHERE d.collection_id = '$COL_ID'
-                      ORDER BY scope, documento, note_id;" \
+                      ORDER BY 2, 1;" \
                 2>/dev/null \
                 | ${pkgs.fzf}/bin/fzf \
                     --prompt "Notas > " \
-                    --header "note_id | ámbito | documento | nota" \
+                    --header "note_id | documento | nota" \
                     --delimiter '|' --height 80% --border \
-                    --preview "echo '{4}'" \
-                    --preview-window bottom:30% \
+                    --preview "echo '{3}'" \
+                    --preview-window bottom:40%:wrap \
                 || true
                 ;;
             esac
