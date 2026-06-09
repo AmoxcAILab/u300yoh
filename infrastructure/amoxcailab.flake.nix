@@ -926,17 +926,20 @@ PYEOF
                   -tAF'|' \
                   -c "SELECT collection_id, collection_name, collection_type,
                              collection_status,
-                             COALESCE(archival_institution_name,'—')
+                             COALESCE(archival_institution_name,'—'),
+                             COALESCE(collection_path,'—'),
+                             COALESCE(collection_url,'—')
                       FROM public.v_collections
                       ORDER BY collection_type, collection_name;" \
                 2>/dev/null \
                 | ${pkgs.fzf}/bin/fzf \
                     --prompt "Colecciones > " \
-                    --header "id | nombre | tipo | estado | institución" \
+                    --header "nombre | tipo | estado | institución" \
                     --delimiter '|' \
+                    --with-nth '2..5' \
                     --height 80% --border \
-                    --preview "${postgresql}/bin/psql -h '$HTR_PGRUN' -p '$HTR_PGPORT' -d '$HTR_PGDB' -x -c \"SELECT * FROM public.v_collections WHERE collection_id = '{1}';\" 2>/dev/null" \
-                    --preview-window right:50% \
+                    --preview "echo 'Nombre:      {2}'; echo 'Tipo:        {3}'; echo 'Estado:      {4}'; echo 'Institución: {5}'; echo 'Ruta:        {6}'; echo 'URL:         {7}'" \
+                    --preview-window 'right:45%:wrap' \
                 || true
                 ;;
               registrar)
@@ -1018,7 +1021,13 @@ DELSQL
                   -tAF'|' \
                   -c "SELECT d.document_id, d.document_name,
                              COALESCE(d.document_Expediente,'—'),
-                             COALESCE(d.document_Fecha_creacion,'—'), ds.document_status
+                             COALESCE(d.document_Fecha_creacion,'—'),
+                             ds.document_status,
+                             COALESCE(d.document_Fondo,'—'),
+                             COALESCE(d.document_Volumen,'—'),
+                             COALESCE(d.document_Lugar_creacion,'—'),
+                             COALESCE(d.document_Soporte,'—'),
+                             COALESCE(d.document_Descripcion,'—')
                       FROM public.documents d
                       JOIN public.document_statuses ds USING (document_status_id)
                       WHERE d.collection_id = '$COL_ID'
@@ -1026,11 +1035,12 @@ DELSQL
                 2>/dev/null \
                 | ${pkgs.fzf}/bin/fzf \
                     --prompt "$COL_NAME > " \
-                    --header "ID | nombre | expediente | fecha | estado" \
+                    --header "nombre | expediente | fecha | estado" \
                     --delimiter '|' \
+                    --with-nth '2..5' \
                     --height 80% --border \
-                    --preview "${postgresql}/bin/psql -h '$HTR_PGRUN' -p '$HTR_PGPORT' -d '$HTR_PGDB' -x -c \"SELECT * FROM public.documents WHERE document_id = '{1}';\" 2>/dev/null" \
-                    --preview-window right:50% \
+                    --preview "echo 'Nombre:     {2}'; echo 'Expediente: {3}'; echo 'Fecha:      {4}'; echo 'Estado:     {5}'; echo 'Fondo:      {6}'; echo 'Volumen:    {7}'; echo 'Lugar:      {8}'; echo 'Soporte:    {9}'; echo ''; echo 'Descripción:'; echo '{10}'" \
+                    --preview-window 'right:45%:wrap' \
                 || true
                 ;;
             esac
