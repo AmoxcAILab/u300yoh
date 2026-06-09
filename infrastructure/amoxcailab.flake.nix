@@ -1100,6 +1100,9 @@ PYEOF
             # ── PYTHONPATH: raíz del proyecto para imports de database.* ──
             export PYTHONPATH="''${HTR_PIPELINE_DIR}''${PYTHONPATH:+:$PYTHONPATH}"
 
+            # ── LD_LIBRARY_PATH: librerías Nix para extensiones C del venv ──
+            export LD_LIBRARY_PATH="${pkgs.zlib}/lib:${pkgs.openssl.out}/lib:${pkgs.libffi}/lib''${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
+
             # ── Activar venv si existe ───────────────────────────────
             if [ -f ".venv/bin/activate" ]; then
               source .venv/bin/activate
