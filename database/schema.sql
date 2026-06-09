@@ -735,6 +735,21 @@ ON CONFLICT DO NOTHING;
 -- VISTAS — por collection_type (ingestión)
 -- ---------------------------------------------------------------------------
 
+CREATE OR REPLACE VIEW public.v_collections AS
+SELECT
+    c.collection_id,
+    c.collection_name,
+    c.collection_path,
+    c.collection_url,
+    ct.collection_type,
+    cs.collection_status,
+    ai.archival_institution_name,
+    ai.archival_institution_short
+FROM public.collections c
+LEFT JOIN public.collection_types        ct USING (collection_type_id)
+LEFT JOIN public.collection_statuses     cs USING (collection_status_id)
+LEFT JOIN public.archival_institutions   ai USING (archival_institution_id);
+
 CREATE OR REPLACE VIEW public.v_documents_agn AS
 SELECT
     d.document_id,
