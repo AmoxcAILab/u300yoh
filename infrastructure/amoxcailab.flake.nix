@@ -840,7 +840,7 @@ PYEOF
                   ${postgresql}/bin/psql \
                     -h "$HTR_PGRUN" -p "$HTR_PGPORT" -d "$HTR_PGDB" \
                     -v ON_ERROR_STOP=1 << DELSQL
-DELETE FROM public.notes_operation
+DELETE FROM public.notes_operations
   WHERE note_id IN (
     SELECT nd.note_id FROM public.notes_documents nd
     JOIN public.documents d USING (document_id)
