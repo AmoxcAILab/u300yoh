@@ -84,7 +84,7 @@
               row=$(${postgresql}/bin/psql \
                 -h "$HTR_PGRUN" -p "$HTR_PGPORT" -d "$HTR_PGDB" \
                 -tAF'|' \
-                -c "SELECT collection_id, collection_name, collection_type FROM public.collections ORDER BY collection_id;" \
+                -c "SELECT collection_id, collection_name, collection_type FROM public.v_collections ORDER BY collection_name;" \
                 2>/dev/null \
                 | ${pkgs.fzf}/bin/fzf \
                     --prompt "Colección > " \
@@ -828,7 +828,6 @@ PYEOF
                 htr_register_collection --collection-metadata "$metadata_file"
                 ;;
               borrar_coleccion)
-                ${fzfCollectionPicker}
                 COL_ID=$(_pick_collection_id)
                 [ -z "$COL_ID" ] && return
                 COL_NAME=$(${postgresql}/bin/psql \
