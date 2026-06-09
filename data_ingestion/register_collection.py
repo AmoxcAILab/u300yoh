@@ -40,8 +40,11 @@ Uso:
     --collection-metadata data_ingestion/metadata/collections/AGN_marina.metadata
 """
 
-import argparse
+import sys
 from pathlib import Path
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+
+import argparse
 from typing import Optional
 
 from database.migration.db import get_conn, Operations, resolve_collaborator_id
