@@ -167,8 +167,11 @@ def register_collection(
 
         print(f"  → {len(doc_files)} documentos encontrados")
 
+        cur = conn.cursor()
         for doc_meta in doc_files:
             try:
+                cur.execute("SAVEPOINT sp_doc")
+
                 doc_fields = parse_metadata(doc_meta)
 
                 # Extraer campos especiales
@@ -204,7 +207,10 @@ def register_collection(
                     Notes.link_to_operation(conn, note_id, op_id)
                     summary["n_notes"] += 1
 
+                cur.execute("RELEASE SAVEPOINT sp_doc")
+
             except Exception as exc:
+                cur.execute("ROLLBACK TO SAVEPOINT sp_doc")
                 msg = f"ERR {doc_meta.name}: {exc}"
                 print(f"    ✗ {msg}")
                 summary["errors"].append(msg)

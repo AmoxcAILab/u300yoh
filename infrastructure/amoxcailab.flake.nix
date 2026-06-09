@@ -814,16 +814,10 @@ PYEOF
                   --height 12 --border)
             case "$opcion" in
               registrar_coleccion)
-                echo "▶ Directorio fuente de la colección:"
-                read -r src_dir
-                echo "▶ Nombre de la colección:"
-                read -r col_name
-                echo "▶ Tipo (AGN / AGI / otro):"
-                read -r col_type
-                htr_register_collection \
-                  --source-dir "$src_dir" \
-                  --name "$col_name" \
-                  --collection-type "$col_type"
+                echo "▶ Ruta al archivo .metadata de la colección:"
+                echo "  (ej: data_ingestion/metadata/collections/AGN_marina.metadata)"
+                read -r metadata_file
+                htr_register_collection --collection-metadata "$metadata_file"
                 ;;
               descargar_imagenes)
                 COL_ID=$(_pick_collection_id)
