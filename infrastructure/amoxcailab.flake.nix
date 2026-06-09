@@ -1039,7 +1039,7 @@ DELSQL
                     --delimiter '|' \
                     --with-nth '2..5' \
                     --height 80% --border \
-                    --preview "echo 'Nombre:     {2}'; echo 'Expediente: {3}'; echo 'Fecha:      {4}'; echo 'Estado:     {5}'; echo 'Fondo:      {6}'; echo 'Volumen:    {7}'; echo 'Lugar:      {8}'; echo 'Soporte:    {9}'; echo ''; echo 'Descripción:'; echo '{10}'" \
+                    --preview "echo 'Nombre:     {2}'; echo 'Expediente: {3}'; echo 'Fecha:      {4}'; echo 'Estado:     {5}'; echo 'Fondo:      {6}'; echo 'Volumen:    {7}'; echo 'Lugar:      {8}'; echo 'Soporte:    {9}'; echo; echo 'Descripcion:'; echo '{10}'" \
                     --preview-window 'right:45%:wrap' \
                 || true
                 ;;
