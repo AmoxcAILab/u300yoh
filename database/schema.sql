@@ -15,19 +15,6 @@
 BEGIN;
 
 -- ---------------------------------------------------------------------------
--- MIGRACIONES (idempotentes — se aplican antes que el DDL principal)
--- ---------------------------------------------------------------------------
--- notes_operation → notes_operations
-DO $$ BEGIN
-  IF EXISTS (
-    SELECT 1 FROM information_schema.tables
-    WHERE table_schema = 'public' AND table_name = 'notes_operation'
-  ) THEN
-    ALTER TABLE public.notes_operation RENAME TO notes_operations;
-  END IF;
-END $$;
-
--- ---------------------------------------------------------------------------
 -- EXTENSIONES
 -- ---------------------------------------------------------------------------
 CREATE EXTENSION IF NOT EXISTS "vector";

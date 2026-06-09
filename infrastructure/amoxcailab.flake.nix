@@ -1550,11 +1550,11 @@ DELSQL
           _menu_base_de_datos() {
             local opcion
             opcion=$(printf \
-              "iniciar_bd\ndetener_bd\naplicar_schema\nestado_bd\ncreate_backup\nvolver" \
+              "iniciar_bd\ndetener_bd\naplicar_schema\nestado_bd\ncreate_backup\nreset_completo\nvolver" \
               | ${pkgs.fzf}/bin/fzf \
                   --prompt "Base de datos > " \
                   --header "$(_db_status_line)" \
-                  --height 12 --border)
+                  --height 13 --border)
             case "$opcion" in
               iniciar_bd)     htr_db_start ;;
               detener_bd)     htr_db_stop ;;
@@ -1567,6 +1567,26 @@ DELSQL
                 VENV_DIR="''${HTR_VENV:-.venv}"
                 export PYTHONPATH="$HTR_PIPELINE_DIR"
                 "$VENV_DIR/bin/python" database/create_backup.py --output-dir "$out_dir"
+                ;;
+              reset_completo)
+                echo "⚠ ATENCIÓN: Esto borrará TODA la base de datos ($HTR_PGDATA)."
+                echo "  No hay vuelta atrás. Escribe RESET para confirmar:"
+                read -r _confirm
+                if [ "$_confirm" != "RESET" ]; then
+                  echo "✗ Cancelado."
+                  return
+                fi
+                if ${postgresql}/bin/pg_isready \
+                     -h "$HTR_PGRUN" -p "$HTR_PGPORT" -q 2>/dev/null; then
+                  echo "▶ Deteniendo PostgreSQL..."
+                  ${postgresql}/bin/pg_ctl -D "$HTR_PGDATA" stop -m fast 2>/dev/null || true
+                fi
+                echo "▶ Eliminando PGDATA ($HTR_PGDATA)..."
+                rm -rf "$HTR_PGDATA"
+                echo "▶ Eliminando PGRUN ($HTR_PGRUN)..."
+                rm -rf "$HTR_PGRUN"
+                echo "✓ Base de datos eliminada."
+                echo "  Para empezar desde cero: htr_db_init"
                 ;;
             esac
           }
