@@ -15,6 +15,19 @@
 BEGIN;
 
 -- ---------------------------------------------------------------------------
+-- MIGRACIONES (idempotentes — se aplican antes que el DDL principal)
+-- ---------------------------------------------------------------------------
+-- notes_operation → notes_operations
+DO $$ BEGIN
+  IF EXISTS (
+    SELECT 1 FROM information_schema.tables
+    WHERE table_schema = 'public' AND table_name = 'notes_operation'
+  ) THEN
+    ALTER TABLE public.notes_operation RENAME TO notes_operations;
+  END IF;
+END $$;
+
+-- ---------------------------------------------------------------------------
 -- EXTENSIONES
 -- ---------------------------------------------------------------------------
 CREATE EXTENSION IF NOT EXISTS "vector";
@@ -395,7 +408,7 @@ CREATE TABLE IF NOT EXISTS public.notes_images (
 );
 
 -- Notas vinculadas a su operación de creación/modificación
-CREATE TABLE IF NOT EXISTS public.notes_operation (
+CREATE TABLE IF NOT EXISTS public.notes_operations (
     note_id              UUID NOT NULL REFERENCES public.notes(note_id),
     operation_id         UUID NOT NULL REFERENCES public.operations(operation_id),
     PRIMARY KEY (note_id, operation_id)
