@@ -924,11 +924,10 @@ PYEOF
                 ${postgresql}/bin/psql \
                   -h "$HTR_PGRUN" -p "$HTR_PGPORT" -d "$HTR_PGDB" \
                   -tAF'|' \
-                  -c "SELECT collection_id, collection_name, collection_type,
-                             collection_status,
-                             COALESCE(archival_institution_name,'—'),
-                             COALESCE(collection_path,'—'),
-                             COALESCE(collection_url,'—')
+                  -c "SELECT collection_name, collection_type, collection_status,
+                             COALESCE(archival_institution_name, 'N/A'),
+                             COALESCE(collection_path, 'N/A'),
+                             COALESCE(collection_url, 'N/A')
                       FROM public.v_collections
                       ORDER BY collection_type, collection_name;" \
                 2>/dev/null \
@@ -936,9 +935,8 @@ PYEOF
                     --prompt "Colecciones > " \
                     --header "nombre | tipo | estado | institución" \
                     --delimiter '|' \
-                    --with-nth '2..5' \
                     --height 80% --border \
-                    --preview "echo 'Nombre:      {2}'; echo 'Tipo:        {3}'; echo 'Estado:      {4}'; echo 'Institución: {5}'; echo 'Ruta:        {6}'; echo 'URL:         {7}'" \
+                    --preview "echo 'Nombre:      {1}'; echo 'Tipo:        {2}'; echo 'Estado:      {3}'; echo 'Institucion: {4}'; echo 'Ruta:        {5}'; echo 'URL:         {6}'" \
                     --preview-window 'right:45%:wrap' \
                 || true
                 ;;
@@ -1019,15 +1017,15 @@ DELSQL
                 ${postgresql}/bin/psql \
                   -h "$HTR_PGRUN" -p "$HTR_PGPORT" -d "$HTR_PGDB" \
                   -tAF'|' \
-                  -c "SELECT d.document_id, d.document_name,
-                             COALESCE(d.document_Expediente,'—'),
-                             COALESCE(d.document_Fecha_creacion,'—'),
+                  -c "SELECT d.document_name,
+                             COALESCE(d.document_Expediente, 'N/A'),
+                             COALESCE(d.document_Fecha_creacion, 'N/A'),
                              ds.document_status,
-                             COALESCE(d.document_Fondo,'—'),
-                             COALESCE(d.document_Volumen,'—'),
-                             COALESCE(d.document_Lugar_creacion,'—'),
-                             COALESCE(d.document_Soporte,'—'),
-                             COALESCE(d.document_Descripcion,'—')
+                             COALESCE(d.document_Fondo, 'N/A'),
+                             COALESCE(d.document_Volumen, 'N/A'),
+                             COALESCE(d.document_Lugar_creacion, 'N/A'),
+                             COALESCE(d.document_Soporte, 'N/A'),
+                             REPLACE(COALESCE(d.document_Descripcion, 'N/A'), '|', '/')
                       FROM public.documents d
                       JOIN public.document_statuses ds USING (document_status_id)
                       WHERE d.collection_id = '$COL_ID'
@@ -1037,9 +1035,8 @@ DELSQL
                     --prompt "$COL_NAME > " \
                     --header "nombre | expediente | fecha | estado" \
                     --delimiter '|' \
-                    --with-nth '2..5' \
                     --height 80% --border \
-                    --preview "echo 'Nombre:     {2}'; echo 'Expediente: {3}'; echo 'Fecha:      {4}'; echo 'Estado:     {5}'; echo 'Fondo:      {6}'; echo 'Volumen:    {7}'; echo 'Lugar:      {8}'; echo 'Soporte:    {9}'; echo; echo 'Descripcion:'; echo '{10}'" \
+                    --preview "echo 'Nombre:     {1}'; echo 'Expediente: {2}'; echo 'Fecha:      {3}'; echo 'Estado:     {4}'; echo 'Fondo:      {5}'; echo 'Volumen:    {6}'; echo 'Lugar:      {7}'; echo 'Soporte:    {8}'; echo; echo 'Descripcion:'; echo '{9}'" \
                     --preview-window 'right:45%:wrap' \
                 || true
                 ;;
