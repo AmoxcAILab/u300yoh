@@ -1019,15 +1019,27 @@ DELSQL
                 ${postgresql}/bin/psql \
                   -h "$HTR_PGRUN" -p "$HTR_PGPORT" -d "$HTR_PGDB" \
                   -tAF'|' \
-                  -c "SELECT d.document_id, d.document_name,
-                             COALESCE(d.document_Expediente, 'N/A'),
-                             COALESCE(d.document_Fecha_creacion, 'N/A'),
+                  -c "SELECT d.document_id,
+                             d.document_name,
+                             COALESCE(d.document_expediente,    'N/A'),
+                             COALESCE(d.document_fecha_creacion,'N/A'),
                              ds.document_status,
-                             COALESCE(d.document_Fondo, 'N/A'),
-                             COALESCE(d.document_Volumen, 'N/A'),
-                             COALESCE(d.document_Lugar_creacion, 'N/A'),
-                             COALESCE(d.document_Soporte, 'N/A'),
-                             REPLACE(COALESCE(d.document_Descripcion, 'N/A'), '|', '/')
+                             COALESCE(d.document_fondo,         'N/A'),
+                             COALESCE(d.document_volumen,       'N/A'),
+                             COALESCE(d.document_caja,          'N/A'),
+                             COALESCE(d.document_legajo,        'N/A'),
+                             COALESCE(d.document_archive,       'N/A'),
+                             COALESCE(d.document_lugar_creacion,'N/A'),
+                             COALESCE(d.document_soporte,       'N/A'),
+                             COALESCE(d.document_rango_fojas,   'N/A'),
+                             COALESCE(d.document_num_pags,      'N/A'),
+                             REPLACE(COALESCE(d.document_descripcion,'N/A'),'|','/'),
+                             REPLACE(COALESCE(
+                               (SELECT string_agg(n.note,' // ')
+                                FROM public.notes n
+                                JOIN public.notes_documents nd USING (note_id)
+                                WHERE nd.document_id = d.document_id),
+                               'N/A'),'|','/')
                       FROM public.documents d
                       JOIN public.document_statuses ds USING (document_status_id)
                       WHERE d.collection_id = '$COL_ID'
@@ -1039,7 +1051,7 @@ DELSQL
                     --delimiter '[|]' \
                     --with-nth '5,2,1' \
                     --height 80% --border \
-                    --preview "${postgresql}/bin/psql -h '$HTR_PGRUN' -p '$HTR_PGPORT' -d '$HTR_PGDB' -x -c \"SELECT * FROM public.documents WHERE document_id = '{1}'; SELECT n.note AS notas FROM public.notes n JOIN public.notes_documents nd USING (note_id) WHERE nd.document_id = '{1}';\" 2>/dev/null" \
+                    --preview "echo 'Nombre:      {2}'; echo 'Expediente:  {3}'; echo 'Fecha:       {4}'; echo 'Estado:      {5}'; echo 'Fondo:       {6}'; echo 'Volumen:     {7}'; echo 'Caja:        {8}'; echo 'Legajo:      {9}'; echo 'Archivo:     {10}'; echo 'Lugar:       {11}'; echo 'Soporte:     {12}'; echo 'Rango fojas: {13}'; echo 'Num pags:    {14}'; echo; echo 'Descripcion:'; echo '{15}'; echo; echo 'Notas:'; echo '{16}'" \
                     --preview-window 'right:50%:wrap' \
                 || true
                 ;;
@@ -1337,7 +1349,7 @@ DELSQL
                     --prompt "Notas > " \
                     --header "note_id | documento | nota" \
                     --delimiter '[|]' --height 80% --border \
-                    --preview "${postgresql}/bin/psql -h '$HTR_PGRUN' -p '$HTR_PGPORT' -d '$HTR_PGDB' -Atc \"SELECT note FROM public.notes WHERE note_id = '{1}';\" 2>/dev/null" \
+                    --preview "echo \"{3}\"" \
                     --preview-window 'bottom:40%:wrap' \
                 || true
                 ;;
