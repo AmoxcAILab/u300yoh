@@ -827,7 +827,7 @@ PYEOF
                   echo "✗ Directorio no encontrado: $METADATA_DIR"
                   break
                 fi
-                metadata_file=$(find "$METADATA_DIR" -name "*.metadata" \
+                metadata_file=$(find "$METADATA_DIR" -maxdepth 1 -name "*.metadata" \
                   | sed "s|$HTR_PIPELINE_DIR/||" \
                   | sort \
                   | ${pkgs.fzf}/bin/fzf \
