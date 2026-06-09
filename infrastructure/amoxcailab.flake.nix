@@ -939,20 +939,7 @@ PYEOF
                     --header "id | nombre | tipo | estado | institución | ruta" \
                     --delimiter '|' \
                     --height 80% --border \
-                    --preview "
-                      ${postgresql}/bin/psql \
-                        -h '$HTR_PGRUN' -p '$HTR_PGPORT' -d '$HTR_PGDB' \
-                        -c \"SELECT c.collection_name, ct.collection_type, cs.collection_status,
-                                    ai.archival_institution_name,
-                                    c.collection_path, c.collection_url,
-                                    (SELECT COUNT(*) FROM public.documents d WHERE d.collection_id = c.collection_id) AS n_documentos,
-                                    (SELECT COUNT(*) FROM public.images i JOIN public.documents d USING (document_id) WHERE d.collection_id = c.collection_id) AS n_imagenes
-                             FROM public.collections c
-                             JOIN public.collection_types ct USING (collection_type_id)
-                             JOIN public.collection_statuses cs USING (collection_status_id)
-                             LEFT JOIN public.archival_institutions ai USING (archival_institution_id)
-                             WHERE c.collection_id = '{1}';\" 2>/dev/null
-                    " \
+                    --preview "${postgresql}/bin/psql -h '$HTR_PGRUN' -p '$HTR_PGPORT' -d '$HTR_PGDB' -x -c \"SELECT * FROM public.v_collections WHERE collection_id::text = trim('{1}');\" 2>/dev/null" \
                     --preview-window right:50% \
                 || true
                 ;;
@@ -1046,19 +1033,7 @@ DELSQL
                     --header "ID | nombre | expediente | fecha | estado" \
                     --delimiter '|' \
                     --height 80% --border \
-                    --preview "
-                      ${postgresql}/bin/psql \
-                        -h '$HTR_PGRUN' -p '$HTR_PGPORT' -d '$HTR_PGDB' \
-                        -c \"SELECT d.document_name, d.document_Fondo, d.document_Volumen,
-                                    d.document_Expediente, d.document_Fecha_creacion,
-                                    d.document_Lugar_creacion, d.document_Soporte,
-                                    d.document_Descripcion, ds.document_status,
-                                    (SELECT COUNT(*) FROM public.images i WHERE i.document_id = d.document_id) AS n_imagenes,
-                                    (SELECT COUNT(*) FROM public.htr h JOIN public.images i USING (image_id) WHERE i.document_id = d.document_id) AS n_htr
-                             FROM public.documents d
-                             JOIN public.document_statuses ds USING (document_status_id)
-                             WHERE d.document_id = '{1}';\" 2>/dev/null
-                    " \
+                    --preview "${postgresql}/bin/psql -h '$HTR_PGRUN' -p '$HTR_PGPORT' -d '$HTR_PGDB' -x -c \"SELECT d.*, ds.document_status FROM public.documents d JOIN public.document_statuses ds USING (document_status_id) WHERE d.document_id::text = trim('{1}');\" 2>/dev/null" \
                     --preview-window right:50% \
                 || true
                 ;;
