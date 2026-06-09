@@ -822,10 +822,26 @@ PYEOF
                       ORDER BY collection_type, collection_name;"
                 ;;
               registrar_coleccion)
-                echo "▶ Ruta al archivo .metadata de la colección:"
-                echo "  (ej: data_ingestion/metadata/collections/AGN_marina.metadata)"
-                read -r metadata_file
-                htr_register_collection --collection-metadata "$metadata_file"
+                METADATA_DIR="$HTR_PIPELINE_DIR/data_ingestion/metadata"
+                if [ ! -d "$METADATA_DIR" ]; then
+                  echo "✗ Directorio no encontrado: $METADATA_DIR"
+                  break
+                fi
+                metadata_file=$(find "$METADATA_DIR" -name "*.metadata" \
+                  | sed "s|$HTR_PIPELINE_DIR/||" \
+                  | sort \
+                  | ${pkgs.fzf}/bin/fzf \
+                      --prompt "Colección > " \
+                      --header "Selecciona archivo .metadata (ESC para cancelar)" \
+                      --preview "cat '$HTR_PIPELINE_DIR/{}' 2>/dev/null" \
+                      --preview-window right:50% \
+                      --height 60% --border \
+                  || true)
+                if [ -z "$metadata_file" ]; then
+                  echo "✗ No se seleccionó ningún archivo."
+                  break
+                fi
+                htr_register_collection --collection-metadata "$HTR_PIPELINE_DIR/$metadata_file"
                 ;;
               borrar_coleccion)
                 COL_ID=$(_pick_collection_id)
