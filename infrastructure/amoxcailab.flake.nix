@@ -1016,44 +1016,231 @@ DELSQL
                 COL_NAME=$(${postgresql}/bin/psql \
                   -h "$HTR_PGRUN" -p "$HTR_PGPORT" -d "$HTR_PGDB" \
                   -tAc "SELECT collection_name FROM public.collections WHERE collection_id = '$COL_ID'")
-                ${postgresql}/bin/psql \
+                COL_TYPE=$(${postgresql}/bin/psql \
                   -h "$HTR_PGRUN" -p "$HTR_PGPORT" -d "$HTR_PGDB" \
-                  -tAF'|' \
-                  -c "SELECT d.document_id,
-                             d.document_name,
-                             COALESCE(d.document_expediente,    'N/A'),
-                             COALESCE(d.document_fecha_creacion,'N/A'),
-                             ds.document_status,
-                             COALESCE(d.document_fondo,         'N/A'),
-                             COALESCE(d.document_volumen,       'N/A'),
-                             COALESCE(d.document_caja,          'N/A'),
-                             COALESCE(d.document_legajo,        'N/A'),
-                             COALESCE(d.document_archive,       'N/A'),
-                             COALESCE(d.document_lugar_creacion,'N/A'),
-                             COALESCE(d.document_soporte,       'N/A'),
-                             COALESCE(d.document_rango_fojas,   'N/A'),
-                             COALESCE(d.document_num_pags,      'N/A'),
-                             REPLACE(COALESCE(d.document_descripcion,'N/A'),'|','/'),
-                             REPLACE(COALESCE(
-                               (SELECT string_agg(n.note,' // ')
-                                FROM public.notes n
-                                JOIN public.notes_documents nd USING (note_id)
-                                WHERE nd.document_id = d.document_id),
-                               'N/A'),'|','/')
-                      FROM public.documents d
-                      JOIN public.document_statuses ds USING (document_status_id)
-                      WHERE d.collection_id = '$COL_ID'
-                      ORDER BY d.document_name;" \
-                2>/dev/null \
-                | ${pkgs.fzf}/bin/fzf \
-                    --prompt "$COL_NAME > " \
-                    --header "estado | nombre | uuid" \
-                    --delimiter '[|]' \
-                    --with-nth '5,2,1' \
-                    --height 80% --border \
-                    --preview "echo 'Nombre:      {2}'; echo 'Expediente:  {3}'; echo 'Fecha:       {4}'; echo 'Estado:      {5}'; echo 'Fondo:       {6}'; echo 'Volumen:     {7}'; echo 'Caja:        {8}'; echo 'Legajo:      {9}'; echo 'Archivo:     {10}'; echo 'Lugar:       {11}'; echo 'Soporte:     {12}'; echo 'Rango fojas: {13}'; echo 'Num pags:    {14}'; echo; echo 'Descripcion:'; echo \"{15}\"; echo; echo 'Notas:'; echo \"{16}\"" \
-                    --preview-window 'right:50%:wrap' \
-                || true
+                  -tAc "SELECT ct.collection_type
+                        FROM public.collections c
+                        JOIN public.collection_types ct USING (collection_type_id)
+                        WHERE c.collection_id = '$COL_ID'" 2>/dev/null)
+                COL_TYPE=$(echo "$COL_TYPE" | tr -d '[:space:]')
+                case "$COL_TYPE" in
+
+                  AGN)
+                    # Cols: 1=id 2=name 3=status 4=archive 5=fondo 6=volumen 7=caja
+                    #       8=legajo 9=expediente 10=fecha 11=año 12=lugar 13=soporte
+                    #       14=descripcion 15=rango_fojas 16=num_pags 17=num_pags_escritas
+                    #       18=notas
+                    ${postgresql}/bin/psql \
+                      -h "$HTR_PGRUN" -p "$HTR_PGPORT" -d "$HTR_PGDB" \
+                      -tAF'|' \
+                      -c "SELECT d.document_id,
+                                 d.document_name,
+                                 ds.document_status,
+                                 COALESCE(d.document_archive,                    'N/A'),
+                                 COALESCE(d.document_fondo,                      'N/A'),
+                                 COALESCE(d.document_volumen,                    'N/A'),
+                                 COALESCE(d.document_caja,                       'N/A'),
+                                 COALESCE(d.document_legajo,                     'N/A'),
+                                 COALESCE(d.document_expediente,                 'N/A'),
+                                 COALESCE(d.document_fecha_creacion,             'N/A'),
+                                 COALESCE(d.\"document_Año_creacion\",           'N/A'),
+                                 COALESCE(d.document_lugar_creacion,             'N/A'),
+                                 COALESCE(d.document_soporte,                    'N/A'),
+                                 REPLACE(COALESCE(d.document_descripcion,        'N/A'),'|','/'),
+                                 COALESCE(d.document_rango_fojas,                'N/A'),
+                                 COALESCE(d.document_num_pags,                   'N/A'),
+                                 COALESCE(d.document_num_pags_escritas,          'N/A'),
+                                 REPLACE(COALESCE(
+                                   (SELECT string_agg(n.note,' // ')
+                                    FROM public.notes n
+                                    JOIN public.notes_documents nd USING (note_id)
+                                    WHERE nd.document_id = d.document_id),
+                                   'N/A'),'|','/')
+                          FROM public.documents d
+                          JOIN public.document_statuses ds USING (document_status_id)
+                          WHERE d.collection_id = '$COL_ID'
+                          ORDER BY d.document_name;" \
+                    2>/dev/null \
+                    | ${pkgs.fzf}/bin/fzf \
+                        --prompt "$COL_NAME [AGN] > " \
+                        --header "estado | nombre | uuid" \
+                        --delimiter '[|]' \
+                        --with-nth '3,2,1' \
+                        --height 80% --border \
+                        --preview "echo 'Nombre:          {2}'; echo 'Archivo:         {4}'; echo 'Fondo:           {5}'; echo 'Volumen:         {6}'; echo 'Caja:            {7}'; echo 'Legajo:          {8}'; echo 'Expediente:      {9}'; echo 'Fecha:           {10}'; echo 'Año:             {11}'; echo 'Lugar:           {12}'; echo 'Soporte:         {13}'; echo 'Rango fojas:     {15}'; echo 'Págs:            {16}'; echo 'Págs escritas:   {17}'; echo; echo 'Descripción:'; echo \"{14}\"; echo; echo 'Notas:'; echo \"{18}\"" \
+                        --preview-window 'right:50%:wrap' \
+                    || true
+                    ;;
+
+                  AMP)
+                    # Cols: 1=id 2=name 3=status 4=archive 5=fondo 6=volumen 7=tomo
+                    #       8=legajo 9=documento 10=fecha 11=año 12=lugar
+                    #       13=descripcion 14=rango_fojas 15=num_pags 16=num_pags_escritas
+                    #       17=notas
+                    ${postgresql}/bin/psql \
+                      -h "$HTR_PGRUN" -p "$HTR_PGPORT" -d "$HTR_PGDB" \
+                      -tAF'|' \
+                      -c "SELECT d.document_id,
+                                 d.document_name,
+                                 ds.document_status,
+                                 COALESCE(d.document_archive,                    'N/A'),
+                                 COALESCE(d.document_fondo,                      'N/A'),
+                                 COALESCE(d.document_volumen,                    'N/A'),
+                                 COALESCE(d.document_tomo,                       'N/A'),
+                                 COALESCE(d.document_legajo,                     'N/A'),
+                                 COALESCE(d.document_documento,                  'N/A'),
+                                 COALESCE(d.document_fecha_creacion,             'N/A'),
+                                 COALESCE(d.\"document_Año_creacion\",           'N/A'),
+                                 COALESCE(d.document_lugar_creacion,             'N/A'),
+                                 REPLACE(COALESCE(d.document_descripcion,        'N/A'),'|','/'),
+                                 COALESCE(d.document_rango_fojas,                'N/A'),
+                                 COALESCE(d.document_num_pags,                   'N/A'),
+                                 COALESCE(d.document_num_pags_escritas,          'N/A'),
+                                 REPLACE(COALESCE(
+                                   (SELECT string_agg(n.note,' // ')
+                                    FROM public.notes n
+                                    JOIN public.notes_documents nd USING (note_id)
+                                    WHERE nd.document_id = d.document_id),
+                                   'N/A'),'|','/')
+                          FROM public.documents d
+                          JOIN public.document_statuses ds USING (document_status_id)
+                          WHERE d.collection_id = '$COL_ID'
+                          ORDER BY d.document_name;" \
+                    2>/dev/null \
+                    | ${pkgs.fzf}/bin/fzf \
+                        --prompt "$COL_NAME [AMP] > " \
+                        --header "estado | nombre | uuid" \
+                        --delimiter '[|]' \
+                        --with-nth '3,2,1' \
+                        --height 80% --border \
+                        --preview "echo 'Nombre:          {2}'; echo 'Archivo:         {4}'; echo 'Fondo:           {5}'; echo 'Volumen:         {6}'; echo 'Tomo:            {7}'; echo 'Legajo:          {8}'; echo 'Documento:       {9}'; echo 'Fecha:           {10}'; echo 'Año:             {11}'; echo 'Lugar:           {12}'; echo 'Rango fojas:     {14}'; echo 'Págs:            {15}'; echo 'Págs escritas:   {16}'; echo; echo 'Descripción:'; echo \"{13}\"; echo; echo 'Notas:'; echo \"{17}\"" \
+                        --preview-window 'right:50%:wrap' \
+                    || true
+                    ;;
+
+                  BP)
+                    # Cols: 1=id 2=name 3=status 4=archive 5=fondo 6=volumen 7=expediente
+                    #       8=fecha 9=año 10=lugar 11=rango_fojas 12=num_pags
+                    #       13=num_pags_escritas 14=notas
+                    ${postgresql}/bin/psql \
+                      -h "$HTR_PGRUN" -p "$HTR_PGPORT" -d "$HTR_PGDB" \
+                      -tAF'|' \
+                      -c "SELECT d.document_id,
+                                 d.document_name,
+                                 ds.document_status,
+                                 COALESCE(d.document_archive,                    'N/A'),
+                                 COALESCE(d.document_fondo,                      'N/A'),
+                                 COALESCE(d.document_volumen,                    'N/A'),
+                                 COALESCE(d.document_expediente,                 'N/A'),
+                                 COALESCE(d.document_fecha_creacion,             'N/A'),
+                                 COALESCE(d.\"document_Año_creacion\",           'N/A'),
+                                 COALESCE(d.document_lugar_creacion,             'N/A'),
+                                 COALESCE(d.document_rango_fojas,                'N/A'),
+                                 COALESCE(d.document_num_pags,                   'N/A'),
+                                 COALESCE(d.document_num_pags_escritas,          'N/A'),
+                                 REPLACE(COALESCE(
+                                   (SELECT string_agg(n.note,' // ')
+                                    FROM public.notes n
+                                    JOIN public.notes_documents nd USING (note_id)
+                                    WHERE nd.document_id = d.document_id),
+                                   'N/A'),'|','/')
+                          FROM public.documents d
+                          JOIN public.document_statuses ds USING (document_status_id)
+                          WHERE d.collection_id = '$COL_ID'
+                          ORDER BY d.document_name;" \
+                    2>/dev/null \
+                    | ${pkgs.fzf}/bin/fzf \
+                        --prompt "$COL_NAME [BP] > " \
+                        --header "estado | nombre | uuid" \
+                        --delimiter '[|]' \
+                        --with-nth '3,2,1' \
+                        --height 80% --border \
+                        --preview "echo 'Nombre:          {2}'; echo 'Archivo:         {4}'; echo 'Fondo:           {5}'; echo 'Volumen:         {6}'; echo 'Expediente:      {7}'; echo 'Fecha:           {8}'; echo 'Año:             {9}'; echo 'Lugar:           {10}'; echo 'Rango fojas:     {11}'; echo 'Págs:            {12}'; echo 'Págs escritas:   {13}'; echo; echo 'Notas:'; echo \"{14}\"" \
+                        --preview-window 'right:50%:wrap' \
+                    || true
+                    ;;
+
+                  AGI)
+                    # Cols: 1=id 2=name 3=status 4=archive 5=titulo 6=signatura
+                    #       7=productores 8=indices_descripcion 9=fecha 10=año
+                    #       11=lugar 12=soporte 13=descripcion 14=num_pags 15=notas
+                    ${postgresql}/bin/psql \
+                      -h "$HTR_PGRUN" -p "$HTR_PGPORT" -d "$HTR_PGDB" \
+                      -tAF'|' \
+                      -c "SELECT d.document_id,
+                                 d.document_name,
+                                 ds.document_status,
+                                 COALESCE(d.document_archive,                              'N/A'),
+                                 COALESCE(d.document_titulo,                               'N/A'),
+                                 COALESCE(d.document_signatura,                            'N/A'),
+                                 COALESCE(d.document_productores,                          'N/A'),
+                                 REPLACE(COALESCE(d.document_indices_de_descripcion,       'N/A'),'|','/'),
+                                 COALESCE(d.document_fecha_creacion,                       'N/A'),
+                                 COALESCE(d.\"document_Año_creacion\",                     'N/A'),
+                                 COALESCE(d.document_lugar_creacion,                       'N/A'),
+                                 COALESCE(d.document_soporte,                              'N/A'),
+                                 REPLACE(COALESCE(d.document_descripcion,                  'N/A'),'|','/'),
+                                 COALESCE(d.document_num_pags,                             'N/A'),
+                                 REPLACE(COALESCE(
+                                   (SELECT string_agg(n.note,' // ')
+                                    FROM public.notes n
+                                    JOIN public.notes_documents nd USING (note_id)
+                                    WHERE nd.document_id = d.document_id),
+                                   'N/A'),'|','/')
+                          FROM public.documents d
+                          JOIN public.document_statuses ds USING (document_status_id)
+                          WHERE d.collection_id = '$COL_ID'
+                          ORDER BY d.document_name;" \
+                    2>/dev/null \
+                    | ${pkgs.fzf}/bin/fzf \
+                        --prompt "$COL_NAME [AGI] > " \
+                        --header "estado | nombre | uuid" \
+                        --delimiter '[|]' \
+                        --with-nth '3,2,1' \
+                        --height 80% --border \
+                        --preview "echo 'Nombre:       {2}'; echo 'Archivo:      {4}'; echo 'Título:       {5}'; echo 'Signatura:    {6}'; echo 'Productores:  {7}'; echo 'Fecha:        {9}'; echo 'Año:          {10}'; echo 'Lugar:        {11}'; echo 'Soporte:      {12}'; echo 'Págs:         {14}'; echo; echo 'Índices desc.:'; echo \"{8}\"; echo; echo 'Descripción:'; echo \"{13}\"; echo; echo 'Notas:'; echo \"{15}\"" \
+                        --preview-window 'right:50%:wrap' \
+                    || true
+                    ;;
+
+                  *)
+                    # corpus_local, ground_truth_collection, o tipo desconocido
+                    # Cols: 1=id 2=name 3=status 4=archive 5=fecha 6=año 7=lugar
+                    #       8=num_pags 9=notas
+                    ${postgresql}/bin/psql \
+                      -h "$HTR_PGRUN" -p "$HTR_PGPORT" -d "$HTR_PGDB" \
+                      -tAF'|' \
+                      -c "SELECT d.document_id,
+                                 d.document_name,
+                                 ds.document_status,
+                                 COALESCE(d.document_archive,                    'N/A'),
+                                 COALESCE(d.document_fecha_creacion,             'N/A'),
+                                 COALESCE(d.\"document_Año_creacion\",           'N/A'),
+                                 COALESCE(d.document_lugar_creacion,             'N/A'),
+                                 COALESCE(d.document_num_pags,                   'N/A'),
+                                 REPLACE(COALESCE(
+                                   (SELECT string_agg(n.note,' // ')
+                                    FROM public.notes n
+                                    JOIN public.notes_documents nd USING (note_id)
+                                    WHERE nd.document_id = d.document_id),
+                                   'N/A'),'|','/')
+                          FROM public.documents d
+                          JOIN public.document_statuses ds USING (document_status_id)
+                          WHERE d.collection_id = '$COL_ID'
+                          ORDER BY d.document_name;" \
+                    2>/dev/null \
+                    | ${pkgs.fzf}/bin/fzf \
+                        --prompt "$COL_NAME > " \
+                        --header "estado | nombre | uuid" \
+                        --delimiter '[|]' \
+                        --with-nth '3,2,1' \
+                        --height 80% --border \
+                        --preview "echo 'Nombre:  {2}'; echo 'Archivo: {4}'; echo 'Fecha:   {5}'; echo 'Año:     {6}'; echo 'Lugar:   {7}'; echo 'Págs:    {8}'; echo; echo 'Notas:'; echo \"{9}\"" \
+                        --preview-window 'right:50%:wrap' \
+                    || true
+                    ;;
+
+                esac
                 ;;
             esac
           }
