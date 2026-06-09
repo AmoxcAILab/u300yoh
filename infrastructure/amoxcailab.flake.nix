@@ -511,7 +511,7 @@ PYEOF
             -c "
               SELECT
                 o.operation_id,
-                ot.operation_type_name,
+                ot.operation_type,
                 o.status,
                 to_char(o.logged_at, 'YYYY-MM-DD HH24:MI') AS logged_at,
                 COALESCE(c.collaborator_name, '—') AS collaborator,
@@ -1034,10 +1034,83 @@ DELSQL
             esac
           }
 
+          _menu_documentos() {
+            local opcion
+            opcion=$(printf \
+              "listar_documentos\nver_documento\nvolver" \
+              | ${pkgs.fzf}/bin/fzf \
+                  --prompt "Documentos > " \
+                  --header "$(_db_status_line)" \
+                  --height 10 --border)
+            case "$opcion" in
+              listar_documentos)
+                COL_ID=$(_pick_collection_id)
+                [ -z "$COL_ID" ] && return
+                COL_NAME=$(${postgresql}/bin/psql \
+                  -h "$HTR_PGRUN" -p "$HTR_PGPORT" -d "$HTR_PGDB" \
+                  -tAc "SELECT collection_name FROM public.collections WHERE collection_id = '$COL_ID'")
+                ${postgresql}/bin/psql \
+                  -h "$HTR_PGRUN" -p "$HTR_PGPORT" -d "$HTR_PGDB" \
+                  -tAF'|' \
+                  -c "SELECT document_id, document_name, document_Expediente,
+                             document_Fecha_creacion, document_status
+                      FROM public.documents d
+                      JOIN public.document_statuses ds USING (document_status_id)
+                      WHERE d.collection_id = '$COL_ID'
+                      ORDER BY d.document_name;" \
+                2>/dev/null \
+                | ${pkgs.fzf}/bin/fzf \
+                    --prompt "$COL_NAME > " \
+                    --header "ID | nombre | expediente | fecha | estado" \
+                    --delimiter '|' \
+                    --height 80% --border \
+                    --preview "
+                      ${postgresql}/bin/psql \
+                        -h '$HTR_PGRUN' -p '$HTR_PGPORT' -d '$HTR_PGDB' \
+                        -c \"SELECT document_name, document_Fondo, document_Volumen,
+                                    document_Expediente, document_Fecha_creacion,
+                                    document_Lugar_creacion, document_Soporte,
+                                    document_Descripcion
+                             FROM public.documents
+                             WHERE document_id = '{1}';\" 2>/dev/null
+                    " \
+                    --preview-window right:50% \
+                || true
+                ;;
+              ver_documento)
+                COL_ID=$(_pick_collection_id)
+                [ -z "$COL_ID" ] && return
+                DOC=$(${postgresql}/bin/psql \
+                  -h "$HTR_PGRUN" -p "$HTR_PGPORT" -d "$HTR_PGDB" \
+                  -tAF'|' \
+                  -c "SELECT document_id, document_name FROM public.documents
+                      WHERE collection_id = '$COL_ID' ORDER BY document_name;" \
+                2>/dev/null \
+                | ${pkgs.fzf}/bin/fzf \
+                    --prompt "Documento > " \
+                    --delimiter '|' --height 40% --border || true)
+                DOC_ID=$(echo "$DOC" | cut -d'|' -f1 | tr -d ' ')
+                [ -z "$DOC_ID" ] && return
+                ${postgresql}/bin/psql \
+                  -h "$HTR_PGRUN" -p "$HTR_PGPORT" -d "$HTR_PGDB" \
+                  -c "SELECT * FROM public.documents WHERE document_id = '$DOC_ID';" \
+                  2>/dev/null
+                echo ""
+                echo "── Notas ──"
+                ${postgresql}/bin/psql \
+                  -h "$HTR_PGRUN" -p "$HTR_PGPORT" -d "$HTR_PGDB" \
+                  -c "SELECT n.note FROM public.notes n
+                      JOIN public.notes_documents nd USING (note_id)
+                      WHERE nd.document_id = '$DOC_ID';" \
+                  2>/dev/null
+                ;;
+            esac
+          }
+
           # ── Bucle principal del menú ─────────────────────────────
           while true; do
             OPCION=$(printf \
-              "colecciones\nhtr\nmodelos\nbase_de_datos\nanotaciones\nknowledge_base\npython_packages\nsalir" \
+              "colecciones\ndocumentos\nhtr\nmodelos\nbase_de_datos\nanotaciones\nknowledge_base\npython_packages\nsalir" \
               | ${pkgs.fzf}/bin/fzf \
                   --prompt "AmoxcAILab > " \
                   --header "$(printf '═══ AmoxcAILab HTR Pipeline ═══\n%s' "$(_db_status_line)")" \
