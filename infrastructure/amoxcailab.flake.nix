@@ -1097,6 +1097,9 @@ PYEOF
             # ── Variables de entorno ─────────────────────────────────
             ${dbEnvVars}
 
+            # ── PYTHONPATH: raíz del proyecto para imports de database.* ──
+            export PYTHONPATH="''${HTR_PIPELINE_DIR}''${PYTHONPATH:+:$PYTHONPATH}"
+
             # ── Activar venv si existe ───────────────────────────────
             if [ -f ".venv/bin/activate" ]; then
               source .venv/bin/activate
