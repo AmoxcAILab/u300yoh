@@ -934,8 +934,9 @@ PYEOF
                 2>/dev/null \
                 | ${pkgs.fzf}/bin/fzf \
                     --prompt "Colecciones > " \
-                    --header "uuid | nombre | tipo | estado | institución" \
+                    --header "estado | nombre | uuid" \
                     --delimiter '[|]' \
+                    --with-nth '4,2,1' \
                     --height 80% --border \
                     --preview "echo 'Nombre:      {2}'; echo 'Tipo:        {3}'; echo 'Estado:      {4}'; echo 'Institucion: {5}'; echo 'Ruta:        {6}'; echo 'URL:         {7}'" \
                     --preview-window 'right:45%:wrap' \
@@ -1034,8 +1035,9 @@ DELSQL
                 2>/dev/null \
                 | ${pkgs.fzf}/bin/fzf \
                     --prompt "$COL_NAME > " \
-                    --header "uuid | nombre | expediente | fecha | estado" \
+                    --header "estado | nombre | uuid" \
                     --delimiter '[|]' \
+                    --with-nth '5,2,1' \
                     --height 80% --border \
                     --preview "echo 'Nombre:     {2}'; echo 'Expediente: {3}'; echo 'Fecha:      {4}'; echo 'Estado:     {5}'; echo 'Fondo:      {6}'; echo 'Volumen:    {7}'; echo 'Lugar:      {8}'; echo 'Soporte:    {9}'; echo; echo 'Descripcion:'; echo '{10}'" \
                     --preview-window 'right:45%:wrap' \

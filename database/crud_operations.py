@@ -33,25 +33,25 @@ from database.migration.db import get_conn, Operations, resolve_collaborator_id
 # Campos de .metadata que no estén aquí se añaden vía ALTER TABLE ADD COLUMN.
 _DOCUMENT_SCHEMA_COLUMNS: frozenset[str] = frozenset({
     "document_archive",
-    "document_Fondo",
-    "document_Volumen",
-    "document_Caja",
-    "document_Tomo",
-    "document_Documento",
-    "document_Legajo",
-    "document_Expediente",
-    "document_Titulo",
-    "document_Signatura",
-    "document_Productores",
-    "document_Indices_de_Descripcion",
-    "document_Fecha_creacion",
-    "document_Año_creacion",
-    "document_Lugar_creacion",
-    "document_Soporte",
-    "document_Descripcion",
-    "document_Rango_fojas",
-    "document_Num_pags",
-    "document_Num_pags_escritas",
+    "document_fondo",
+    "document_volumen",
+    "document_caja",
+    "document_tomo",
+    "document_documento",
+    "document_legajo",
+    "document_expediente",
+    "document_titulo",
+    "document_signatura",
+    "document_productores",
+    "document_indices_de_descripcion",
+    "document_fecha_creacion",
+    "document_año_creacion",
+    "document_lugar_creacion",
+    "document_soporte",
+    "document_descripcion",
+    "document_rango_fojas",
+    "document_num_pags",
+    "document_num_pags_escritas",
 })
 
 
@@ -234,8 +234,8 @@ class Documents:
         row = cur.fetchone()
         document_status_id = row["document_status_id"] if row else None
 
-        # Filtrar campos vacíos y garantizar que existen las columnas dinámicas
-        extra = {k: v for k, v in archival_fields.items() if v is not None and v != ""}
+        # Filtrar campos vacíos, normalizar a minúsculas y garantizar columnas dinámicas
+        extra = {k.lower(): v for k, v in archival_fields.items() if v is not None and v != ""}
         Documents._ensure_columns(conn, extra)
 
         # Construir INSERT dinámico
