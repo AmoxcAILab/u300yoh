@@ -1,195 +1,248 @@
 """
 data_ingestion/register_collection.py
 ──────────────────────────────────────
-Registra una colección en la BD recorriendo su estructura de directorios.
+Registra una colección y sus documentos desde archivos .metadata.
 
-Estructura esperada en --source-dir:
-  nombre_colección/
-    nombre_colección_metadata.csv   ← metadatos de todos los documentos
-    documento_001/                  ← subdirectorio = documento
-      imagen_001.jpg                ← imagen = página del documento
-      imagen_002.jpg
-    documento_002/
-      ...
+Estructura de archivos esperada:
+  {metadata_root}/
+    {collection}.metadata              ← metadatos de la colección
+    documents/{collection}/            ← metadatos de documentos
+      **/*.metadata                    ← un archivo por documento
+
+Formato de {collection}.metadata:
+  collection_name                : Marina
+  collection_type                : AGN
+  collection_status              : new
+  collection_url                 :
+  collection_archival_institution: Archivo General de la Nación
+
+Formato de {document}.metadata:
+  document_name             : AGN_Marina_v001-1_exp001
+  document_status           : new
+  document_archive          : Archivo General de la Nación
+  document_Fondo            : Marina
+  document_Notas            : Las fojas 4 y 5 están en blanco.  ← se crea como nota
+  ...
 
 Flujo:
-  1. Insertar en public.collections → operación collection_registered
-  2. Leer CSV de metadatos si existe
-  3. Para cada subdirectorio: insertar en public.documents → operación document_registered
-  4. Para cada imagen: insertar en public.images → operación image_registered
-  5. Imprimir resumen
+  1. Parsear {collection}.metadata → INSERT en collections → collection_registered
+  2. Si collection_Notas → crear nota vinculada a la colección
+  3. Para cada {document}.metadata:
+     a. Extraer document_Notas (si existe)
+     b. INSERT en documents con todos los campos archivísticos → document_registered
+     c. Si había document_Notas → crear nota vinculada al documento
 
 Uso:
-  python register_collection.py \\
-    --name "AGN_Flotas_Serie_1" \\
-    --collection-type AGN \\
-    --source-dir ./data_ingestion/raw_collections_images/AGN_Flotas_Serie_1
+  python data_ingestion/register_collection.py \\
+    --collection-metadata data_ingestion/metadata/collections/AGN_marina.metadata
 
-  htr_register_collection
+  htr_register_collection \\
+    --collection-metadata data_ingestion/metadata/collections/AGN_marina.metadata
 """
 
 import argparse
-import csv
 from pathlib import Path
 from typing import Optional
 
-from database.migration.db import get_conn
-from database.crud_operations import Collections, Documents, Images
-
-IMAGE_EXTENSIONS = {".jpg", ".jpeg", ".png", ".tif", ".tiff", ".bmp"}
+from database.migration.db import get_conn, Operations, resolve_collaborator_id
+from database.crud_operations import Collections, Documents, Notes
 
 
-def _read_metadata_csv(csv_path: Path) -> dict[str, dict]:
+# Campos del .metadata de colección que se usan para el INSERT o se ignoran.
+# Todo lo demás se descarta silenciosamente.
+_COLLECTION_KNOWN = {
+    "collection_name",
+    "collection_type",
+    "collection_status",
+    "collection_path",
+    "collection_url",
+    "collection_archival_institution",
+}
+
+# Campos del .metadata de documento que tienen tratamiento especial.
+_DOCUMENT_SKIP = {
+    "document_id",        # generado por la BD
+    "collection_id",      # se pasa en tiempo de ejecución
+    "document_status_id", # se resuelve desde document_status
+}
+_DOCUMENT_SPECIAL = {
+    "document_name",
+    "document_status",
+    "document_path",
+    "document_url",
+    "document_Notas",   # se crea como nota, no se inserta en documents
+}
+
+
+def parse_metadata(path: Path) -> dict[str, Optional[str]]:
     """
-    Lee el CSV de metadatos de la colección.
-    Devuelve {document_filename: {columna: valor}}.
-    La primera columna se usa como clave del documento.
+    Parsea un archivo .metadata de formato 'clave : valor'.
+    Los valores vacíos se devuelven como None.
+    Ignora líneas sin ':'.
     """
-    if not csv_path.exists():
-        return {}
-    metadata = {}
-    with csv_path.open(encoding="utf-8-sig", newline="") as f:
-        reader = csv.DictReader(f)
-        for row in reader:
-            key = list(row.values())[0].strip()
-            metadata[key] = dict(row)
-    return metadata
+    fields: dict[str, Optional[str]] = {}
+    for line in path.read_text(encoding="utf-8").splitlines():
+        if ":" not in line:
+            continue
+        key, _, value = line.partition(":")
+        key = key.strip()
+        value = value.strip() or None
+        if key:
+            fields[key] = value
+    return fields
 
 
 def register_collection(
-    source_dir: Path,
-    collection_name: str,
-    collection_type: str = "AGN",
-    collection_url: Optional[str] = None,
-    collaborator_id: Optional[int] = None,
+    collection_metadata: Path,
+    collaborator_id: Optional[str] = None,
 ) -> dict:
     """
-    Registra una colección completa desde un directorio local.
-    Devuelve un resumen con los IDs asignados.
+    Registra una colección completa en la BD desde sus archivos .metadata.
+    Devuelve un resumen con los IDs asignados y conteos.
     """
-    source_dir = source_dir.resolve()
-    if not source_dir.is_dir():
-        raise ValueError(f"El directorio no existe: {source_dir}")
+    collection_metadata = collection_metadata.resolve()
+    if not collection_metadata.exists():
+        raise FileNotFoundError(f"Archivo no encontrado: {collection_metadata}")
 
-    csv_candidates = list(source_dir.glob("*_metadata.csv"))
-    metadata_by_document: dict[str, dict] = {}
-    metadata_csv_path = None
-    if csv_candidates:
-        metadata_csv_path = csv_candidates[0]
-        metadata_by_document = _read_metadata_csv(metadata_csv_path)
-        print(f"  ✓ CSV de metadatos: {metadata_csv_path.name} "
-              f"({len(metadata_by_document)} registros)")
-    else:
-        print("  ⚠ No se encontró CSV de metadatos.")
+    collection_name_from_stem = collection_metadata.stem  # e.g. "AGN_marina"
+    docs_dir = collection_metadata.parent / "documents" / collection_name_from_stem
+
+    # ── 1. Parsear metadatos de colección ─────────────────────────────────
+    col_fields = parse_metadata(collection_metadata)
+
+    collection_name = col_fields.get("collection_name") or collection_name_from_stem
+    collection_type = col_fields.get("collection_type") or "AGN"
+    collection_status = col_fields.get("collection_status") or "new"
+    collection_path = col_fields.get("collection_path")
+    collection_url = col_fields.get("collection_url")
+    archival_institution = col_fields.get("collection_archival_institution")
+    collection_notes = col_fields.get("collection_Notas")
 
     summary = {
-        "collection_id": None,
+        "collection_id":   None,
         "collection_name": collection_name,
-        "n_documents": 0,
-        "n_images": 0,
-        "documents": [],
+        "n_documents":     0,
+        "n_notes":         0,
+        "errors":          [],
     }
 
     with get_conn() as conn:
+        collaborator_id = resolve_collaborator_id(conn, collaborator_id)
+
+        # ── 2. Registrar colección ─────────────────────────────────────────
         collection_id = Collections.create(
             conn,
             collection_name=collection_name,
             collection_type=collection_type,
-            collection_path=str(source_dir),
+            collection_status=collection_status,
+            collection_path=collection_path,
             collection_url=collection_url,
-            metadata_csv_path=str(metadata_csv_path) if metadata_csv_path else None,
+            archival_institution=archival_institution,
             collaborator_id=collaborator_id,
         )
-        summary["collection_id"] = collection_id
-        print(f"  ✓ Colección registrada: id={collection_id}")
+        summary["collection_id"] = str(collection_id)
+        print(f"  ✓ Colección registrada: {collection_name} → {collection_id}")
 
-        document_dirs = sorted(
-            d for d in source_dir.iterdir() if d.is_dir()
-        )
-        if not document_dirs:
-            print("  ⚠ No se encontraron subdirectorios de documentos.")
+        # ── 3. Nota de colección (si existe) ──────────────────────────────
+        if collection_notes:
+            note_id = Notes.create(conn, collection_notes)
+            Notes.link_to_collection(conn, note_id, collection_id)
+            op_id = Operations.record(conn, "note_created", collaborator_id)
+            Notes.link_to_operation(conn, note_id, op_id)
+            summary["n_notes"] += 1
+            print(f"    ✓ Nota de colección registrada")
 
-        for document_dir in document_dirs:
-            doc_filename = document_dir.name
-            doc_metadata = metadata_by_document.get(doc_filename, {})
-            detail = None
-            if doc_metadata:
-                detail = "; ".join(
-                    f"{k}={v}" for k, v in list(doc_metadata.items())[:3]
-                )
+        # ── 4. Documentos ─────────────────────────────────────────────────
+        if not docs_dir.exists():
+            print(f"  ⚠ Directorio de documentos no encontrado: {docs_dir}")
+            return summary
 
-            document_id = Documents.create(
-                conn,
-                collection_id=collection_id,
-                document_filename=doc_filename,
-                document_path=str(document_dir),
-                detail=detail,
-                collaborator_id=collaborator_id,
-            )
+        doc_files = sorted(docs_dir.rglob("*.metadata"))
+        if not doc_files:
+            print(f"  ⚠ No se encontraron archivos .metadata en {docs_dir}")
+            return summary
 
-            doc_info = {
-                "document_id": document_id,
-                "document_filename": doc_filename,
-                "n_images": 0,
-            }
+        print(f"  → {len(doc_files)} documentos encontrados")
 
-            image_files = sorted(
-                f for f in document_dir.iterdir()
-                if f.is_file() and f.suffix.lower() in IMAGE_EXTENSIONS
-            )
+        for doc_meta in doc_files:
+            try:
+                doc_fields = parse_metadata(doc_meta)
 
-            for page_number, image_file in enumerate(image_files, start=1):
-                Images.create(
+                # Extraer campos especiales
+                document_name   = doc_fields.pop("document_name", None) or doc_meta.stem
+                document_status = doc_fields.pop("document_status", None) or "new"
+                document_path   = doc_fields.pop("document_path", None)
+                document_url    = doc_fields.pop("document_url", None)
+                doc_notes       = doc_fields.pop("document_Notas", None)
+
+                # Eliminar campos que la BD genera o que no corresponden a documents
+                for skip in _DOCUMENT_SKIP:
+                    doc_fields.pop(skip, None)
+
+                # Insertar documento con todos los campos archivísticos restantes
+                document_id = Documents.create(
                     conn,
-                    document_id=document_id,
-                    image_filename=image_file.name,
-                    image_path=str(image_file),
-                    image_type="original",
-                    page_number=page_number,
+                    collection_id=collection_id,
+                    document_name=document_name,
+                    document_status=document_status,
+                    document_path=document_path,
+                    document_url=document_url,
                     collaborator_id=collaborator_id,
+                    **doc_fields,
                 )
-                doc_info["n_images"] += 1
-                summary["n_images"] += 1
+                summary["n_documents"] += 1
+                print(f"    ✓ {document_name}")
 
-            summary["documents"].append(doc_info)
-            summary["n_documents"] += 1
-            print(f"    {doc_filename}: {doc_info['n_images']} imágenes")
+                # Nota del documento (si existe)
+                if doc_notes:
+                    note_id = Notes.create(conn, doc_notes)
+                    Notes.link_to_document(conn, note_id, document_id)
+                    op_id = Operations.record(conn, "note_created", collaborator_id)
+                    Notes.link_to_operation(conn, note_id, op_id)
+                    summary["n_notes"] += 1
+
+            except Exception as exc:
+                msg = f"ERR {doc_meta.name}: {exc}"
+                print(f"    ✗ {msg}")
+                summary["errors"].append(msg)
 
     return summary
 
 
-def main():
+def main() -> None:
     parser = argparse.ArgumentParser(
-        description="Registrar una colección de documentos históricos en la BD."
+        description="Registrar colección y documentos desde archivos .metadata."
     )
-    parser.add_argument("--name", required=True,
-                        help="Nombre de la colección.")
-    parser.add_argument("--collection-type", default="AGN",
-                        choices=["AGN", "AGI", "corpus_local", "ground_truth_collection"])
-    parser.add_argument("--source-dir", type=Path, required=True,
-                        help="Directorio raíz con subcarpetas de documentos.")
-    parser.add_argument("--url", default=None)
-    parser.add_argument("--collaborator-id", type=int, default=None)
+    parser.add_argument(
+        "--collection-metadata",
+        type=Path,
+        required=True,
+        help="Ruta al archivo {collection}.metadata (p.ej. data_ingestion/metadata/collections/AGN_marina.metadata)",
+    )
+    parser.add_argument(
+        "--collaborator-id",
+        default=None,
+        help="UUID del colaborador (default: $HTR_COLLABORATOR_ID o $USER)",
+    )
     args = parser.parse_args()
 
-    print(f"▶ Registrando colección '{args.name}'...")
-    print(f"  Fuente : {args.source_dir}")
-    print(f"  Tipo   : {args.collection_type}")
+    print(f"▶ Registrando desde: {args.collection_metadata}")
 
     summary = register_collection(
-        source_dir=args.source_dir,
-        collection_name=args.name,
-        collection_type=args.collection_type,
-        collection_url=args.url,
+        collection_metadata=args.collection_metadata,
         collaborator_id=args.collaborator_id,
     )
 
     print()
-    print("═" * 50)
+    print("═" * 55)
     print(f"  collection_id : {summary['collection_id']}")
     print(f"  Documentos    : {summary['n_documents']}")
-    print(f"  Imágenes      : {summary['n_images']}")
-    print("═" * 50)
+    print(f"  Notas         : {summary['n_notes']}")
+    if summary["errors"]:
+        print(f"  Errores       : {len(summary['errors'])}")
+        for e in summary["errors"]:
+            print(f"    - {e}")
+    print("═" * 55)
 
 
 if __name__ == "__main__":

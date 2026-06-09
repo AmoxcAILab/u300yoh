@@ -104,7 +104,7 @@ def check_connection() -> bool:
 # RESOLUCIÓN DE COLLABORATOR ID
 # ──────────────────────────────────────────────────────────────
 
-def resolve_collaborator_id(conn, collaborator_id: Optional[int] = None) -> Optional[int]:
+def resolve_collaborator_id(conn, collaborator_id: Optional[str] = None) -> Optional[str]:
     """
     Resuelve el collaborator_id activo con este orden de precedencia:
     1. El valor pasado explícitamente
@@ -117,7 +117,7 @@ def resolve_collaborator_id(conn, collaborator_id: Optional[int] = None) -> Opti
 
     env_id = os.environ.get("HTR_COLLABORATOR_ID")
     if env_id:
-        return int(env_id)
+        return env_id  # UUID string, no convertir a int
 
     username = os.environ.get("USER") or os.environ.get("USERNAME")
     if not username:
@@ -149,7 +149,7 @@ def resolve_collaborator_id(conn, collaborator_id: Optional[int] = None) -> Opti
 class OperationTypes:
     """Cache en memoria de operation_type_id por nombre."""
 
-    _cache: dict[str, int] = {}
+    _cache: dict[str, str] = {}  # nombre → UUID string
 
     @classmethod
     def get_id(cls, conn, operation_type: str) -> int:

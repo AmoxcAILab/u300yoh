@@ -1,7 +1,6 @@
-collection_id                      : 4
-collection_name                    : Manuscritos
-collection_path                    :
-collection_type_id                 : 3
-collection_status_id               : 1
-collection_url                     :
-collection_archival_institution_id : 3
+collection_name                : Manuscritos
+collection_type                : BP
+collection_status              : new
+collection_path                :
+collection_url                 :
+collection_archival_institution: Biblioteca Palafoxiana

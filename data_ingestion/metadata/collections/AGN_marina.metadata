@@ -1,7 +1,6 @@
-collection_id                      : 1
-collection_name                    : Marina
-collection_path                    :
-collection_type_id                 : 1
-collection_status_id               : 1
-collection_url                     :
-collection_archival_institution_id : 1
+collection_name                : Marina
+collection_type                : AGN
+collection_status              : new
+collection_path                :
+collection_url                 :
+collection_archival_institution: Archivo General de la Nación

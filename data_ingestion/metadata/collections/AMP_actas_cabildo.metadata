@@ -1,7 +1,6 @@
-collection_id                      : 3
-collection_name                    : Actas Cabildo
-collection_path                    :
-collection_type_id                 : 2
-collection_status_id               : 1
-collection_url                     :
-collection_archival_institution_id : 2
+collection_name                : Actas Cabildo
+collection_type                : AMP
+collection_status              : new
+collection_path                :
+collection_url                 :
+collection_archival_institution: Archivo Municipal de Puebla
