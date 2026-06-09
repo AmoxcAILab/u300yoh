@@ -132,6 +132,20 @@ def register_collection(
     with get_conn() as conn:
         collaborator_id = resolve_collaborator_id(conn, collaborator_id)
 
+        # ── Verificar que la colección no existe ya ────────────────────────
+        cur = conn.cursor()
+        cur.execute(
+            "SELECT collection_id FROM public.collections WHERE collection_name = %(name)s",
+            {"name": collection_name},
+        )
+        existing = cur.fetchone()
+        if existing:
+            raise ValueError(
+                f"La colección '{collection_name}' ya existe "
+                f"(id: {existing['collection_id']}). "
+                f"Elimínala antes de volver a registrarla."
+            )
+
         # ── 2. Registrar colección ─────────────────────────────────────────
         collection_id = Collections.create(
             conn,

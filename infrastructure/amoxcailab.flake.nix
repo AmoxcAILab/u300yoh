@@ -807,17 +807,60 @@ PYEOF
           _menu_colecciones() {
             local opcion
             opcion=$(printf \
-              "registrar_coleccion\ndescargar_imagenes\nregistrar_ground_truth\nexportar_para_anotacion\nvolver" \
+              "listar_colecciones\nregistrar_coleccion\nborrar_coleccion\ndescargar_imagenes\nregistrar_ground_truth\nexportar_para_anotacion\nvolver" \
               | ${pkgs.fzf}/bin/fzf \
                   --prompt "Colecciones > " \
                   --header "$(_db_status_line)" \
-                  --height 12 --border)
+                  --height 14 --border)
             case "$opcion" in
+              listar_colecciones)
+                ${postgresql}/bin/psql \
+                  -h "$HTR_PGRUN" -p "$HTR_PGPORT" -d "$HTR_PGDB" \
+                  -c "SELECT collection_name, collection_type, collection_status,
+                             archival_institution_name
+                      FROM public.v_collections
+                      ORDER BY collection_type, collection_name;"
+                ;;
               registrar_coleccion)
                 echo "▶ Ruta al archivo .metadata de la colección:"
                 echo "  (ej: data_ingestion/metadata/collections/AGN_marina.metadata)"
                 read -r metadata_file
                 htr_register_collection --collection-metadata "$metadata_file"
+                ;;
+              borrar_coleccion)
+                ${fzfCollectionPicker}
+                COL_ID=$(_pick_collection_id)
+                [ -z "$COL_ID" ] && return
+                COL_NAME=$(${postgresql}/bin/psql \
+                  -h "$HTR_PGRUN" -p "$HTR_PGPORT" -d "$HTR_PGDB" \
+                  -tAc "SELECT collection_name FROM public.collections WHERE collection_id = '$COL_ID'")
+                echo "⚠ Vas a eliminar '$COL_NAME' y todos sus documentos y notas."
+                echo "  Escribe el nombre de la colección para confirmar:"
+                read -r confirm
+                if [ "$confirm" = "$COL_NAME" ]; then
+                  ${postgresql}/bin/psql \
+                    -h "$HTR_PGRUN" -p "$HTR_PGPORT" -d "$HTR_PGDB" \
+                    -v ON_ERROR_STOP=1 << DELSQL
+DELETE FROM public.notes_operation
+  WHERE note_id IN (
+    SELECT nd.note_id FROM public.notes_documents nd
+    JOIN public.documents d USING (document_id)
+    WHERE d.collection_id = '$COL_ID');
+DELETE FROM public.notes_documents
+  WHERE document_id IN (
+    SELECT document_id FROM public.documents WHERE collection_id = '$COL_ID');
+DELETE FROM public.notes_collections WHERE collection_id = '$COL_ID';
+DELETE FROM public.documents_operations
+  WHERE document_id IN (
+    SELECT document_id FROM public.documents WHERE collection_id = '$COL_ID');
+DELETE FROM public.collections_operations WHERE collection_id = '$COL_ID';
+DELETE FROM public.documents WHERE collection_id = '$COL_ID';
+DELETE FROM public.collections WHERE collection_id = '$COL_ID';
+DELSQL
+                  echo "✓ Colección '$COL_NAME' eliminada."
+                else
+                  echo "✗ Nombre incorrecto. Operación cancelada."
+                fi
                 ;;
               descargar_imagenes)
                 COL_ID=$(_pick_collection_id)
