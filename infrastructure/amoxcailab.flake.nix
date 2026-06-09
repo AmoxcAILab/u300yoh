@@ -1028,7 +1028,7 @@ DELSQL
                   -c "SELECT d.document_id,
                              d.document_name,
                              ds.document_status,
-                             COALESCE(ct.collection_type,                                  ''),
+                             ct.collection_type,
                              COALESCE(d.document_archive,                                  'N/A'),
                              COALESCE(d.document_fondo,                                    'N/A'),
                              COALESCE(d.document_volumen,                                  'N/A'),
