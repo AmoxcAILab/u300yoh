@@ -924,22 +924,18 @@ PYEOF
                 ${postgresql}/bin/psql \
                   -h "$HTR_PGRUN" -p "$HTR_PGPORT" -d "$HTR_PGDB" \
                   -tAF'|' \
-                  -c "SELECT c.collection_id, c.collection_name,
-                             ct.collection_type, cs.collection_status,
-                             COALESCE(ai.archival_institution_name,'—'),
-                             COALESCE(c.collection_path,'—')
-                      FROM public.collections c
-                      JOIN public.collection_types ct USING (collection_type_id)
-                      JOIN public.collection_statuses cs USING (collection_status_id)
-                      LEFT JOIN public.archival_institutions ai USING (archival_institution_id)
-                      ORDER BY ct.collection_type, c.collection_name;" \
+                  -c "SELECT collection_id, collection_name, collection_type,
+                             collection_status,
+                             COALESCE(archival_institution_name,'—')
+                      FROM public.v_collections
+                      ORDER BY collection_type, collection_name;" \
                 2>/dev/null \
                 | ${pkgs.fzf}/bin/fzf \
                     --prompt "Colecciones > " \
-                    --header "id | nombre | tipo | estado | institución | ruta" \
+                    --header "id | nombre | tipo | estado | institución" \
                     --delimiter '|' \
                     --height 80% --border \
-                    --preview "${postgresql}/bin/psql -h '$HTR_PGRUN' -p '$HTR_PGPORT' -d '$HTR_PGDB' -x -c \"SELECT * FROM public.v_collections WHERE collection_id::text = trim('{1}');\" 2>/dev/null" \
+                    --preview "${postgresql}/bin/psql -h '$HTR_PGRUN' -p '$HTR_PGPORT' -d '$HTR_PGDB' -x -c \"SELECT * FROM public.v_collections WHERE collection_id = '{1}';\" 2>/dev/null" \
                     --preview-window right:50% \
                 || true
                 ;;
@@ -1033,7 +1029,7 @@ DELSQL
                     --header "ID | nombre | expediente | fecha | estado" \
                     --delimiter '|' \
                     --height 80% --border \
-                    --preview "${postgresql}/bin/psql -h '$HTR_PGRUN' -p '$HTR_PGPORT' -d '$HTR_PGDB' -x -c \"SELECT d.*, ds.document_status FROM public.documents d JOIN public.document_statuses ds USING (document_status_id) WHERE d.document_id::text = trim('{1}');\" 2>/dev/null" \
+                    --preview "${postgresql}/bin/psql -h '$HTR_PGRUN' -p '$HTR_PGPORT' -d '$HTR_PGDB' -x -c \"SELECT * FROM public.documents WHERE document_id = '{1}';\" 2>/dev/null" \
                     --preview-window right:50% \
                 || true
                 ;;
