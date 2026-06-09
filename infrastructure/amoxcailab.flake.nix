@@ -779,12 +779,118 @@ PYEOF
 
 
         # ══════════════════════════════════════════════════════════
+        # WRAPPERS PARA SCRIPTS DE IMAGEN
+        # ══════════════════════════════════════════════════════════
+
+        # Picker de imagen interactivo: collection → document → image
+        # Usado por layoutAnalysisScript y preprocessImageScript.
+        imagePicker = ''
+          _pick_image_id() {
+            local _prompt="''${1:-Imagen}"
+
+            # 1. Seleccionar colección
+            local _col_id
+            _col_id=$(_pick_collection_id)
+            [ -z "$_col_id" ] && return 1
+
+            # 2. Seleccionar documento dentro de la colección
+            local _doc_row
+            _doc_row=$(${postgresql}/bin/psql \
+              -h "$HTR_PGRUN" -p "$HTR_PGPORT" -d "$HTR_PGDB" \
+              -tAF'|' \
+              -c "SELECT document_id, document_name FROM public.documents
+                  WHERE collection_id = '$_col_id' ORDER BY document_name;" \
+              2>/dev/null \
+              | ${pkgs.fzf}/bin/fzf \
+                  --prompt "Documento > " --header "ID | nombre" \
+                  --delimiter '|' --height 40% --border || true)
+            local _doc_id
+            _doc_id=$(echo "$_doc_row" | cut -d'|' -f1 | tr -d ' ')
+            [ -z "$_doc_id" ] && return 1
+
+            # 3. Seleccionar imagen dentro del documento
+            local _img_row
+            _img_row=$(${postgresql}/bin/psql \
+              -h "$HTR_PGRUN" -p "$HTR_PGPORT" -d "$HTR_PGDB" \
+              -tAF'|' \
+              -c "SELECT i.image_id, i.image_filename, it.image_type,
+                         COALESCE(i.page_number::text, '—') AS page
+                  FROM public.images i
+                  JOIN public.image_types it USING (image_type_id)
+                  WHERE i.document_id = '$_doc_id'
+                  ORDER BY i.page_number NULLS LAST, i.image_filename;" \
+              2>/dev/null \
+              | ${pkgs.fzf}/bin/fzf \
+                  --prompt "$_prompt > " \
+                  --header "image_id | archivo | tipo | página" \
+                  --delimiter '|' --height 50% --border \
+                  --preview "
+                    ${postgresql}/bin/psql \
+                      -h '$HTR_PGRUN' -p '$HTR_PGPORT' -d '$HTR_PGDB' \
+                      -c \"SELECT image_filename, image_path, image_type_id,
+                                  page_number, calligraphy_type_id, calligraphy_confidence
+                           FROM public.images WHERE image_id = '{1}';\" 2>/dev/null
+                  " \
+                  --preview-window right:45% \
+              || true)
+            echo "$_img_row" | cut -d'|' -f1 | tr -d ' '
+          }
+        '';
+
+        layoutAnalysisScript = pkgs.writeShellScriptBin "htr_layout_analysis" ''
+          set -euo pipefail
+          ${dbEnvVars}
+          ${venvCheck}
+          ${dbCheck}
+          ${fzfCollectionPicker}
+          ${imagePicker}
+
+          IMAGE_ID="''${1:-}"
+          if [ -z "$IMAGE_ID" ]; then
+            IMAGE_ID=$(_pick_image_id "Layout analysis")
+          fi
+          if [ -z "$IMAGE_ID" ]; then
+            echo "✗ No se seleccionó imagen."
+            exit 1
+          fi
+
+          echo "▶ Enviando imagen $IMAGE_ID a layout analysis (Transkribus)..."
+          cd "$HTR_PIPELINE_DIR"
+          "$PYTHON" data_ingestion/send_to_layout_analysis.py --image-id "$IMAGE_ID" "$@"
+        '';
+
+        preprocessImageScript = pkgs.writeShellScriptBin "htr_preprocess_image" ''
+          set -euo pipefail
+          ${dbEnvVars}
+          ${venvCheck}
+          ${dbCheck}
+          ${fzfCollectionPicker}
+          ${imagePicker}
+
+          IMAGE_ID="''${1:-}"
+          if [ -z "$IMAGE_ID" ]; then
+            IMAGE_ID=$(_pick_image_id "Pre-procesar")
+          fi
+          if [ -z "$IMAGE_ID" ]; then
+            echo "✗ No se seleccionó imagen."
+            exit 1
+          fi
+
+          echo "▶ Pre-procesando imagen $IMAGE_ID (CLAHE)..."
+          cd "$HTR_PIPELINE_DIR"
+          "$PYTHON" data_ingestion/image_pre_processing.py --image-id "$IMAGE_ID" "$@"
+        '';
+
+
+        # ══════════════════════════════════════════════════════════
         # MENÚ INTERACTIVO PRINCIPAL
         # ══════════════════════════════════════════════════════════
 
         menuScript = pkgs.writeShellScriptBin "htr_menu" ''
           set -euo pipefail
           ${dbEnvVars}
+          ${fzfCollectionPicker}
+          ${imagePicker}
 
           # ── Estado de la BD ──────────────────────────────────────
           _db_online() {
@@ -800,32 +906,33 @@ PYEOF
             fi
           }
 
-          # ── Picker de colección ──────────────────────────────────
-          ${fzfCollectionPicker}
+          # ══════════════════════════════════════════════════════
+          # SUBMENÚS
+          # ══════════════════════════════════════════════════════
 
-          # ── Submenús ─────────────────────────────────────────────
+          # ── Colecciones ──────────────────────────────────────────
           _menu_colecciones() {
             local opcion
             opcion=$(printf \
-              "listar_colecciones\nregistrar_coleccion\nborrar_coleccion\ndescargar_imagenes\nregistrar_ground_truth\nexportar_para_anotacion\nvolver" \
+              "ver_colecciones\nregistrar\neliminar\nvolver" \
               | ${pkgs.fzf}/bin/fzf \
                   --prompt "Colecciones > " \
                   --header "$(_db_status_line)" \
-                  --height 14 --border)
+                  --height 10 --border)
             case "$opcion" in
-              listar_colecciones)
+              ver_colecciones)
                 ${postgresql}/bin/psql \
                   -h "$HTR_PGRUN" -p "$HTR_PGPORT" -d "$HTR_PGDB" \
-                  -c "SELECT collection_name, collection_type, collection_status,
-                             archival_institution_name
+                  -c "SELECT collection_id, collection_name, collection_type,
+                             collection_status, archival_institution_name
                       FROM public.v_collections
                       ORDER BY collection_type, collection_name;"
                 ;;
-              registrar_coleccion)
+              registrar)
                 METADATA_DIR="$HTR_PIPELINE_DIR/data_ingestion/metadata"
                 if [ ! -d "$METADATA_DIR" ]; then
                   echo "✗ Directorio no encontrado: $METADATA_DIR"
-                  break
+                  return
                 fi
                 metadata_file=$(find "$METADATA_DIR" -maxdepth 2 -name "*.metadata" \
                   | sed "s|$HTR_PIPELINE_DIR/||" \
@@ -839,11 +946,11 @@ PYEOF
                   || true)
                 if [ -z "$metadata_file" ]; then
                   echo "✗ No se seleccionó ningún archivo."
-                  break
+                  return
                 fi
                 htr_register_collection --collection-metadata "$HTR_PIPELINE_DIR/$metadata_file"
                 ;;
-              borrar_coleccion)
+              eliminar)
                 COL_ID=$(_pick_collection_id)
                 [ -z "$COL_ID" ] && return
                 COL_NAME=$(${postgresql}/bin/psql \
@@ -877,189 +984,19 @@ DELSQL
                   echo "✗ Nombre incorrecto. Operación cancelada."
                 fi
                 ;;
-              descargar_imagenes)
-                COL_ID=$(_pick_collection_id)
-                [ -z "$COL_ID" ] && return
-                echo "▶ Directorio fuente de imágenes:"
-                read -r src_dir
-                htr_download_images \
-                  --collection-id "$COL_ID" \
-                  --source-dir "$src_dir"
-                ;;
-              registrar_ground_truth)
-                COL_ID=$(_pick_collection_id)
-                [ -z "$COL_ID" ] && return
-                echo "▶ Directorio de ground_truth:"
-                read -r gt_dir
-                htr_register_ground_truth \
-                  --collection-id "$COL_ID" \
-                  --ground-truth-dir "$gt_dir"
-                ;;
-              exportar_para_anotacion)
-                COL_ID=$(_pick_collection_id)
-                [ -z "$COL_ID" ] && return
-                htr_export_for_annotation --collection-id "$COL_ID"
-                ;;
             esac
           }
 
-          _menu_htr() {
-            local opcion
-            opcion=$(printf \
-              "estado_pipeline\nlog_operaciones\nenviar_clasificacion_tipografica\nenviar_transcripcion_htr\nenviar_limpieza_historica\nenviar_modernizacion\nvolver" \
-              | ${pkgs.fzf}/bin/fzf \
-                  --prompt "HTR > " \
-                  --header "$(_db_status_line)" \
-                  --height 14 --border)
-            case "$opcion" in
-              estado_pipeline)            htr_pipeline_status ;;
-              log_operaciones)            htr_operations_log ;;
-              enviar_clasificacion_tipografica)
-                echo "▶ Archivo batch (image_ids):"
-                read -r batch
-                htr_slurm_typography_classification "$batch"
-                ;;
-              enviar_transcripcion_htr)
-                echo "▶ Archivo batch (image_ids):"
-                read -r batch
-                htr_slurm_htr_transcription "$batch"
-                ;;
-              enviar_limpieza_historica)
-                echo "▶ Archivo batch (htr_ids):"
-                read -r batch
-                htr_slurm_historical_clean "$batch"
-                ;;
-              enviar_modernizacion)
-                echo "▶ Archivo batch (htr_ids):"
-                read -r batch
-                htr_slurm_clean_modern "$batch"
-                ;;
-            esac
-          }
-
-          _menu_base_de_datos() {
-            local opcion
-            opcion=$(printf \
-              "iniciar_bd\ndetener_bd\naplicar_schema\nestado_bd\ncreate_backup\nvolver" \
-              | ${pkgs.fzf}/bin/fzf \
-                  --prompt "Base de datos > " \
-                  --header "$(_db_status_line)" \
-                  --height 12 --border)
-            case "$opcion" in
-              iniciar_bd)       htr_db_start ;;
-              detener_bd)       htr_db_stop ;;
-              aplicar_schema)   htr_db_schema ;;
-              estado_bd)        htr_db_status ;;
-              create_backup)
-                echo "▶ Directorio de salida (default: .):"
-                read -r out_dir
-                out_dir="''${out_dir:-.}"
-                VENV_DIR="''${HTR_VENV:-.venv}"
-                export PYTHONPATH="$HTR_PIPELINE_DIR"
-                "$VENV_DIR/bin/python" database/create_backup.py --output-dir "$out_dir"
-                ;;
-            esac
-          }
-
-          _menu_anotaciones() {
-            local opcion
-            opcion=$(printf \
-              "sincronizar_anotaciones\nexportar_para_anotacion\nvolver" \
-              | ${pkgs.fzf}/bin/fzf \
-                  --prompt "Anotaciones > " \
-                  --header "$(_db_status_line)" \
-                  --height 10 --border)
-            case "$opcion" in
-              sincronizar_anotaciones)
-                echo "▶ Directorio de anotaciones:"
-                read -r ann_dir
-                htr_sync_annotations --annotations-dir "$ann_dir"
-                ;;
-              exportar_para_anotacion)
-                COL_ID=$(_pick_collection_id)
-                [ -z "$COL_ID" ] && return
-                htr_export_for_annotation --collection-id "$COL_ID"
-                ;;
-            esac
-          }
-
-          _menu_knowledge_base() {
-            local opcion
-            opcion=$(printf \
-              "reconstruir_knowledge_base\nvolver" \
-              | ${pkgs.fzf}/bin/fzf \
-                  --prompt "Knowledge base > " \
-                  --header "$(_db_status_line)" \
-                  --height 8 --border)
-            case "$opcion" in
-              reconstruir_knowledge_base) htr_knowledge_base_rebuild ;;
-            esac
-          }
-
-          _menu_python_packages() {
-            local opcion
-            opcion=$(printf \
-              "explorar_requirements\ninstalar_paquete\ndesinstalar_paquete\nsetup_venv\nvolver" \
-              | ${pkgs.fzf}/bin/fzf \
-                  --prompt "Python packages > " \
-                  --header "$(printf 'Venv: %s\nReqs: %s' "''${HTR_VENV:-.venv}" "''${HTR_REQUIREMENTS:-requirements.txt}")" \
-                  --height 12 --border)
-            case "$opcion" in
-              explorar_requirements)
-                htr_requirements
-                ;;
-              instalar_paquete)
-                htr_requirements --install
-                ;;
-              desinstalar_paquete)
-                htr_requirements --remove
-                ;;
-              setup_venv)
-                htr_setup_venv
-                ;;
-            esac
-          }
-
-          _menu_modelos() {
-            local opcion
-            opcion=$(printf \
-              "registrar_modelo\nlistar_modelos\nvolver" \
-              | ${pkgs.fzf}/bin/fzf \
-                  --prompt "Modelos > " \
-                  --header "$(_db_status_line)" \
-                  --height 9 --border)
-            case "$opcion" in
-              registrar_modelo)
-                echo "▶ Nombre del modelo:"
-                read -r mname
-                echo "▶ Ruta del modelo:"
-                read -r mpath
-                echo "▶ Tipo (htr / typography / layout):"
-                read -r mtype
-                htr_register_model "$mname" "$mpath" "''${mtype:-htr}"
-                ;;
-              listar_modelos)
-                if _db_online; then
-                  ${postgresql}/bin/psql \
-                    -h "$HTR_PGRUN" -p "$HTR_PGPORT" -d "$HTR_PGDB" \
-                    -c "SELECT model_id, model_name, model_type, model_path FROM public.models ORDER BY model_id;"
-                else
-                  echo "BD no disponible."
-                fi
-                ;;
-            esac
-          }
-
+          # ── Documentos ───────────────────────────────────────────
           _menu_documentos() {
             local opcion
-            opcion=$(printf \
-              "listar_documentos\nver_documento\nvolver" \
+            opcion=$(printf "ver_documentos\nvolver" \
               | ${pkgs.fzf}/bin/fzf \
                   --prompt "Documentos > " \
                   --header "$(_db_status_line)" \
-                  --height 10 --border)
+                  --height 8 --border)
             case "$opcion" in
-              listar_documentos)
+              ver_documentos)
                 COL_ID=$(_pick_collection_id)
                 [ -z "$COL_ID" ] && return
                 COL_NAME=$(${postgresql}/bin/psql \
@@ -1068,8 +1005,9 @@ DELSQL
                 ${postgresql}/bin/psql \
                   -h "$HTR_PGRUN" -p "$HTR_PGPORT" -d "$HTR_PGDB" \
                   -tAF'|' \
-                  -c "SELECT document_id, document_name, document_Expediente,
-                             document_Fecha_creacion, document_status
+                  -c "SELECT d.document_id, d.document_name,
+                             COALESCE(d.document_Expediente,'—'),
+                             COALESCE(d.document_Fecha_creacion,'—'), ds.document_status
                       FROM public.documents d
                       JOIN public.document_statuses ds USING (document_status_id)
                       WHERE d.collection_id = '$COL_ID'
@@ -1093,58 +1031,569 @@ DELSQL
                     --preview-window right:50% \
                 || true
                 ;;
-              ver_documento)
+            esac
+          }
+
+          # ── Imágenes ─────────────────────────────────────────────
+          _menu_imagenes() {
+            local opcion
+            opcion=$(printf \
+              "ver_imagenes\nenviar_a_clasificador\npre_procesar\nregistrar\ndescargar\nvolver" \
+              | ${pkgs.fzf}/bin/fzf \
+                  --prompt "Imágenes > " \
+                  --header "$(_db_status_line)" \
+                  --height 12 --border)
+            case "$opcion" in
+              ver_imagenes)
                 COL_ID=$(_pick_collection_id)
                 [ -z "$COL_ID" ] && return
-                DOC=$(${postgresql}/bin/psql \
+                ${postgresql}/bin/psql \
                   -h "$HTR_PGRUN" -p "$HTR_PGPORT" -d "$HTR_PGDB" \
                   -tAF'|' \
-                  -c "SELECT document_id, document_name FROM public.documents
-                      WHERE collection_id = '$COL_ID' ORDER BY document_name;" \
+                  -c "SELECT i.image_id, d.document_name, i.image_filename,
+                             it.image_type,
+                             COALESCE(i.page_number::text,'—') AS page,
+                             COALESCE(ct.calligraphy_type,'—') AS calligrafia
+                      FROM public.images i
+                      JOIN public.image_types it USING (image_type_id)
+                      JOIN public.documents d USING (document_id)
+                      LEFT JOIN public.calligraphy_types ct USING (calligraphy_type_id)
+                      WHERE d.collection_id = '$COL_ID'
+                      ORDER BY d.document_name, i.page_number NULLS LAST, i.image_filename;" \
                 2>/dev/null \
                 | ${pkgs.fzf}/bin/fzf \
-                    --prompt "Documento > " \
-                    --delimiter '|' --height 40% --border || true)
-                DOC_ID=$(echo "$DOC" | cut -d'|' -f1 | tr -d ' ')
-                [ -z "$DOC_ID" ] && return
-                ${postgresql}/bin/psql \
-                  -h "$HTR_PGRUN" -p "$HTR_PGPORT" -d "$HTR_PGDB" \
-                  -c "SELECT * FROM public.documents WHERE document_id = '$DOC_ID';" \
-                  2>/dev/null
-                echo ""
-                echo "── Notas ──"
-                ${postgresql}/bin/psql \
-                  -h "$HTR_PGRUN" -p "$HTR_PGPORT" -d "$HTR_PGDB" \
-                  -c "SELECT n.note FROM public.notes n
-                      JOIN public.notes_documents nd USING (note_id)
-                      WHERE nd.document_id = '$DOC_ID';" \
-                  2>/dev/null
+                    --prompt "Imágenes > " \
+                    --header "image_id | documento | archivo | tipo | pág | caligrafía" \
+                    --delimiter '|' --height 80% --border \
+                    --preview "
+                      ${postgresql}/bin/psql \
+                        -h '$HTR_PGRUN' -p '$HTR_PGPORT' -d '$HTR_PGDB' \
+                        -c \"SELECT image_filename, image_path, image_type_id,
+                                    page_number, calligraphy_type_id, calligraphy_confidence
+                             FROM public.images WHERE image_id = '{1}';\" 2>/dev/null
+                    " \
+                    --preview-window right:45% \
+                || true
                 ;;
+              enviar_a_clasificador)
+                echo "▶ Archivo batch (image_ids, uno por línea):"
+                read -r batch
+                htr_slurm_typography_classification "$batch"
+                ;;
+              pre_procesar)
+                htr_preprocess_image
+                ;;
+              registrar)
+                echo "TODO: registrar imágenes locales en disco sin descargar"
+                ;;
+              descargar)
+                htr_download_images
+                ;;
+            esac
+          }
+
+          # ── HTR ──────────────────────────────────────────────────
+          _menu_htr() {
+            local opcion
+            opcion=$(printf \
+              "ver_archivos_htr\nenviar_a_transcripcion\nenviar_a_layout_analysis\nvolver" \
+              | ${pkgs.fzf}/bin/fzf \
+                  --prompt "HTR > " \
+                  --header "$(_db_status_line)" \
+                  --height 10 --border)
+            case "$opcion" in
+              ver_archivos_htr)
+                COL_ID=$(_pick_collection_id)
+                [ -z "$COL_ID" ] && return
+                ${postgresql}/bin/psql \
+                  -h "$HTR_PGRUN" -p "$HTR_PGPORT" -d "$HTR_PGDB" \
+                  -tAF'|' \
+                  -c "SELECT h.htr_id, d.document_name, i.image_filename,
+                             h.htr_filename,
+                             COALESCE(ct.calligraphy_type,'—') AS calligrafia
+                      FROM public.htr h
+                      JOIN public.images i USING (image_id)
+                      JOIN public.documents d USING (document_id)
+                      LEFT JOIN public.calligraphy_types ct USING (calligraphy_type_id)
+                      WHERE d.collection_id = '$COL_ID'
+                      ORDER BY d.document_name, i.page_number NULLS LAST;" \
+                2>/dev/null \
+                | ${pkgs.fzf}/bin/fzf \
+                    --prompt "HTR > " \
+                    --header "htr_id | documento | imagen | archivo HTR | caligrafía" \
+                    --delimiter '|' --height 80% --border \
+                    --preview "
+                      ${postgresql}/bin/psql \
+                        -h '$HTR_PGRUN' -p '$HTR_PGPORT' -d '$HTR_PGDB' \
+                        -c \"SELECT h.htr_filename, h.htr_path, h.transkribus_model_id
+                             FROM public.htr h WHERE h.htr_id = '{1}';\" 2>/dev/null
+                    " \
+                    --preview-window right:45% \
+                || true
+                ;;
+              enviar_a_transcripcion)
+                echo "▶ Archivo batch (image_ids, uno por línea):"
+                read -r batch
+                htr_slurm_htr_transcription "$batch"
+                ;;
+              enviar_a_layout_analysis)
+                htr_layout_analysis
+                ;;
+            esac
+          }
+
+          # ── Ground Truth ─────────────────────────────────────────
+          _menu_ground_truth() {
+            local opcion
+            opcion=$(printf \
+              "ver_ground_truth\nregistrar_ground_truth\nvolver" \
+              | ${pkgs.fzf}/bin/fzf \
+                  --prompt "Ground Truth > " \
+                  --header "$(_db_status_line)" \
+                  --height 9 --border)
+            case "$opcion" in
+              ver_ground_truth)
+                COL_ID=$(_pick_collection_id)
+                [ -z "$COL_ID" ] && return
+                ${postgresql}/bin/psql \
+                  -h "$HTR_PGRUN" -p "$HTR_PGPORT" -d "$HTR_PGDB" \
+                  -tAF'|' \
+                  -c "SELECT gt.ground_truth_id, d.document_name,
+                             i.image_filename, gt.ground_truth_filename
+                      FROM public.ground_truth gt
+                      JOIN public.htr h USING (htr_id)
+                      JOIN public.images i USING (image_id)
+                      JOIN public.documents d USING (document_id)
+                      WHERE d.collection_id = '$COL_ID'
+                      ORDER BY d.document_name, i.page_number NULLS LAST;" \
+                2>/dev/null \
+                | ${pkgs.fzf}/bin/fzf \
+                    --prompt "Ground Truth > " \
+                    --header "gt_id | documento | imagen | archivo GT" \
+                    --delimiter '|' --height 80% --border \
+                    --preview "
+                      ${postgresql}/bin/psql \
+                        -h '$HTR_PGRUN' -p '$HTR_PGPORT' -d '$HTR_PGDB' \
+                        -c \"SELECT gt.ground_truth_filename, gt.ground_truth_path
+                             FROM public.ground_truth gt WHERE gt.ground_truth_id = '{1}';\" 2>/dev/null
+                    " \
+                    --preview-window right:45% \
+                || true
+                ;;
+              registrar_ground_truth)
+                COL_ID=$(_pick_collection_id)
+                [ -z "$COL_ID" ] && return
+                echo "▶ Directorio de ground_truth:"
+                read -r gt_dir
+                htr_register_ground_truth \
+                  --collection-id "$COL_ID" \
+                  --ground-truth-dir "$gt_dir"
+                ;;
+            esac
+          }
+
+          # ── Limpieza ─────────────────────────────────────────────
+          _menu_limpieza() {
+            local opcion
+            opcion=$(printf \
+              "listar_versiones_limpias\nenviar_a_limpieza\nexportar_para_anotacion\nimportar_anotaciones\nvolver" \
+              | ${pkgs.fzf}/bin/fzf \
+                  --prompt "Limpieza > " \
+                  --header "$(_db_status_line)" \
+                  --height 11 --border)
+            case "$opcion" in
+              listar_versiones_limpias)
+                COL_ID=$(_pick_collection_id)
+                [ -z "$COL_ID" ] && return
+                ${postgresql}/bin/psql \
+                  -h "$HTR_PGRUN" -p "$HTR_PGPORT" -d "$HTR_PGDB" \
+                  -tAF'|' \
+                  -c "SELECT hc.hist_clean_id, d.document_name,
+                             i.image_filename, hc.hist_clean_filename
+                      FROM public.hist_clean hc
+                      JOIN public.htr h USING (htr_id)
+                      JOIN public.images i USING (image_id)
+                      JOIN public.documents d USING (document_id)
+                      WHERE d.collection_id = '$COL_ID'
+                      ORDER BY d.document_name, i.page_number NULLS LAST;" \
+                2>/dev/null \
+                | ${pkgs.fzf}/bin/fzf \
+                    --prompt "Hist. clean > " \
+                    --header "hist_clean_id | documento | imagen | archivo" \
+                    --delimiter '|' --height 80% --border \
+                    --preview "
+                      cat '{4}' 2>/dev/null || echo '(archivo no disponible localmente)'
+                    " \
+                    --preview-window right:50% \
+                || true
+                ;;
+              enviar_a_limpieza)
+                echo "▶ Archivo batch (htr_ids, uno por línea):"
+                read -r batch
+                htr_slurm_historical_clean "$batch"
+                ;;
+              exportar_para_anotacion)
+                COL_ID=$(_pick_collection_id)
+                [ -z "$COL_ID" ] && return
+                htr_export_for_annotation --collection-id "$COL_ID"
+                ;;
+              importar_anotaciones)
+                echo "▶ Directorio de anotaciones:"
+                read -r ann_dir
+                htr_sync_annotations --annotations-dir "$ann_dir"
+                ;;
+            esac
+          }
+
+          # ── Modernización ────────────────────────────────────────
+          _menu_modernizacion() {
+            local opcion
+            opcion=$(printf \
+              "listar_modernizaciones\nenviar_a_modernizacion\nexportar_para_anotacion\nimportar_anotaciones\nvolver" \
+              | ${pkgs.fzf}/bin/fzf \
+                  --prompt "Modernización > " \
+                  --header "$(_db_status_line)" \
+                  --height 11 --border)
+            case "$opcion" in
+              listar_modernizaciones)
+                COL_ID=$(_pick_collection_id)
+                [ -z "$COL_ID" ] && return
+                ${postgresql}/bin/psql \
+                  -h "$HTR_PGRUN" -p "$HTR_PGPORT" -d "$HTR_PGDB" \
+                  -tAF'|' \
+                  -c "SELECT cm.clean_modern_id, d.document_name,
+                             i.image_filename, cm.clean_modern_filename
+                      FROM public.clean_modern cm
+                      JOIN public.hist_clean hc USING (hist_clean_id)
+                      JOIN public.htr h USING (htr_id)
+                      JOIN public.images i USING (image_id)
+                      JOIN public.documents d USING (document_id)
+                      WHERE d.collection_id = '$COL_ID'
+                      ORDER BY d.document_name, i.page_number NULLS LAST;" \
+                2>/dev/null \
+                | ${pkgs.fzf}/bin/fzf \
+                    --prompt "Clean modern > " \
+                    --header "clean_modern_id | documento | imagen | archivo" \
+                    --delimiter '|' --height 80% --border \
+                    --preview "
+                      cat '{4}' 2>/dev/null || echo '(archivo no disponible localmente)'
+                    " \
+                    --preview-window right:50% \
+                || true
+                ;;
+              enviar_a_modernizacion)
+                echo "▶ Archivo batch (htr_ids, uno por línea):"
+                read -r batch
+                htr_slurm_clean_modern "$batch"
+                ;;
+              exportar_para_anotacion)
+                COL_ID=$(_pick_collection_id)
+                [ -z "$COL_ID" ] && return
+                htr_export_for_annotation --collection-id "$COL_ID"
+                ;;
+              importar_anotaciones)
+                echo "▶ Directorio de anotaciones:"
+                read -r ann_dir
+                htr_sync_annotations --annotations-dir "$ann_dir"
+                ;;
+            esac
+          }
+
+          # ── Notas ────────────────────────────────────────────────
+          _menu_notas() {
+            local opcion
+            opcion=$(printf "listar_notas_por_coleccion\nvolver" \
+              | ${pkgs.fzf}/bin/fzf \
+                  --prompt "Notas > " \
+                  --header "$(_db_status_line)" \
+                  --height 8 --border)
+            case "$opcion" in
+              listar_notas_por_coleccion)
+                COL_ID=$(_pick_collection_id)
+                [ -z "$COL_ID" ] && return
+                ${postgresql}/bin/psql \
+                  -h "$HTR_PGRUN" -p "$HTR_PGPORT" -d "$HTR_PGDB" \
+                  -tAF'|' \
+                  -c "SELECT n.note_id, 'colección' AS scope, '' AS documento, n.note
+                      FROM public.notes n
+                      JOIN public.notes_collections nc USING (note_id)
+                      WHERE nc.collection_id = '$COL_ID'
+                      UNION ALL
+                      SELECT n.note_id, 'documento', d.document_name, n.note
+                      FROM public.notes n
+                      JOIN public.notes_documents nd USING (note_id)
+                      JOIN public.documents d USING (document_id)
+                      WHERE d.collection_id = '$COL_ID'
+                      ORDER BY scope, documento, note_id;" \
+                2>/dev/null \
+                | ${pkgs.fzf}/bin/fzf \
+                    --prompt "Notas > " \
+                    --header "note_id | ámbito | documento | nota" \
+                    --delimiter '|' --height 80% --border \
+                    --preview "echo '{4}'" \
+                    --preview-window bottom:30% \
+                || true
+                ;;
+            esac
+          }
+
+          # ── Modelos ──────────────────────────────────────────────
+          _menu_modelos() {
+            local opcion
+            opcion=$(printf \
+              "ver_modelos\nmodificar_parametros\nregistrar_modelo\nvolver" \
+              | ${pkgs.fzf}/bin/fzf \
+                  --prompt "Modelos > " \
+                  --header "$(_db_status_line)" \
+                  --height 10 --border)
+            case "$opcion" in
+              ver_modelos)
+                ${postgresql}/bin/psql \
+                  -h "$HTR_PGRUN" -p "$HTR_PGPORT" -d "$HTR_PGDB" \
+                  -c "SELECT model_id, model_name, model_type, model_version,
+                             model_url, model_local_path,
+                             model_parameter_1, model_parameter_n
+                      FROM public.models ORDER BY model_id;" \
+                2>/dev/null || echo "BD no disponible."
+                ;;
+              modificar_parametros)
+                if ! _db_online; then echo "✗ BD no disponible."; return; fi
+                MODEL_ID=$(${postgresql}/bin/psql \
+                  -h "$HTR_PGRUN" -p "$HTR_PGPORT" -d "$HTR_PGDB" \
+                  -tAF'|' \
+                  -c "SELECT model_id, model_name, model_type FROM public.models ORDER BY model_name;" \
+                2>/dev/null \
+                | ${pkgs.fzf}/bin/fzf \
+                    --prompt "Modelo > " --header "ID | nombre | tipo" \
+                    --delimiter '|' --height 40% --border \
+                | cut -d'|' -f1 | tr -d ' ' || true)
+                [ -z "$MODEL_ID" ] && return
+                echo "▶ Nuevo model_url       (Enter para mantener):"
+                read -r new_url
+                echo "▶ Nueva model_version   (Enter para mantener):"
+                read -r new_ver
+                echo "▶ Nuevo model_local_path (Enter para mantener):"
+                read -r new_path
+                echo "▶ Nuevo model_parameter_1 (Enter para mantener):"
+                read -r new_p1
+                echo "▶ Nuevo model_parameter_n (Enter para mantener):"
+                read -r new_pn
+                [ -n "$new_url" ]  && ${postgresql}/bin/psql -h "$HTR_PGRUN" -p "$HTR_PGPORT" -d "$HTR_PGDB" \
+                  -c "UPDATE public.models SET model_url = '$new_url' WHERE model_id = '$MODEL_ID';" 2>/dev/null
+                [ -n "$new_ver" ]  && ${postgresql}/bin/psql -h "$HTR_PGRUN" -p "$HTR_PGPORT" -d "$HTR_PGDB" \
+                  -c "UPDATE public.models SET model_version = '$new_ver' WHERE model_id = '$MODEL_ID';" 2>/dev/null
+                [ -n "$new_path" ] && ${postgresql}/bin/psql -h "$HTR_PGRUN" -p "$HTR_PGPORT" -d "$HTR_PGDB" \
+                  -c "UPDATE public.models SET model_local_path = '$new_path' WHERE model_id = '$MODEL_ID';" 2>/dev/null
+                [ -n "$new_p1" ]   && ${postgresql}/bin/psql -h "$HTR_PGRUN" -p "$HTR_PGPORT" -d "$HTR_PGDB" \
+                  -c "UPDATE public.models SET model_parameter_1 = '$new_p1' WHERE model_id = '$MODEL_ID';" 2>/dev/null
+                [ -n "$new_pn" ]   && ${postgresql}/bin/psql -h "$HTR_PGRUN" -p "$HTR_PGPORT" -d "$HTR_PGDB" \
+                  -c "UPDATE public.models SET model_parameter_n = '$new_pn' WHERE model_id = '$MODEL_ID';" 2>/dev/null
+                echo "✓ Modelo $MODEL_ID actualizado."
+                ;;
+              registrar_modelo)
+                echo "▶ Nombre del modelo:"
+                read -r mname
+                echo "▶ Ruta local del modelo:"
+                read -r mpath
+                echo "▶ Tipo (htr / typography / layout):"
+                read -r mtype
+                htr_register_model "$mname" "$mpath" "''${mtype:-htr}"
+                ;;
+            esac
+          }
+
+          # ── Base de conocimiento ─────────────────────────────────
+          _menu_base_conocimiento() {
+            local opcion
+            opcion=$(printf \
+              "ver_diccionarios\nver_abreviaturas\nregistrar_abreviaturas\nver_analisis_descriptivos\nregistrar_analisis_descriptivos\nreconstruir_base_de_conocimiento\nvolver" \
+              | ${pkgs.fzf}/bin/fzf \
+                  --prompt "Base de conocimiento > " \
+                  --header "$(_db_status_line)" \
+                  --height 13 --border)
+            case "$opcion" in
+              ver_diccionarios)
+                local sub
+                sub=$(printf "rag_knowledge_base\nabreviaturas_y_expansiones\nvolver" \
+                  | ${pkgs.fzf}/bin/fzf \
+                      --prompt "Diccionarios > " \
+                      --header "$(_db_status_line)" \
+                      --height 9 --border)
+                case "$sub" in
+                  rag_knowledge_base)
+                    ${postgresql}/bin/psql \
+                      -h "$HTR_PGRUN" -p "$HTR_PGPORT" -d "$HTR_PGDB" \
+                      -c "SELECT knowledge_base_type,
+                                 COUNT(*) AS total,
+                                 COUNT(*) FILTER (WHERE verified) AS verificados
+                          FROM rag.knowledge_base
+                          GROUP BY knowledge_base_type
+                          ORDER BY knowledge_base_type;" 2>/dev/null \
+                    || echo "(tabla rag.knowledge_base no disponible)"
+                    ;;
+                  abreviaturas_y_expansiones)
+                    ${postgresql}/bin/psql \
+                      -h "$HTR_PGRUN" -p "$HTR_PGPORT" -d "$HTR_PGDB" \
+                      -tAF'|' \
+                      -c "SELECT a.abbreviation_id, a.abbreviation,
+                                 COALESCE(e.expansion,'—'), et.expansion_type
+                          FROM public.abbreviations a
+                          LEFT JOIN public.abbreviations_expansions ae USING (abbreviation_id)
+                          LEFT JOIN public.expansions e USING (expansion_id)
+                          LEFT JOIN public.expansion_type et USING (expansion_type_id)
+                          ORDER BY a.abbreviation;" \
+                    2>/dev/null \
+                    | ${pkgs.fzf}/bin/fzf \
+                        --prompt "Abreviaturas > " \
+                        --header "id | abreviatura | expansión | tipo" \
+                        --delimiter '|' --height 80% --border \
+                    || true
+                    ;;
+                esac
+                ;;
+              ver_abreviaturas)
+                COL_ID=$(_pick_collection_id)
+                [ -z "$COL_ID" ] && return
+                ${postgresql}/bin/psql \
+                  -h "$HTR_PGRUN" -p "$HTR_PGPORT" -d "$HTR_PGDB" \
+                  -tAF'|' \
+                  -c "SELECT a.abbreviation_id, a.abbreviation,
+                             COALESCE(e.expansion,'—') AS expansion,
+                             d.document_name
+                      FROM public.abbreviations a
+                      JOIN public.htr_abbreviations ha USING (abbreviation_id)
+                      JOIN public.htr h USING (htr_id)
+                      JOIN public.images i USING (image_id)
+                      JOIN public.documents d USING (document_id)
+                      LEFT JOIN public.abbreviations_expansions ae USING (abbreviation_id)
+                      LEFT JOIN public.expansions e USING (expansion_id)
+                      WHERE d.collection_id = '$COL_ID'
+                      ORDER BY d.document_name, a.abbreviation;" \
+                2>/dev/null \
+                | ${pkgs.fzf}/bin/fzf \
+                    --prompt "Abreviaturas > " \
+                    --header "id | abreviatura | expansión | documento" \
+                    --delimiter '|' --height 80% --border \
+                || true
+                ;;
+              registrar_abreviaturas)
+                echo "▶ Directorio de anotaciones JSON:"
+                read -r ann_dir
+                [ -z "$ann_dir" ] && return
+                htr_sync_annotations --annotations-dir "$ann_dir" --no-kb-rebuild
+                ;;
+              ver_analisis_descriptivos)
+                COL_ID=$(_pick_collection_id)
+                [ -z "$COL_ID" ] && return
+                ${postgresql}/bin/psql \
+                  -h "$HTR_PGRUN" -p "$HTR_PGPORT" -d "$HTR_PGDB" \
+                  -c "SELECT at.analysis_type, d.document_name,
+                             da.cer, da.wer, da.bleu, da.chrf_pp,
+                             da.n_errors, da.analyzed_at
+                      FROM public.descriptive_analysis da
+                      JOIN public.analysis_types at USING (analysis_type_id)
+                      JOIN public.documents d USING (document_id)
+                      WHERE d.collection_id = '$COL_ID'
+                      ORDER BY d.document_name, da.analyzed_at DESC;" \
+                2>/dev/null || echo "(sin análisis disponibles)"
+                ;;
+              registrar_analisis_descriptivos)
+                echo "▶ Directorio de anotaciones JSON:"
+                read -r ann_dir
+                [ -z "$ann_dir" ] && return
+                htr_sync_annotations --annotations-dir "$ann_dir"
+                ;;
+              reconstruir_base_de_conocimiento)
+                htr_knowledge_base_rebuild
+                ;;
+            esac
+          }
+
+          # ── Operaciones ──────────────────────────────────────────
+          _menu_operaciones() {
+            htr_operations_log
+          }
+
+          # ── Infraestructura ──────────────────────────────────────
+          _menu_infraestructura() {
+            local opcion
+            opcion=$(printf "paquetes_python\nbase_de_datos\nvolver" \
+              | ${pkgs.fzf}/bin/fzf \
+                  --prompt "Infraestructura > " \
+                  --header "$(_db_status_line)" \
+                  --height 9 --border)
+            case "$opcion" in
+              paquetes_python) _menu_python_packages ;;
+              base_de_datos)   _menu_base_de_datos ;;
+            esac
+          }
+
+          _menu_base_de_datos() {
+            local opcion
+            opcion=$(printf \
+              "iniciar_bd\ndetener_bd\naplicar_schema\nestado_bd\ncreate_backup\nvolver" \
+              | ${pkgs.fzf}/bin/fzf \
+                  --prompt "Base de datos > " \
+                  --header "$(_db_status_line)" \
+                  --height 12 --border)
+            case "$opcion" in
+              iniciar_bd)     htr_db_start ;;
+              detener_bd)     htr_db_stop ;;
+              aplicar_schema) htr_db_schema ;;
+              estado_bd)      htr_db_status ;;
+              create_backup)
+                echo "▶ Directorio de salida (default: .):"
+                read -r out_dir
+                out_dir="''${out_dir:-.}"
+                VENV_DIR="''${HTR_VENV:-.venv}"
+                export PYTHONPATH="$HTR_PIPELINE_DIR"
+                "$VENV_DIR/bin/python" database/create_backup.py --output-dir "$out_dir"
+                ;;
+            esac
+          }
+
+          _menu_python_packages() {
+            local opcion
+            opcion=$(printf \
+              "explorar_requirements\ninstalar_paquete\ndesinstalar_paquete\nsetup_venv\nvolver" \
+              | ${pkgs.fzf}/bin/fzf \
+                  --prompt "Python packages > " \
+                  --header "$(printf 'Venv: %s\nReqs: %s' "''${HTR_VENV:-.venv}" "''${HTR_REQUIREMENTS:-requirements.txt}")" \
+                  --height 12 --border)
+            case "$opcion" in
+              explorar_requirements)  htr_requirements ;;
+              instalar_paquete)       htr_requirements --install ;;
+              desinstalar_paquete)    htr_requirements --remove ;;
+              setup_venv)             htr_setup_venv ;;
             esac
           }
 
           # ── Bucle principal del menú ─────────────────────────────
           while true; do
             OPCION=$(printf \
-              "colecciones\ndocumentos\nhtr\nmodelos\nbase_de_datos\nanotaciones\nknowledge_base\npython_packages\nsalir" \
+              "colecciones\ndocumentos\nimágenes\nhtr\nground_truth\nlimpieza\nmodernización\nbase_de_conocimiento\nmodelos\nnotas\noperaciones\ninfrastructura\nsalir" \
               | ${pkgs.fzf}/bin/fzf \
                   --prompt "AmoxcAILab > " \
                   --header "$(printf '═══ AmoxcAILab HTR Pipeline ═══\n%s' "$(_db_status_line)")" \
-                  --height 15 \
+                  --height 19 \
                   --border \
                   --no-info \
                   --cycle) || break
 
             case "$OPCION" in
-              colecciones)      _menu_colecciones ;;
-              documentos)       _menu_documentos ;;
-              htr)              _menu_htr ;;
-              modelos)          _menu_modelos ;;
-              base_de_datos)    _menu_base_de_datos ;;
-              anotaciones)      _menu_anotaciones ;;
-              knowledge_base)   _menu_knowledge_base ;;
-              python_packages)  _menu_python_packages ;;
-              salir|"")         break ;;
+              colecciones)            _menu_colecciones ;;
+              documentos)             _menu_documentos ;;
+              "imágenes")             _menu_imagenes ;;
+              htr)                    _menu_htr ;;
+              ground_truth)           _menu_ground_truth ;;
+              limpieza)               _menu_limpieza ;;
+              "modernización")        _menu_modernizacion ;;
+              base_de_conocimiento)   _menu_base_conocimiento ;;
+              modelos)                _menu_modelos ;;
+              notas)                  _menu_notas ;;
+              operaciones)            _menu_operaciones ;;
+              infrastructura)         _menu_infraestructura ;;
+              salir|"")               break ;;
             esac
           done
 
@@ -1194,6 +1643,10 @@ DELSQL
           htr_slurm_historical_clean          = { type = "app"; program = "${slurmHistoricalCleanScript}/bin/htr_slurm_historical_clean"; };
           htr_slurm_clean_modern              = { type = "app"; program = "${slurmCleanModernScript}/bin/htr_slurm_clean_modern"; };
 
+          # Wrappers nuevos
+          htr_layout_analysis  = { type = "app"; program = "${layoutAnalysisScript}/bin/htr_layout_analysis"; };
+          htr_preprocess_image = { type = "app"; program = "${preprocessImageScript}/bin/htr_preprocess_image"; };
+
           # Menú
           htr_menu = { type = "app"; program = "${menuScript}/bin/htr_menu"; };
         };
@@ -1216,6 +1669,7 @@ DELSQL
             operationsLogScript pipelineStatusScript
             slurmTypographyScript slurmHtrTranscriptionScript
             slurmHistoricalCleanScript slurmCleanModernScript
+            layoutAnalysisScript preprocessImageScript
             menuScript
           ];
 
