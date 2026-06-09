@@ -1314,7 +1314,7 @@ DELSQL
                 ${postgresql}/bin/psql \
                   -h "$HTR_PGRUN" -p "$HTR_PGPORT" -d "$HTR_PGDB" \
                   -tAF'|' \
-                  -c "SELECT n.note_id, 'colección' AS scope, '' AS documento, n.note
+                  -c "SELECT n.note_id, 'colección' AS scope, '''' AS documento, n.note
                       FROM public.notes n
                       JOIN public.notes_collections nc USING (note_id)
                       WHERE nc.collection_id = '$COL_ID'
