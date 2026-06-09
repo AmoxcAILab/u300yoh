@@ -89,7 +89,7 @@
                 | ${pkgs.fzf}/bin/fzf \
                     --prompt "Colección > " \
                     --header "ID | nombre | tipo" \
-                    --delimiter '|' \
+                    --delimiter '[|]' \
                     --preview 'echo "collection_id: {1}"' \
                     --height 15 --border)
               echo "$row" | cut -d'|' -f1 | tr -d ' '
@@ -525,7 +525,7 @@ PYEOF
           | ${pkgs.fzf}/bin/fzf \
               --prompt "Operación > " \
               --header "ID | tipo | estado | fecha | colaborador | job_id" \
-              --delimiter '|' \
+              --delimiter '[|]' \
               --height 80% \
               --border \
               --preview '
@@ -803,7 +803,7 @@ PYEOF
               2>/dev/null \
               | ${pkgs.fzf}/bin/fzf \
                   --prompt "Documento > " --header "ID | nombre" \
-                  --delimiter '|' --height 40% --border || true)
+                  --delimiter '[|]' --height 40% --border || true)
             local _doc_id
             _doc_id=$(echo "$_doc_row" | cut -d'|' -f1 | tr -d ' ')
             [ -z "$_doc_id" ] && return 1
@@ -823,7 +823,7 @@ PYEOF
               | ${pkgs.fzf}/bin/fzf \
                   --prompt "$_prompt > " \
                   --header "image_id | archivo | tipo | página" \
-                  --delimiter '|' --height 50% --border \
+                  --delimiter '[|]' --height 50% --border \
                   --preview "
                     ${postgresql}/bin/psql \
                       -h '$HTR_PGRUN' -p '$HTR_PGPORT' -d '$HTR_PGDB' \
@@ -924,7 +924,8 @@ PYEOF
                 ${postgresql}/bin/psql \
                   -h "$HTR_PGRUN" -p "$HTR_PGPORT" -d "$HTR_PGDB" \
                   -tAF'|' \
-                  -c "SELECT collection_name, collection_type, collection_status,
+                  -c "SELECT collection_id, collection_name, collection_type,
+                             collection_status,
                              COALESCE(archival_institution_name, 'N/A'),
                              COALESCE(collection_path, 'N/A'),
                              COALESCE(collection_url, 'N/A')
@@ -933,10 +934,10 @@ PYEOF
                 2>/dev/null \
                 | ${pkgs.fzf}/bin/fzf \
                     --prompt "Colecciones > " \
-                    --header "nombre | tipo | estado | institución" \
-                    --delimiter '|' \
+                    --header "uuid | nombre | tipo | estado | institución" \
+                    --delimiter '[|]' \
                     --height 80% --border \
-                    --preview "echo 'Nombre:      {1}'; echo 'Tipo:        {2}'; echo 'Estado:      {3}'; echo 'Institucion: {4}'; echo 'Ruta:        {5}'; echo 'URL:         {6}'" \
+                    --preview "echo 'Nombre:      {2}'; echo 'Tipo:        {3}'; echo 'Estado:      {4}'; echo 'Institucion: {5}'; echo 'Ruta:        {6}'; echo 'URL:         {7}'" \
                     --preview-window 'right:45%:wrap' \
                 || true
                 ;;
@@ -1017,7 +1018,7 @@ DELSQL
                 ${postgresql}/bin/psql \
                   -h "$HTR_PGRUN" -p "$HTR_PGPORT" -d "$HTR_PGDB" \
                   -tAF'|' \
-                  -c "SELECT d.document_name,
+                  -c "SELECT d.document_id, d.document_name,
                              COALESCE(d.document_Expediente, 'N/A'),
                              COALESCE(d.document_Fecha_creacion, 'N/A'),
                              ds.document_status,
@@ -1033,10 +1034,10 @@ DELSQL
                 2>/dev/null \
                 | ${pkgs.fzf}/bin/fzf \
                     --prompt "$COL_NAME > " \
-                    --header "nombre | expediente | fecha | estado" \
-                    --delimiter '|' \
+                    --header "uuid | nombre | expediente | fecha | estado" \
+                    --delimiter '[|]' \
                     --height 80% --border \
-                    --preview "echo 'Nombre:     {1}'; echo 'Expediente: {2}'; echo 'Fecha:      {3}'; echo 'Estado:     {4}'; echo 'Fondo:      {5}'; echo 'Volumen:    {6}'; echo 'Lugar:      {7}'; echo 'Soporte:    {8}'; echo; echo 'Descripcion:'; echo '{9}'" \
+                    --preview "echo 'Nombre:     {2}'; echo 'Expediente: {3}'; echo 'Fecha:      {4}'; echo 'Estado:     {5}'; echo 'Fondo:      {6}'; echo 'Volumen:    {7}'; echo 'Lugar:      {8}'; echo 'Soporte:    {9}'; echo; echo 'Descripcion:'; echo '{10}'" \
                     --preview-window 'right:45%:wrap' \
                 || true
                 ;;
@@ -1073,7 +1074,7 @@ DELSQL
                 | ${pkgs.fzf}/bin/fzf \
                     --prompt "Imágenes > " \
                     --header "image_id | documento | archivo | tipo | pág | caligrafía" \
-                    --delimiter '|' --height 80% --border \
+                    --delimiter '[|]' --height 80% --border \
                     --preview "
                       ${postgresql}/bin/psql \
                         -h '$HTR_PGRUN' -p '$HTR_PGPORT' -d '$HTR_PGDB' \
@@ -1130,7 +1131,7 @@ DELSQL
                 | ${pkgs.fzf}/bin/fzf \
                     --prompt "HTR > " \
                     --header "htr_id | documento | imagen | archivo HTR | caligrafía" \
-                    --delimiter '|' --height 80% --border \
+                    --delimiter '[|]' --height 80% --border \
                     --preview "
                       ${postgresql}/bin/psql \
                         -h '$HTR_PGRUN' -p '$HTR_PGPORT' -d '$HTR_PGDB' \
@@ -1179,7 +1180,7 @@ DELSQL
                 | ${pkgs.fzf}/bin/fzf \
                     --prompt "Ground Truth > " \
                     --header "gt_id | documento | imagen | archivo GT" \
-                    --delimiter '|' --height 80% --border \
+                    --delimiter '[|]' --height 80% --border \
                     --preview "
                       ${postgresql}/bin/psql \
                         -h '$HTR_PGRUN' -p '$HTR_PGPORT' -d '$HTR_PGDB' \
@@ -1229,7 +1230,7 @@ DELSQL
                 | ${pkgs.fzf}/bin/fzf \
                     --prompt "Hist. clean > " \
                     --header "hist_clean_id | documento | imagen | archivo" \
-                    --delimiter '|' --height 80% --border \
+                    --delimiter '[|]' --height 80% --border \
                     --preview "
                       cat '{4}' 2>/dev/null || echo '(archivo no disponible localmente)'
                     " \
@@ -1283,7 +1284,7 @@ DELSQL
                 | ${pkgs.fzf}/bin/fzf \
                     --prompt "Clean modern > " \
                     --header "clean_modern_id | documento | imagen | archivo" \
-                    --delimiter '|' --height 80% --border \
+                    --delimiter '[|]' --height 80% --border \
                     --preview "
                       cat '{4}' 2>/dev/null || echo '(archivo no disponible localmente)'
                     " \
@@ -1333,7 +1334,7 @@ DELSQL
                 | ${pkgs.fzf}/bin/fzf \
                     --prompt "Notas > " \
                     --header "note_id | documento | nota" \
-                    --delimiter '|' --height 80% --border \
+                    --delimiter '[|]' --height 80% --border \
                     --preview "echo '{3}'" \
                     --preview-window bottom:40%:wrap \
                 || true
@@ -1369,7 +1370,7 @@ DELSQL
                 2>/dev/null \
                 | ${pkgs.fzf}/bin/fzf \
                     --prompt "Modelo > " --header "ID | nombre | tipo" \
-                    --delimiter '|' --height 40% --border \
+                    --delimiter '[|]' --height 40% --border \
                 | cut -d'|' -f1 | tr -d ' ' || true)
                 [ -z "$MODEL_ID" ] && return
                 echo "▶ Nuevo model_url       (Enter para mantener):"
@@ -1450,7 +1451,7 @@ DELSQL
                     | ${pkgs.fzf}/bin/fzf \
                         --prompt "Abreviaturas > " \
                         --header "id | abreviatura | expansión | tipo" \
-                        --delimiter '|' --height 80% --border \
+                        --delimiter '[|]' --height 80% --border \
                     || true
                     ;;
                 esac
@@ -1477,7 +1478,7 @@ DELSQL
                 | ${pkgs.fzf}/bin/fzf \
                     --prompt "Abreviaturas > " \
                     --header "id | abreviatura | expansión | documento" \
-                    --delimiter '|' --height 80% --border \
+                    --delimiter '[|]' --height 80% --border \
                 || true
                 ;;
               registrar_abreviaturas)
