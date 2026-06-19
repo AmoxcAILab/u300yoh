@@ -31,26 +31,33 @@
 
         # ── Variables de entorno ───────────────────────────────────
         dbEnvVars = ''
+          # Directorio raíz — primero para ubicar .env
+          export HTR_PIPELINE_DIR="''${HTR_PIPELINE_DIR:-$(pwd)}"
+
+          # Cargar .env si existe (define HTR_PGPASSWORD y otras sobreescrituras)
+          if [ -f "$HTR_PIPELINE_DIR/.env" ]; then
+            set -a; . "$HTR_PIPELINE_DIR/.env"; set +a
+          fi
+
           export HTR_PGDATA="''${HTR_PGDATA:-$HOME/.local/share/htr-pipeline/pgdata}"
           export HTR_PGRUN="''${HTR_PGRUN:-$HOME/.local/share/htr-pipeline/run}"
           export HTR_PGPORT="''${HTR_PGPORT:-5433}"
           export HTR_PGDB="''${HTR_PGDB:-htr_pipeline}"
           export HTR_PGUSER="''${HTR_PGUSER:-$USER}"
+          export HTR_PGPASSWORD="''${HTR_PGPASSWORD:-}"
 
           export PGDATA="$HTR_PGDATA"
           export PGHOST="$HTR_PGRUN"
           export PGPORT="$HTR_PGPORT"
           export PGDATABASE="$HTR_PGDB"
           export PGUSER="$HTR_PGUSER"
+          export PGPASSWORD="$HTR_PGPASSWORD"
 
           export HTR_DB_URL="postgresql://$HTR_PGUSER@/$HTR_PGDB?host=$HTR_PGRUN&port=$HTR_PGPORT"
 
           # Modelos locales y colaborador activo
           export HTR_MODELS_DIR="''${HTR_MODELS_DIR:-$(pwd)/data_ingestion/models}"
           export HTR_COLLABORATOR_ID="''${HTR_COLLABORATOR_ID:-}"
-
-          # Directorio raíz del proyecto (para PYTHONPATH y paths de scripts)
-          export HTR_PIPELINE_DIR="''${HTR_PIPELINE_DIR:-$(pwd)}"
         '';
 
         # ── Helpers compartidos ────────────────────────────────────
@@ -133,6 +140,17 @@
                 --username="$HTR_PGUSER"
             rm -f "$_PASSWD_FILE"
             echo "✓ Cluster inicializado."
+
+            # Añadir autenticación por contraseña para amoxcailab
+            # (debe preceder a las reglas trust del catch-all)
+            if [ -n "$HTR_PGPASSWORD" ]; then
+              {
+                echo "local   $HTR_PGDB   amoxcailab   scram-sha-256"
+                cat "$HTR_PGDATA/pg_hba.conf"
+              } > "$HTR_PGDATA/pg_hba.conf.new" \
+                && mv "$HTR_PGDATA/pg_hba.conf.new" "$HTR_PGDATA/pg_hba.conf"
+              echo "✓ pg_hba.conf: scram-sha-256 para amoxcailab."
+            fi
           else
             echo "✓ Cluster ya existe. Saltando initdb."
           fi
@@ -172,6 +190,31 @@ PGCONF
             echo "✓ Base de datos creada."
           else
             echo "✓ Base de datos '$HTR_PGDB' ya existe."
+          fi
+
+          # Crear o actualizar el rol amoxcailab con contraseña
+          if [ -n "$HTR_PGPASSWORD" ]; then
+            echo "▶ Configurando rol amoxcailab..."
+            _ROLE_EXISTS=$(${postgresql}/bin/psql \
+              -h "$HTR_PGRUN" -p "$HTR_PGPORT" -d postgres \
+              -tAc "SELECT 1 FROM pg_roles WHERE rolname = 'amoxcailab'" 2>/dev/null || echo "")
+            if [ "$_ROLE_EXISTS" = "1" ]; then
+              ${postgresql}/bin/psql \
+                -h "$HTR_PGRUN" -p "$HTR_PGPORT" -d postgres \
+                -v pgpass="$HTR_PGPASSWORD" \
+                -c "ALTER ROLE amoxcailab WITH PASSWORD :'pgpass';"
+            else
+              ${postgresql}/bin/psql \
+                -h "$HTR_PGRUN" -p "$HTR_PGPORT" -d postgres \
+                -v pgpass="$HTR_PGPASSWORD" \
+                -c "CREATE ROLE amoxcailab WITH LOGIN PASSWORD :'pgpass';"
+            fi
+            ${postgresql}/bin/psql \
+              -h "$HTR_PGRUN" -p "$HTR_PGPORT" -d postgres \
+              -c "GRANT ALL PRIVILEGES ON DATABASE $HTR_PGDB TO amoxcailab;"
+            echo "✓ Rol amoxcailab configurado."
+          else
+            echo "⚠ HTR_PGPASSWORD no definido — crea .env con HTR_PGPASSWORD."
           fi
 
           echo ""
