@@ -195,19 +195,18 @@ PGCONF
           # Crear o actualizar el rol amoxcailab con contraseña
           if [ -n "$HTR_PGPASSWORD" ]; then
             echo "▶ Configurando rol amoxcailab..."
+            _pw_esc=$(printf '%s' "$HTR_PGPASSWORD" | sed "s/'/''''/g")
             _ROLE_EXISTS=$(${postgresql}/bin/psql \
               -h "$HTR_PGRUN" -p "$HTR_PGPORT" -d postgres \
               -tAc "SELECT 1 FROM pg_roles WHERE rolname = 'amoxcailab'" 2>/dev/null || echo "")
             if [ "$_ROLE_EXISTS" = "1" ]; then
               ${postgresql}/bin/psql \
                 -h "$HTR_PGRUN" -p "$HTR_PGPORT" -d postgres \
-                -v pgpass="$HTR_PGPASSWORD" \
-                -c "ALTER ROLE amoxcailab WITH PASSWORD :'pgpass';"
+                -c "ALTER ROLE amoxcailab WITH PASSWORD '$_pw_esc';"
             else
               ${postgresql}/bin/psql \
                 -h "$HTR_PGRUN" -p "$HTR_PGPORT" -d postgres \
-                -v pgpass="$HTR_PGPASSWORD" \
-                -c "CREATE ROLE amoxcailab WITH LOGIN PASSWORD :'pgpass';"
+                -c "CREATE ROLE amoxcailab WITH LOGIN PASSWORD '$_pw_esc';"
             fi
             ${postgresql}/bin/psql \
               -h "$HTR_PGRUN" -p "$HTR_PGPORT" -d postgres \
